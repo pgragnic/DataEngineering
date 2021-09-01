@@ -1,11 +1,10 @@
 # DROP TABLES
 
-query = "DROP TABLE "
-songplay_table_drop = query + "songplays"
-user_table_drop = query + "users"
-song_table_drop = query + "songs"
-artist_table_drop = query + "artists"
-time_table_drop = query + "time"
+songplay_table_drop = "DROP TABLE songplays"
+user_table_drop = "DROP TABLE users"
+song_table_drop = "DROP TABLE songs"
+artist_table_drop = "DROP TABLE artists"
+time_table_drop = "DROP TABLE time"
 
 # CREATE TABLES
 
@@ -28,7 +27,7 @@ artist_table_create = ("""CREATE TABLE IF NOT EXISTS artists \
                     latitude numeric, longitude numeric)""")
 
 time_table_create = ("""CREATE TABLE IF NOT EXISTS time \
-                    (start_time timestamp, hour int, day int, \
+                    (start_time numeric, hour int, day int, \
                     week int, month varchar, year int, weekday int)
                     """)
 
@@ -37,18 +36,17 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS time \
 songplay_table_insert = ("""
 """)
 
-user_table_insert = ("""
-""")
+user_table_insert = ("INSERT INTO users " \
+                 "VALUES(%s, %s, %s, %s, %s)")
 
-song_table_insert = ("""
-""")
+song_table_insert = ("INSERT INTO songs " \
+                 "VALUES(%s, %s, %s, %s, %s)")
 
-artist_table_insert = ("""
-""")
+artist_table_insert = ("INSERT INTO artists " \
+                 "VALUES(%s, %s, %s, %s, %s)")
 
-
-time_table_insert = ("""
-""")
+time_table_insert = ("INSERT INTO time " \
+                 "VALUES(%s, %s, %s, %s, %s, %s, %s)")
 
 # FIND SONGS
 
