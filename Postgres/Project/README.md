@@ -29,8 +29,8 @@ This project is based on 2 datasets:
 
 # How To
 - install "psycopg2-binary" python library: pip install psycopg2-binary
-- copy all program files in project folder
-- copy data files in projetc folder (data/log_data and data/song_data folders)
-- start a terminal in project folder
+- create a project folder
+- unzip the file in the project folder
+- start a terminal in the project folder
 - run command `python .\create_tables.py`
 - run command `python .\etl.py`
