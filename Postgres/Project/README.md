@@ -27,9 +27,10 @@ This project is based on 2 datasets:
   - log_data: contain activity data
   - song_data: contain data about songs (artist, duration...)
 
-# How to
+# How To
 - install "psycopg2-binary" python library: pip install psycopg2-binary
-- copy all program files in project folder and datas in data/ folder
+- copy all program files in project folder
+- copy data files in projetc folder (data/log_data and data/song_data folders)
 - start a terminal in project folder
 - run command `python .\create_tables.py`
 - run command `python .\etl.py`
