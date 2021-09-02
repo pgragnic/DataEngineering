@@ -33,8 +33,8 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS time \
 
 # INSERT RECORDS
 
-songplay_table_insert = ("""
-""")
+songplay_table_insert = ("INSERT INTO songplays " \
+                 "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
 user_table_insert = ("INSERT INTO users " \
                  "VALUES(%s, %s, %s, %s, %s)")
@@ -50,10 +50,11 @@ time_table_insert = ("INSERT INTO time " \
 
 # FIND SONGS
 
-song_select = ("""
-""")
+song_select = ("select songs.song_id, artists.artist_id from songs \
+                    JOIN artists ON songs.artist_id = artists.artist_id \
+                    where songs.title = %s AND artists.name = %s AND songs.duration = %s")
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+create_table_queries  = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
