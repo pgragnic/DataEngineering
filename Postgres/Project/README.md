@@ -8,15 +8,28 @@ This project is based on 2 datasets:
 - Log Dataset: activity logs from a music streaming app
 
 # Prerequisites
-import os
-import glob
-import psycopg2
-import pandas as pd
-from sql_queries import *
 
-# How to execute
-
+- python 3.x
+- python modules:
+  - os
+  - glob
+  - psycopg2
+  - pandas
 
 # Files used
+- create_tables.py: create sparkify database and create tables
+- etl.ipynb: used to prepare the effective etl process
+- etl.py: contains the effective etl process
+- readme.md: contains overview and instructions about this etl process
+- sql_queries: contains all drop, create, insert and find SQL queries used by etl process
+- test.ipynb: script which tests if data have been correctly inserted by etl process 
+- data folder:
+  - log_data: contain activity data
+  - song_data: contain data about songs (artist, duration...)
 
-The README file includes a summary of the project, how to run the Python scripts, and an explanation of the files in the repository. Comments are used effectively and each function has a docstring.
+# How to
+- install "psycopg2-binary" python library: pip install psycopg2-binary
+- copy all program files in project folder and datas in data/ folder
+- start a terminal in project folder
+- run command `python .\create_tables.py`
+- run command `python .\etl.py`
