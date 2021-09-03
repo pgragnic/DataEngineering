@@ -42,7 +42,7 @@ def process_log_file(cur, filepath):
 
     Arguments:
         cur: the cursor object.
-        filepath: song data file path.
+        filepath: log data file path.
 
     Returns:
         None
