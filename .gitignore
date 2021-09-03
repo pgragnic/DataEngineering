@@ -1,4 +1,6 @@
 __pycache__/
 .ipynb_checkpoints/
+Postgres/Project/Django/django
+Postgres/Project/data/
 *.json
 *.zip

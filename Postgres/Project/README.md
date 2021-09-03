@@ -17,6 +17,7 @@ This project is based on 2 datasets:
   - pandas
 
 # Files used
+
 - create_tables.py: create sparkify database and create tables
 - etl.ipynb: used to prepare the effective etl process
 - etl.py: contains the effective etl process
@@ -26,6 +27,19 @@ This project is based on 2 datasets:
 - data folder:
   - log_data: contain activity data
   - song_data: contain data about songs (artist, duration...)
+
+# Database schema
+
+The star schema has:
+- 1 fact table: 
+  - songplays
+- 4 dimension tables
+  - users
+  - songs
+  - artists
+  - time
+
+![](sparkify_erd.png?raw=true)
 
 # How To
 - install "psycopg2-binary" python library: pip install psycopg2-binary
