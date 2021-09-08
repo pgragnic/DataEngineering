@@ -2,5 +2,7 @@ __pycache__/
 .ipynb_checkpoints/
 Postgres/Project/Django/django
 Postgres/Project/data/
+Cassandra/Project/event_data/
+*.csv
 *.json
 *.zip
