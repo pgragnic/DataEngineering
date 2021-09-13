@@ -3,6 +3,7 @@ __pycache__/
 Postgres/Project/Django/django
 Postgres/Project/data/
 Cassandra/Project/event_data/
+Data Warehouses/Pagila/Data/
 *.csv
 *.json
 *.zip
