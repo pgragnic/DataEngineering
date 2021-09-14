@@ -7,3 +7,4 @@ Data Warehouses/Pagila/Data/
 *.csv
 *.json
 *.zip
+dwh.cfg
