@@ -7,35 +7,86 @@ config.read('dwh.cfg')
 
 # DROP TABLES
 
-staging_events_table_drop = ""
-staging_songs_table_drop = ""
-songplay_table_drop = ""
-user_table_drop = ""
-song_table_drop = ""
-artist_table_drop = ""
-time_table_drop = ""
+staging_events_table_drop = "DROP TABLE IF EXISTS staging_events"
+staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs"
+songplay_table_drop = "DROP TABLE IF EXISTS songplays"
+user_table_drop = "DROP TABLE IF EXISTS users"
+song_table_drop = "DROP TABLE IF EXISTS songs"
+artist_table_drop = "DROP TABLE IF EXISTS artists"
+time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
 
 staging_events_table_create= ("""
-""")
+    CREATE TABLE IF NOT EXISTS
+    (
+        
+    )
+    """)
 
 staging_songs_table_create = ("""
 """)
 
 songplay_table_create = ("""
+    CREATE TABLE IF NOT EXISTS songplays 
+        (
+            songplay_id SERIAL PRIMARY KEY,
+            start_time bigint NOT NULL,
+            user_id int NOT NULL,
+            level varchar NOT NULL,
+            song_id varchar,
+            artist_id varchar,
+            session_id int NOT NULL,
+            location varchar,
+            user_agent varchar NOT NULL,
+            UNIQUE (start_time, user_id)
+        );
 """)
 
 user_table_create = ("""
+    CREATE TABLE IF NOT EXISTS users
+        (
+            user_id int PRIMARY KEY,
+            first_name varchar NOT NULL,
+            last_name varchar NOT NULL,
+            gender varchar NOT NULL, \
+            level varchar NOT NULL
+        );
 """)
 
 song_table_create = ("""
+    CREATE TABLE IF NOT EXISTS songs
+        (
+            song_id varchar PRIMARY KEY,
+            title varchar NOT NULL,
+            artist_id varchar NOT NULL,
+            year int NOT NULL,
+            duration numeric NOT NULL
+        );
 """)
 
 artist_table_create = ("""
+    CREATE TABLE IF NOT EXISTS artists
+        (
+            artist_id varchar PRIMARY KEY,
+            name varchar NOT NULL,
+            location varchar,
+            latitude numeric,
+            longitude numeric
+        );
 """)
 
 time_table_create = ("""
+    CREATE TABLE IF NOT EXISTS time \
+        (
+            start_time timestamp PRIMARY KEY,
+            hour int NOT NULL,
+            day int NOT NULL,
+            week int NOT NULL,
+            month varchar NOT NULL,
+            year int NOT NULL,
+            weekday int NOT NULL
+        );
 """)
 
 # STAGING TABLES
