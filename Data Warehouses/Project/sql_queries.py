@@ -22,22 +22,22 @@ staging_events_table_create= ("""
         (
             artist varchar,
             auth varchar NOT NULL,
-            firstName varchar NOT NULL,
-            gender varchar NOT NULL,
-            itemInSession integer NOT NULL,
-            lastName varchar NOT NULL,
+            firstName varchar,
+            gender varchar,
+            itemInSession integer,
+            lastName varchar,
             length numeric,
             level varchar NOT NULL,
-            location varchar NOT NULL,
+            location varchar,
             method varchar NOT NULL,
             page varchar NOT NULL,
-            registration numeric NOT NULL,
-            sessionId integer NOT NULL,
+            registration numeric,
+            sessionId integer,
             song varchar,
             status integer NOT NULL,
-            ts timestamp NOT NULL,
-            userAgent varchar NOT NULL,
-            userId integer NOT NULL
+            ts bigint NOT NULL,
+            userAgent varchar,
+            userId integer
         );
 """)
 
@@ -79,7 +79,7 @@ user_table_create = ("""
             user_id int PRIMARY KEY,
             first_name varchar NOT NULL,
             last_name varchar NOT NULL,
-            gender varchar NOT NULL, \
+            gender varchar NOT NULL,
             level varchar NOT NULL
         );
 """)
@@ -121,11 +121,19 @@ time_table_create = ("""
 
 # STAGING TABLES
 
-staging_events_copy = ("""
-""").format()
+staging_events_copy = (
+        """ COPY {} FROM '{}'
+        iam_role 'arn:aws:iam::909496952025:role/dwhRole'
+        JSON 'auto' ACCEPTINVCHARS
+        """
+        ).format("staging_events", "s3://udacity-dend/log_data")
 
-staging_songs_copy = ("""
-""").format()
+staging_songs_copy = (
+        """ COPY {} FROM '{}'
+        iam_role 'arn:aws:iam::909496952025:role/dwhRole'
+        JSON 'auto' ACCEPTINVCHARS
+        """
+        ).format("staging_songs", "s3://udacity-dend/song_data")
 
 # FINAL TABLES
 
