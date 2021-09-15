@@ -137,30 +137,30 @@ staging_songs_copy = (
 
 # FINAL TABLES
 
-songplay_table_insert = ("""
-""")
-
-INSERT INTO dimDate (date_key, date, year, quarter, month, day, week, is_weekend)
-SELECT DISTINCT(TO_CHAR(payment_date :: DATE, 'yyyyMMDD')::integer) AS date_key,
-       date(payment_date)                                           AS date,
-       EXTRACT(year FROM payment_date)                              AS year,
-       EXTRACT(quarter FROM payment_date)                           AS quarter,
-       EXTRACT(month FROM payment_date)                             AS month,
-       EXTRACT(day FROM payment_date)                               AS day,
-       EXTRACT(week FROM payment_date)                              AS week,
-       CASE WHEN EXTRACT(ISODOW FROM payment_date) IN (6, 7) THEN true ELSE false END AS is_weekend
-FROM payment;
-
-song_table_insert = ("""
-                        INSERT INTO songs \
-                        VALUES(%s, %s, %s, %s, %s)
-                        ON CONFLICT DO NOTHING;
-                    """)
+songplay_table_insert = (""" """)
 
 user_table_insert = ("""
+        INSERT INTO users (user_id, first_name, last_name, gender, level)
+        SELECT 
+            DISTINCT(userid) as user_id,
+            firstname as first_name,
+            lastname as last_name,
+            gender,
+            level
+        FROM staging_events
+        WHERE userid IS NOT NULL
 """)
 
 song_table_insert = ("""
+        INSERT INTO songs (song_id, title, artist_id, year, duration)
+        SELECT
+            DISTINCT (song_id) as song_id,
+            title,
+            artist_id,
+            year,
+            duration
+        FROM staging_songs
+        WHERE song_id IS NOT NULL
 """)
 
 artist_table_insert = ("""
@@ -174,4 +174,5 @@ time_table_insert = ("""
 create_table_queries = [staging_events_table_create, staging_songs_table_create, songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
 drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
-insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
+#insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
+insert_table_queries = [song_table_insert]
