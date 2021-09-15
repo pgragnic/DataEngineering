@@ -60,7 +60,7 @@ staging_songs_table_create = ("""
 songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplays 
         (
-            songplay_id double precision DEFAULT nextval('songplays_seq') NOT NULL,
+            songplay_id double precision DEFAULT nextval('songplays_seq') PRIMARY KEY,
             start_time bigint NOT NULL,
             user_id int NOT NULL,
             level varchar NOT NULL,
@@ -139,6 +139,18 @@ staging_songs_copy = (
 
 songplay_table_insert = ("""
 """)
+
+%%sql
+INSERT INTO dimDate (date_key, date, year, quarter, month, day, week, is_weekend)
+SELECT DISTINCT(TO_CHAR(payment_date :: DATE, 'yyyyMMDD')::integer) AS date_key,
+       date(payment_date)                                           AS date,
+       EXTRACT(year FROM payment_date)                              AS year,
+       EXTRACT(quarter FROM payment_date)                           AS quarter,
+       EXTRACT(month FROM payment_date)                             AS month,
+       EXTRACT(day FROM payment_date)                               AS day,
+       EXTRACT(week FROM payment_date)                              AS week,
+       CASE WHEN EXTRACT(ISODOW FROM payment_date) IN (6, 7) THEN true ELSE false END AS is_weekend
+FROM payment;
 
 user_table_insert = ("""
 """)
