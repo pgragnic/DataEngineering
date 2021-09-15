@@ -124,14 +124,14 @@ time_table_create = ("""
 staging_events_copy = (
         """ COPY {} FROM '{}'
         iam_role 'arn:aws:iam::909496952025:role/dwhRole'
-        JSON 'auto' ACCEPTINVCHARS
+        JSON 'auto ignorecase' ACCEPTINVCHARS
         """
         ).format("staging_events", "s3://udacity-dend/log_data")
 
 staging_songs_copy = (
         """ COPY {} FROM '{}'
         iam_role 'arn:aws:iam::909496952025:role/dwhRole'
-        JSON 'auto' ACCEPTINVCHARS
+        JSON 'auto ignorecase' ACCEPTINVCHARS
         """
         ).format("staging_songs", "s3://udacity-dend/song_data")
 
@@ -140,7 +140,6 @@ staging_songs_copy = (
 songplay_table_insert = ("""
 """)
 
-%%sql
 INSERT INTO dimDate (date_key, date, year, quarter, month, day, week, is_weekend)
 SELECT DISTINCT(TO_CHAR(payment_date :: DATE, 'yyyyMMDD')::integer) AS date_key,
        date(payment_date)                                           AS date,
@@ -151,6 +150,12 @@ SELECT DISTINCT(TO_CHAR(payment_date :: DATE, 'yyyyMMDD')::integer) AS date_key,
        EXTRACT(week FROM payment_date)                              AS week,
        CASE WHEN EXTRACT(ISODOW FROM payment_date) IN (6, 7) THEN true ELSE false END AS is_weekend
 FROM payment;
+
+song_table_insert = ("""
+                        INSERT INTO songs \
+                        VALUES(%s, %s, %s, %s, %s)
+                        ON CONFLICT DO NOTHING;
+                    """)
 
 user_table_insert = ("""
 """)
