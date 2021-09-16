@@ -12,8 +12,10 @@ This project is based on 2 datasets:
 - python 3.x
 - python modules:
   - configparser
-  - psycopg2
+  - json
   - pandas
+  - psycopg2
+  - time
 
 # Files used
 
