@@ -123,17 +123,17 @@ time_table_create = ("""
 
 staging_events_copy = (
         """ COPY {} FROM '{}'
-        iam_role 'arn:aws:iam::909496952025:role/dwhRole'
+        iam_role {}
         JSON 'auto ignorecase' ACCEPTINVCHARS
         """
-        ).format("staging_events", "s3://udacity-dend/log_data")
+        ).format("staging_events", "s3://udacity-dend/log_data", config.get("IAM","IAM_ROLE_ARN"))
 
 staging_songs_copy = (
         """ COPY {} FROM '{}'
-        iam_role 'arn:aws:iam::909496952025:role/dwhRole'
+        iam_role '{}'
         JSON 'auto ignorecase' ACCEPTINVCHARS
         """
-        ).format("staging_songs", "s3://udacity-dend/song_data")
+        ).format("staging_songs", "s3://udacity-dend/song_data", config.get("IAM","IAM_ROLE_ARN"))
 
 # FINAL TABLES
 

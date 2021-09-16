@@ -17,15 +17,13 @@ This project is based on 2 datasets:
 
 # Files used
 
+- create_redshift_cluster: create automatically a new redshift cluster
 - create_tables.py: create sparkify database and create tables
-- etl.ipynb: used to prepare the effective etl process
+- delete_redshift_cluster: delete automatically the redshift cluster
+- dwh.cfg: contains all configuration (AWS, IAM, S3, Redshift)
 - etl.py: contains the effective etl process
 - readme.md: contains overview and instructions about this etl process
-- sql_queries: contains all drop, create, insert and find SQL queries used by etl process
-- test.ipynb: script which tests if data have been correctly inserted by etl process 
-- data folder:
-  - log_data: contain activity data
-  - song_data: contain data about songs (artist, duration...)
+- sql_queries.py: contains all drop, create, insert and find SQL queries used by etl process
 
 # Database schema
 
