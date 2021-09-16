@@ -5,6 +5,8 @@ import configparser
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
 
+iam_role_cfg = config.get("IAM","IAM_ROLE_ARN")
+
 # DROP TABLES
 
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events"
@@ -126,14 +128,14 @@ staging_events_copy = (
         iam_role {}
         JSON 'auto ignorecase' ACCEPTINVCHARS
         """
-        ).format("staging_events", "s3://udacity-dend/log_data", config.get("IAM","IAM_ROLE_ARN"))
+        ).format("staging_events", "s3://udacity-dend/log_data", iam_role_cfg)
 
 staging_songs_copy = (
         """ COPY {} FROM '{}'
-        iam_role '{}'
+        iam_role {}
         JSON 'auto ignorecase' ACCEPTINVCHARS
         """
-        ).format("staging_songs", "s3://udacity-dend/song_data", config.get("IAM","IAM_ROLE_ARN"))
+        ).format("staging_songs", "s3://udacity-dend/song_data", iam_role_cfg)
 
 # FINAL TABLES
 
