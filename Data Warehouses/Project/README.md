@@ -17,9 +17,9 @@ This project is based on 2 datasets:
 
 # Files used
 
-- create_redshift_cluster: create automatically a new redshift cluster
+- `create_redshift_cluster`: create automatically a new redshift cluster
 - create_tables.py: create sparkify database and create tables
-- delete_redshift_cluster: delete automatically the redshift cluster
+- delete_redshift_cluster.py: delete automatically the redshift cluster
 - dwh.cfg: contains all configuration (AWS, IAM, S3, Redshift)
 - etl.py: contains the effective etl process
 - readme.md: contains overview and instructions about this etl process
