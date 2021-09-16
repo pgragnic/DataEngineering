@@ -143,14 +143,13 @@ songplay_table_insert = ("""
             TIMESTAMP 'epoch' + ts/1000 *INTERVAL '1 second' AS start_time,
             userid AS user_id,
             level,
-            s.song_id AS song_id,
-            a.artist_id AS artist_id,
+            sts.song_id AS song_id,
+            sts.artist_id AS artist_id,
             sessionid AS sessions_id,
             ste.location,
             useragent AS user_agent
             FROM staging_events AS ste
-                JOIN songs AS s ON ste.song = s.title
-                JOIN artists AS a ON ste.artist = a.name
+                JOIN staging_songs AS sts ON ste.song = sts.title
  """)
 
 user_table_insert = ("""
@@ -206,8 +205,6 @@ time_table_insert = ("""
 # QUERY LISTS
 
 create_table_queries = [staging_events_table_create, staging_songs_table_create, songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
-#drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
-drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
+drop_table_queries = [staging_events_table_drop, staging_songs_table_drop, songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
-#insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
 insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
