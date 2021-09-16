@@ -61,12 +61,12 @@ songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplays 
         (
             songplay_id bigint IDENTITY(0,1) NOT NULL,
-            start_time bigint NOT NULL,
+            start_time timestamp,
             user_id int NOT NULL,
             level varchar NOT NULL,
-            song_id varchar,
-            artist_id varchar,
-            session_id int NOT NULL,
+            song_id varchar NOT NULL,
+            artist_id varchar NOT NULL,
+            session_id int NOT NULL NOT NULL,
             location varchar,
             user_agent varchar NOT NULL,
             UNIQUE (start_time, user_id)
@@ -137,7 +137,21 @@ staging_songs_copy = (
 
 # FINAL TABLES
 
-songplay_table_insert = (""" """)
+songplay_table_insert = ("""
+        INSERT INTO songplays (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
+        SELECT 
+            TIMESTAMP 'epoch' + ts/1000 *INTERVAL '1 second' AS start_time,
+            userid AS user_id,
+            level,
+            s.song_id AS song_id,
+            a.artist_id AS artist_id,
+            sessionid AS sessions_id,
+            ste.location,
+            useragent AS user_agent
+            FROM staging_events AS ste
+                JOIN songs AS s ON ste.song = s.title
+                JOIN artists AS a ON ste.artist = a.name
+ """)
 
 user_table_insert = ("""
         INSERT INTO users (user_id, first_name, last_name, gender, level)
@@ -196,4 +210,4 @@ create_table_queries = [staging_events_table_create, staging_songs_table_create,
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
 copy_table_queries = [staging_events_copy, staging_songs_copy]
 #insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
-insert_table_queries = [user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
+insert_table_queries = [songplay_table_insert, user_table_insert, song_table_insert, artist_table_insert, time_table_insert]
