@@ -60,7 +60,7 @@ staging_songs_table_create = ("""
 songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplays 
         (
-            songplay_id double precision DEFAULT nextval('songplays_seq') PRIMARY KEY,
+            songplay_id bigint IDENTITY(0,1) NOT NULL,
             start_time bigint NOT NULL,
             user_id int NOT NULL,
             level varchar NOT NULL,
