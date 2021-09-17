@@ -50,6 +50,7 @@ def main():
     conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['CLUSTER'].values()))
     cur = conn.cursor()
 
+    '''
     print("1. Dropping tables...")
     start_time = time.time()
     drop_tables(cur, conn)
@@ -64,7 +65,7 @@ def main():
     start_time = time.time()
     load_staging_tables(cur, conn)
     print("--- It took %s seconds ---" % (time.time() - start_time))
-
+    '''
     print("4. Loading final tables...")
     start_time = time.time()
     insert_tables(cur, conn)
