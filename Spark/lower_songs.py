@@ -19,7 +19,7 @@ if __name__ == "__main__":
         "despacito",
         "All the stars"]
     
-    destributed_song_log = spark.sparkContext.parallelize(log_of_songs)
+    distributed_song_log = spark.sparkContext.parallelize(log_of_songs)
 
     print(distributed_song_log.map(lambda x: x.lower()).collect())
 
