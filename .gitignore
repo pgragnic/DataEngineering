@@ -6,5 +6,6 @@ Cassandra/Project/event_data/
 Data Warehouses/Pagila/Data/
 *.csv
 *.json
+*.pem
 *.zip
 dwh.cfg
