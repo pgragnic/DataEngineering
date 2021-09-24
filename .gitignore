@@ -5,6 +5,7 @@ Postgres/Project/data/
 Cassandra/Project/event_data/
 Data Warehouses/Pagila/Data/
 *.csv
+*.gz
 *.json
 *.pem
 *.zip
