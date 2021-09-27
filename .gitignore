@@ -1,10 +1,10 @@
 __pycache__/
 .ipynb_checkpoints/
-Postgres/Project/Django/django
+Postgres/Project/Django/django/
 Postgres/Project/data/
 Cassandra/Project/event_data/
 Data Warehouses/Pagila/Data/
-Spark/Project/data
+Spark/Project/data/
 *.cfg
 *.csv
 *.gz
