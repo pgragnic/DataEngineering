@@ -4,9 +4,10 @@ Postgres/Project/Django/django
 Postgres/Project/data/
 Cassandra/Project/event_data/
 Data Warehouses/Pagila/Data/
+Spark/Project/data
+*.cfg
 *.csv
 *.gz
 *.json
 *.pem
 *.zip
-dwh.cfg
