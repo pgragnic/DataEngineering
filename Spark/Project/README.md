@@ -9,29 +9,18 @@ This project is based on 2 datasets:
 
 # Prerequisites
 
+- AWS EMR cluster or local Spark
 - python 3.x
 - python modules:
   - configparser
-  - json
-  - pandas
-  - psycopg2
-  - time
 
 # Files used
 
-- create_redshift_cluster: create automatically a new redshift cluster
-- create_tables.py: create sparkify database and create tables
-- delete_redshift_cluster.py: delete automatically the redshift cluster
-- dwh.cfg: contains all configuration (AWS, IAM, S3, Redshift)
-- etl.py: contains the effective etl process
+- dl.cfg: contains AWS credentials
+- etl.py: reads data from S3, processes that data using Spark, and writes them back to S3
 - readme.md: contains overview and instructions about this etl process
-- sql_queries.py: contains all drop, create, insert and find SQL queries used by etl process
 
-# Database schema
-
-Staging tables:
-  - staging_events
-  - staging_songs
+# Parquet files schema
 
 The star schema has:
 - 1 fact table: 
@@ -46,11 +35,8 @@ The star schema has:
 
 # How To
 - create a project folder
-- install "psycopg2-binary" python library: pip install psycopg2-binary
+- install "configparser" python library: pip install configparser
 - install "pandas" python library: pip install pandas
 - unzip the file in the project folder
 - start a terminal in the project folder
-- run command `python .\create_redshift_cluster.py`
-- run command `python .\etl.py` (it will call automatically create_tables.py first)
-When Redshift cluster is not anymore necessary
-- run command `python .\delete_redshift_cluster.py` 
+- run command `python .\etl.py`

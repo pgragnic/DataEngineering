@@ -10,4 +10,5 @@ Spark/Project/data/
 *.gz
 *.json
 *.pem
+*.sh
 *.zip
