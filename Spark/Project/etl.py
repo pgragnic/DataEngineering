@@ -7,6 +7,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql import functions as f
 from pyspark.sql import types as t
 
+
 config = configparser.ConfigParser()
 config.read('dl.cfg')
 
@@ -35,39 +36,40 @@ def create_spark_session():
 
 def process_song_data(spark, input_data, output_data):
 
-   """
-   Description: This function process songs data and write songs and artists tables to parquet files
+    """
+    Description: This function process songs data and write songs and artists tables to parquet files
+        
+    Arguments:
+        spark: Spark session
+        input_data: input files repository path
+        output_data: output files repository path
+    Returns:
+        None
+    """
+
+    # get filepath to song data file
+    song_data = os.path.join(input_data, "song_data/A/*/*/*.json")
+
+    # read song data file
+    print ("    Reading song data file") 
+    df = spark.read.json(song_data)
+
+    # write songs table to parquet files partitioned by year and artist
+    print ("    Writing songs table to parquet files")
     
-   Arguments:
-      spark: Spark session
-      input_data: input files repository path
-      output_data: output files repository path
-   Returns:
-      None
-   """
-
-   # get filepath to song data file
-   song_data = os.path.join(input_data, "song_data/A/*/*/*.json")
-
-   # read song data file
-   print ("    Reading song data file") 
-   df = spark.read.json(song_data)
-
-   # write songs table to parquet files partitioned by year and artist
-   print ("    Writing songs table to parquet files")
-   df.dropDuplicates("song_id").select("song_id", "title", "artist_id", "year", "duration") \
-    .write.mode("overwrite") \
-    .parquet(output_data + "songs")
-
-    #.partitionBy("year","artist_id") \
-
-   print ("    Writing artists table to parquet files")
-   # write artists table to parquet files
-   df.dropDuplicates("artist_id").select("artist_id", "artist_name", "artist_location", "artist_latitude", "artist_longitude") \
+    df.drop_duplicates(subset=['song_id']).select("song_id", "title", "artist_id", "year", "duration") \
         .write.mode("overwrite") \
-        .parquet(output_data + "artists")
-      
-   df.createOrReplaceTempView("songsData")
+        .partitionBy("year","artist_id") \
+        .parquet(output_data + "songs")
+
+    # write artists table to parquet files
+    print ("    Writing artists table to parquet files")
+
+    df.drop_duplicates(subset=['artist_id']).select("artist_id", "artist_name", "artist_location", "artist_latitude", "artist_longitude") \
+            .write.mode("overwrite") \
+            .parquet(output_data + "artists")
+        
+    df.createOrReplaceTempView("songsData")
 
 
 def process_log_data(spark, input_data, output_data):
@@ -93,7 +95,7 @@ def process_log_data(spark, input_data, output_data):
     # write users table to parquet files
     print ("    Writing users table to parquet files")
 
-    df.dropDuplicates("user_id").select(df.userId.alias("user_id"), df.firstName.alias("first_name") , \
+    df.drop_duplicates(subset=['userId']).select(df.userId.alias("user_id"), df.firstName.alias("first_name") , \
         df.lastName.alias("last_name"), "gender", "level") \
         .write.mode("overwrite") \
         .parquet(output_data + "users")
@@ -122,10 +124,10 @@ def process_log_data(spark, input_data, output_data):
 
     # write time table to parquet files partitioned by year and month
     print ("    Writing time table to parquet files")
-    df.select('start_time', 'hour', 'day', 'week', 'month', 'year', 'weekday') \
+    df.drop_duplicates(subset=['start_time']).select('start_time', 'hour', 'day', 'week', 'month', 'year', 'weekday') \
         .write.mode("overwrite") \
+        .partitionBy("year", "month") \
         .parquet(output_data + "time")
-        # .partitionBy("year", "month") \
     
     # read in song data to use for songplays table
     song_df = spark.sql("SELECT DISTINCT song_id, artist_id, artist_name FROM songsData")
@@ -135,28 +137,31 @@ def process_log_data(spark, input_data, output_data):
 
     # extract columns from joined song and log datasets to create songplays table
     print ("    Writing songplays table to parquet files")
-    songplays_table = dfNextSong.join(song_df, song_df.artist_name == df.artist, "inner") \
+    dfNextSong.join(song_df, song_df.artist_name == df.artist, "inner") \
         .distinct() \
-        .select(col("start_time"), col("userId"), col("level"), col("sessionId"), \
-                col("location"), col("userAgent"), col("song_id"), col("artist_id")) \
-        .withColumn("songplay_id", monotonically_increasing_id()) \
+        .select(f.col("start_time"), f.col("userId"), f.col("level"), f.col("sessionId"), \
+                f.col("location"), f.col("userAgent"), f.col("song_id"), f.col("artist_id"), \
+                df['year'].alias('year'), df['month'].alias('month')) \
+        .withColumn("songplay_id", f.monotonically_increasing_id()) \
         .write.mode("overwrite") \
+        .partitionBy('year', 'month') \
         .parquet(output_data + "songplays")
 
 
 def main():
+    print("BEGINNING")
     print ("1. Creating/Getting Spark session")
     start_time = time.time()
     spark = create_spark_session()
     print("--- It took %s seconds ---" % (time.time() - start_time))
 
     # S3 buckets
-    # input_data = "s3a://udacity-dend/"
-    # output_data = "s3a://pg-west2-udacity/parquets/"
+    input_data = "s3a://udacity-dend/"
+    output_data = "s3a://pg-west2-udacity/parquets/"
 
     # Local for dev purpose
-    input_data = "data/"
-    output_data = "data/parquets/"
+    #input_data = "data/"
+    #output_data = "data/parquets/"
 
     start_time = time.time()
     print ("2. Starting SONG data processing")    
@@ -165,8 +170,9 @@ def main():
 
     start_time = time.time()
     print ("3. Starting LOG data processing")
-  #  process_log_data(spark, input_data, output_data)
+    process_log_data(spark, input_data, output_data)
     print("--- It took %s seconds ---" % (time.time() - start_time))
+    print("END")
 
 if __name__ == "__main__":
     main()

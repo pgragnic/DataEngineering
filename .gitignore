@@ -12,3 +12,4 @@ Spark/Project/data/
 *.pem
 *.sh
 *.zip
+*.yaml
