@@ -25,15 +25,15 @@ They want to have this data available in a datawarehouse. The best solution to a
 
 This project is based on 2 datasets hosted on S3:
 
-* Song Dataset: subset of real data from the Million Song Dataset.
-* Log Dataset: activity logs from a music streaming app
+- Song Dataset: subset of real data from the Million Song Dataset.
+- Log Dataset: activity logs from a music streaming app
 
 ## Prerequisites
 
-* python 3.x
-* python modules:
-  * time
-  * airflow
+- python 3.x
+- python modules:
+  - time
+  - airflow
 
 ## ETL-Process
 
@@ -46,33 +46,33 @@ Schema of the Airflow DAG:
 
 ### dag
 
-* airflow_project.py: contains the DAG
+- dags/airflow_project.py: contains the DAG
 
 ### Operators
 
-* data_quality.py: check data quality of all final tables
-* load_dimension.py: load dimension tables (songs, users , artists, time)
-* load_fact.py: load songplays table
+- plugins/operators/data_quality.py: check data quality of all final tables
+- plugins/operators/load_dimension.py: load dimension tables (songs, users , artists, time)
+- plugins/operators/load_fact.py: load songplays table
 
 ### Helpers
 
-* sql_queries.py: contains all create and select queries used by operators
+- plugins/helpers/sql_queries.py: contains all create and select queries used by operators
 
 ## Database schema
 
 Staging tables:
 
-* staging_events
-* staging_songs
+- staging_events
+- staging_songs
 
 The star schema has:
 
-* 1 fact table:
-  * songplays
-* 4 dimension tables
-  * users
-  * songs
-  * artists
-  * time
+- 1 fact table:
+  - songplays
+- 4 dimension tables
+  - users
+  - songs
+  - artists
+  - time
 
 ![Sparkify ERD](images/sparkify_erd.png?raw=true)
