@@ -7,6 +7,7 @@ Data Warehouses/Pagila/Data/
 Spark/Project/data/
 *.cfg
 *.csv
+*.env
 *.gz
 *.json
 *.pem
