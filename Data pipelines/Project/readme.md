@@ -19,11 +19,11 @@ This project is based on 2 datasets:
 # Files used
 
 - airflow_project.py: contains the DAG
-## Operators:
+##    Operators:
 - data_quality.py:
 - load_dimension.py: 
 - load_fact.py:
-## Helpers
+##    Helpers
 - sql_queries.py: contains all create, select queries used in the DAG
 
 # Database schema
