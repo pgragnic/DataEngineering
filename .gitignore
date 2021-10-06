@@ -10,6 +10,7 @@ Spark/Project/data/
 *.env
 *.gz
 *.json
+*.parquet
 *.pem
 *.sh
 *.zip
