@@ -2,12 +2,17 @@
 
 ## Summary
 
-* [Introduction](#Introduction)
-* [ELT Process](#ELT-Process)
-* [Sources](#Sources)
-* [Destinations](#Destinations)
-* [Project Structure](#Project-Structure)
-* [Data Quality Checks](#Data-Quality-Checks)
+- [Data Pipeline with Airflow](#data-pipeline-with-airflow)
+  - [Summary](#summary)
+  - [Introduction](#introduction)
+  - [Datasets](#datasets)
+  - [Prerequisites](#prerequisites)
+  - [ETL-Process](#etl-process)
+  - [Structure](#structure)
+    - [dag](#dag)
+    - [Operators](#operators)
+    - [Helpers](#helpers)
+  - [Database schema](#database-schema)
 
 --------------------------------------------
 
@@ -30,14 +35,14 @@ This project is based on 2 datasets hosted on S3:
   * time
   * airflow
 
-## ETL Process
+## ETL-Process
 
 The ETL process id managed by Airflow (<https://airflow.apache.org/>)
 
 Schema of the Airflow DAG:
 ![DAG](images/dag.png?raw=true)
 
-## Files used
+## Structure
 
 ### dag
 
