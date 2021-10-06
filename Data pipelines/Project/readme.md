@@ -37,7 +37,7 @@ This project is based on 2 datasets hosted on S3:
 
 ## ETL-Process
 
-The ETL process id managed by Airflow (<https://airflow.apache.org/>)
+The ETL process is managed by Airflow (<https://airflow.apache.org/>)
 
 Schema of the Airflow DAG:
 ![DAG](images/dag.png?raw=true)
