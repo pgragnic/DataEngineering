@@ -1,25 +1,5 @@
 # Udacity Data Engineer Nanodegree - Capstone Project
 
-## Summary
-
-- [Data Pipeline with Airflow](#data-pipeline-with-airflow)
-  - [Summary](#summary)
-  - [Introduction](#introduction)
-  - [Datasets](#datasets)
-  - [Prerequisites](#prerequisites)
-  - [ETL-Process](#etl-process)
-  - [Structure](#structure)
-    - [dag](#dag)
-    - [Operators](#operators)
-    - [Helpers](#helpers)
-  - [Database schema](#database-schema)
-
-### Introduction
-This project build up a data warehouse by integrating immigration data and demography data together to provide a wider range [single-source-of-truth](https://en.wikipedia.org/wiki/Single_source_of_truth) database.
-
-
-The project follows the follow steps:
-
 ## Step 1: Scope the Project and Gather Data
 
 ### Scope
@@ -38,9 +18,6 @@ The main goal of this datawarehouse is to provide data about immigration data.
 |[Airlines](https://openflights.org/data.html#airline)| CSV | This dataset contains information about airlines|
 
 ## Step 2: Explore and Assess the Data
-
-
-
 
 ## Step 3: Define the Data Model
 
