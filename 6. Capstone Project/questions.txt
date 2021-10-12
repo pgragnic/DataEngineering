@@ -1,0 +1,12 @@
+# Most tourists are from which country
+# Most visited state
+# Most visited state with State name
+Visit Purpose
+State & Visit purpose
+Age range & country
+DaysinUS range & country
+Top Gender in county has fips
+Top racial group in the state
+Arrival to US by month
+County & Weather
+
