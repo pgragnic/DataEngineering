@@ -1,16 +1,16 @@
 # Capstone project about COVID
 
-## Datasets
+## Step 1: Scope the Project and Gather Data
 
-### [Daily reports (csse_covid_19_daily_reports)](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports)
+### Datasets
+
+This project contains 4 datasets related to COVID 19, see below description of these datasets.
+
+#### [Daily reports (csse_covid_19_daily_reports)](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports)
 
 This folder contains daily case reports. All timestamps are in UTC (GMT+0).
 
-#### File naming convention
-
-MM-DD-YYYY.csv in UTC.
-
-#### Field description
+##### Field description
 
 * FIPS: US only. Federal Information Processing Standards code that uniquely identifies counties within the USA.
 * Admin2: County name. US only.
@@ -26,15 +26,15 @@ MM-DD-YYYY.csv in UTC.
 * Case_Fatality_Ratio (%): Case-Fatality Ratio (%) = Number recorded deaths / Number cases.
 * All cases, deaths, and recoveries reported are based on the date of initial report. Exceptions to this are noted in the "Data Modification" and "Retrospective reporting of (probable) cases and deaths" subsections below.  
 
-### [Covid-19 Economic Exposure Index](https://data.humdata.org/dataset/covid-19-economic-exposure-index)
+##### [Covid-19 Economic Exposure Index](https://data.humdata.org/dataset/covid-19-economic-exposure-index)
 
 Country's economic exposure due to COVID-19. Composite indicator based on World Bank's datasets on remittances, food import dependence, primary commodity export dependence, tourism dependence, government indebtedness and foreign currency reserves.
 
-### [Countries of the World](https://www.kaggle.com/fernandol/countries-of-the-world)
+##### [Countries of the World](https://www.kaggle.com/fernandol/countries-of-the-world)
 
 Information on population, region, area size, infant mortality and more.
 
-### [Coronavirus (COVID-19) Vaccinations](https://ourworldindata.org/covid-vaccinations)
+##### [Coronavirus (COVID-19) Vaccinations](https://ourworldindata.org/covid-vaccinations)
 
 This vaccination dataset uses the most recent official numbers from governments and health ministries worldwide. Population estimates for per-capita metrics are based on the United Nations World Population Prospects. Income groups are based on the World Bank classification. A full list of our country-specific sources is available at the bottom of this page, and we also answer frequently-asked questions there.
 
