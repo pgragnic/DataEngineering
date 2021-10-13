@@ -2,9 +2,14 @@
 
 ## Step 1: Scope the Project and Gather Data
 
-### Datasets
+### Scope
 
-This project contains 4 datasets related to COVID 19, see below description of these datasets.
+The project goal is to provide a datalake containing information about COVID19.
+API scraping is used to gather fact data and CSV files are used for dimension data
+
+### Datas
+
+Data is composed of 4 datasets, see below description of these datasets.
 
 #### [Daily reports (csse_covid_19_daily_reports)](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports)
 
