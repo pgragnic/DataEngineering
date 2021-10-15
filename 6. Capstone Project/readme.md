@@ -10,6 +10,7 @@
   - [Data transformation](#data-transformation)
   - [Data Model](#data-model)
   - [Data Pipeline](#data-pipeline)
+  - [How To](#how-to)
   - [Tools](#tools)
   - [Other Scenarios](#other-scenarios)
 
@@ -103,6 +104,14 @@ covid_processing.ipynb
 data_quality.ipynb
 
 - check data quality: more than 0 rows and depending on the tables, check if the size is greater than a size limit
+
+## How To
+
+- create a project folder
+- unzip files/directories in the project folder
+- run `covid_api_scraping.ipynb` (optional, you already have 100 csv files in the zip file)
+- run `covid_processing.ipynb`
+- run `covid_data_quality.ipynb`
 
 ## Tools
 
