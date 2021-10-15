@@ -29,19 +29,27 @@ This is the data repository for the 2019 Novel Coronavirus Visual Dashboard oper
 
 This folder contains daily case reports. All timestamps are in UTC (GMT+0).
 
+Number of lines: 2 214 879
+
 #### [Covid-19 Economic Exposure Index](https://data.humdata.org/dataset/covid-19-economic-exposure-index)
 
 Country's economic exposure due to COVID-19. Composite indicator based on World Bank's datasets on remittances, food import dependence, primary commodity export dependence, tourism dependence, government indebtedness and foreign currency reserves.
 
+Number of lines: 191
+
 #### [Countries of the World](https://www.kaggle.com/fernandol/countries-of-the-world)
 
 Information on population, region, area size, infant mortality and more.
+
+Number of lines: 227
 
 #### [Coronavirus (COVID-19) Vaccinations](https://ourworldindata.org/covid-vaccinations)
 
 This vaccination dataset uses the most recent official numbers from governments and health ministries worldwide. Population estimates for per-capita metrics are based on the United Nations World Population Prospects. Income groups are based on the World Bank classification. A full list of our country-specific sources is available at the bottom of this page, and we also answer frequently-asked questions there.
 
 In this dataset you can see all of the data on COVID-19 vaccinations (doses administered, people with at least 1 dose, and people fully vaccinated).
+
+Number of lines: 54 341
 
 ## Data transformation
 
@@ -94,7 +102,7 @@ covid_processing.ipynb
 
 data_quality.ipynb
 
-- check data quality
+- check data quality: more than 0 rows and depending on the tables, check if the size is greater than a size limit
 
 ## Tools
 
