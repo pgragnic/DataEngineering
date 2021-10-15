@@ -94,3 +94,7 @@ Vaccination
 
 * Map out the conceptual data model and explain why you chose that model
 * List the steps necessary to pipeline the data into the chosen data model
+
+See ERD below
+
+![ERD](images/erd.png)
