@@ -9,16 +9,16 @@ API scraping is used to gather fact data and CSV files are used for dimension da
 
 ### Datas
 
-Data is composed of 4 datasets, see below description of these datasets.
+Data is composed of 4 datasets.
 
-#### [Daily reports (csse_covid_19_daily_reports)](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports)
+#### [JHU CSSE COVID-19 Dataset](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data)
+
+JHU CSSE COVID-19 Dataset
 
 This folder contains daily case reports. All timestamps are in UTC (GMT+0).
 
 ##### Field description
 
-* FIPS: US only. Federal Information Processing Standards code that uniquely identifies counties within the USA.
-* Admin2: County name. US only.
 * Province_State: Province, state or dependency name.
 * Country_Region: Country, region or sovereignty name. The names of locations included on the Website correspond with the official designations used by the U.S. Department of State.
 * Last Update: MM/DD/YYYY HH:mm:ss  (24 hour format, in UTC).
@@ -59,3 +59,38 @@ In this dataset you can see all of our data on COVID-19 vaccinations (doses admi
 * people_fully_vaccinated_per_hundred: people_fully_vaccinated per 100 people in the total population of the country.
 * total_boosters: Total number of COVID-19 vaccination booster doses administered (doses administered beyond the number prescribed by the vaccination protocol)
 * total_boosters_per_hundred: Total number of COVID-19 vaccination booster doses administered per 100 people in the total population.
+
+## Step 2: Explore and Assess the Data
+
+### Cleanup tasks
+
+Covid19 dataset
+
+* Remove FIPS and Admin2 of JHU CSSE COVID-19 Dataset as it is US only information
+* Convert date values to date
+* Convert Last_Update to datetime
+* Rename Long_ field to Longitude and Lat to Latitude
+* Convert Confirmed, Deaths, Recovered and Active to integer
+* Convert Longitude, Latitude, Incident_Rate and Case_Fatality_Ratio to float
+
+Countries dataset
+
+* Rename columns with spaces
+* Convert fields to integer or numeric depending of their type
+
+Exposure dataset
+
+* Replace spaces by _ in column names
+* Replace , by . for numbers in Spark dataframe
+* Replace "x", "No data" and "0" by NULL
+* Convert fields to integer or float depending of their type
+
+Vaccination
+
+* Rename location column to country
+* Convert fields to integer or numeric depending of their type
+
+## Step 3: Define the Data Model
+
+* Map out the conceptual data model and explain why you chose that model
+* List the steps necessary to pipeline the data into the chosen data model
