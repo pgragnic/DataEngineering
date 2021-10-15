@@ -1,13 +1,21 @@
 # Capstone project about COVID
 
-----
+- [Capstone project about COVID](#capstone-project-about-covid)
+  - [Step 1: Scope the Project and Gather Data](#step-1-scope-the-project-and-gather-data)
+    - [Scope](#scope)
+    - [Datas](#datas)
+      - [JHU CSSE COVID-19 Dataset](#jhu-csse-covid-19-dataset)
+        - [Field description](#field-description)
+        - [Covid-19 Economic Exposure Index](#covid-19-economic-exposure-index)
+        - [Countries of the World](#countries-of-the-world)
+        - [Coronavirus (COVID-19) Vaccinations](#coronavirus-covid-19-vaccinations)
+  - [Step 2: Explore and Assess the Data](#step-2-explore-and-assess-the-data)
+    - [Cleanup tasks](#cleanup-tasks)
+  - [Step 3: Define the Data Model](#step-3-define-the-data-model)
+    - [Data model](#data-model)
+    - [Data Pipeline](#data-pipeline)
+  - [Step4: Run ETL to Model the Data](#step4-run-etl-to-model-the-data)
 
-{:.no_toc}
-
-- TOC
-{Step 1: Scope the Project and Gather Data:toc}
-
-----
 
 ## Step 1: Scope the Project and Gather Data
 
