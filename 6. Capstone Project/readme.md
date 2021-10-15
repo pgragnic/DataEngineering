@@ -93,6 +93,13 @@ Vaccination
 * Map out the conceptual data model and explain why you chose that model
 * List the steps necessary to pipeline the data into the chosen data model
 
-See ERD below
+### Data model
 
+Since the purpose of this data warehouse is for OLAP and BI app usage, we will model these data sets with star schema data modeling.
+
+See ERD below:
 ![ERD](images/erd.png)
+
+### Data Pipeline
+
+![Data Pipeline](images/data-pipeline.png)
