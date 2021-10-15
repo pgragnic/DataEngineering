@@ -1,54 +1,49 @@
 # Capstone project about COVID
 
 - [Capstone project about COVID](#capstone-project-about-covid)
-  - [Step 1: Scope the Project and Gather Data](#step-1-scope-the-project-and-gather-data)
-    - [Scope](#scope)
-    - [Data](#data)
-      - [JHU CSSE COVID-19 Dataset](#jhu-csse-covid-19-dataset)
-        - [Covid-19 Economic Exposure Index](#covid-19-economic-exposure-index)
-        - [Countries of the World](#countries-of-the-world)
-        - [Coronavirus (COVID-19) Vaccinations](#coronavirus-covid-19-vaccinations)
-  - [Step 2: Explore and Assess the Data](#step-2-explore-and-assess-the-data)
-    - [Cleanup tasks](#cleanup-tasks)
-  - [Step 3: Define the Data Model](#step-3-define-the-data-model)
-    - [Data model](#data-model)
-    - [Data Pipeline](#data-pipeline)
-  - [Step4: Run ETL to Model the Data](#step4-run-etl-to-model-the-data)
+  - [Scope](#scope)
+  - [Datasets](#datasets)
+    - [JHU CSSE COVID-19 Dataset](#jhu-csse-covid-19-dataset)
+      - [Covid-19 Economic Exposure Index](#covid-19-economic-exposure-index)
+      - [Countries of the World](#countries-of-the-world)
+      - [Coronavirus (COVID-19) Vaccinations](#coronavirus-covid-19-vaccinations)
+  - [Data transformation](#data-transformation)
+  - [Data Model](#data-model)
+  - [Data Pipeline](#data-pipeline)
+  - [Tools](#tools)
+  - [Other Scenarios](#other-scenarios)
 
-## Step 1: Scope the Project and Gather Data
-
-### Scope
+## Scope
 
 Johns Hopkins University (JHU) is a reference for COVID19 data.
 The goal of this project is to provide a Datawarehouse containing information coming from JHU and aggregate with other sources, vaccination, economic exposure and countries.
+This datawarehouse can be used to do analytics about COVID: number of positive cases per country/region, evolution of the cases, economic exposure of contries...
 
-### Data
+## Datasets
 
 Data is composed of 4 datasets.
 
-#### [JHU CSSE COVID-19 Dataset](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data)
+### [JHU CSSE COVID-19 Dataset](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data)
 
 This is the data repository for the 2019 Novel Coronavirus Visual Dashboard operated by the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE). Also, Supported by ESRI Living Atlas Team and the Johns Hopkins University Applied Physics Lab (JHU APL).
 
 This folder contains daily case reports. All timestamps are in UTC (GMT+0).
 
-##### [Covid-19 Economic Exposure Index](https://data.humdata.org/dataset/covid-19-economic-exposure-index)
+#### [Covid-19 Economic Exposure Index](https://data.humdata.org/dataset/covid-19-economic-exposure-index)
 
 Country's economic exposure due to COVID-19. Composite indicator based on World Bank's datasets on remittances, food import dependence, primary commodity export dependence, tourism dependence, government indebtedness and foreign currency reserves.
 
-##### [Countries of the World](https://www.kaggle.com/fernandol/countries-of-the-world)
+#### [Countries of the World](https://www.kaggle.com/fernandol/countries-of-the-world)
 
 Information on population, region, area size, infant mortality and more.
 
-##### [Coronavirus (COVID-19) Vaccinations](https://ourworldindata.org/covid-vaccinations)
+#### [Coronavirus (COVID-19) Vaccinations](https://ourworldindata.org/covid-vaccinations)
 
 This vaccination dataset uses the most recent official numbers from governments and health ministries worldwide. Population estimates for per-capita metrics are based on the United Nations World Population Prospects. Income groups are based on the World Bank classification. A full list of our country-specific sources is available at the bottom of this page, and we also answer frequently-asked questions there.
 
 In this dataset you can see all of the data on COVID-19 vaccinations (doses administered, people with at least 1 dose, and people fully vaccinated).
 
-## Step 2: Explore and Assess the Data
-
-### Cleanup tasks
+## Data transformation
 
 Covid19 dataset
 
@@ -76,26 +71,46 @@ Vaccination
 - Rename location column to country
 - Convert fields to integer or numeric depending of their type
 
-## Step 3: Define the Data Model
+## Data Model
 
-- Map out the conceptual data model and explain why you chose that model
-- List the steps necessary to pipeline the data into the chosen data model
-
-### Data model
-
-Since the purpose of this data warehouse is for OLAP and BI app usage, we will model these data sets with star schema data modeling.
+Since the purpose of this datawarehouse is for OLAP and BI app usage, we will model these data sets with star schema data modeling.
 
 See ERD below:
 ![ERD](images/erd.png)
 
-### Data Pipeline
+## Data Pipeline
 
 ![Data Pipeline](images/data-pipeline.png)
 
-- Reads all the CSV files from "data\csse_covid_19_data\csse_covid_19_daily_reports\" to fill fact_covid table
-- Read static CSV files:
-  - countries.csv in dim_countries
-  - exposure.csv in dim_exposure
-  - vaccination.csv on dim_vaccination
+covid_api_sraping.ipynb
 
-## Step4: Run ETL to Model the Data
+- Retrieve the COVID19 data from GitHub API and save them in directory "data\csse_covid_19_data\csse_covid_19_daily_reports\"
+
+covid_processing.ipynb
+
+- Read CSV files
+- Transform data with Pandas and Spark
+- Write the data in PostGresSQL
+
+data_quality.ipynb
+
+- check data quality
+
+## Tools
+
+**Requests**: this is a very basic library for web scraping. This tool does not parse the HTML data retrieved but in my case it was not necessary as the raw data is in CSV format
+
+**Pandas**: for data transoformation pandas is very efficient and offers a good data representation
+
+**Apache Sark**: Spark is very efficient to process huge amount of data in parallel and provides by default a set of tools for SQL
+
+**PostGres**: for this project a relational database seems to be the good choice for analytics purpose
+
+## Other Scenarios
+
+The data was increased by 100x: I would use AWS EMR for the processing part and Redshift for datawarehousing.
+These 2 AWS services offer performance and scability.
+
+The pipelines would be run on a daily basis by 7 am every day: Apache Airflow could be used for building up a ETL data pipeline to regularly update the date.
+
+The database needed to be accessed by 100+ people: I would use Redshift as it can accept up to 500 concurrent connections.
