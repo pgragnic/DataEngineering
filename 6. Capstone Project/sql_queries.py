@@ -96,5 +96,13 @@ fact_covid_create = ("""
     );
 """)
 
+# Data quality (DQ)
+
+DQ_dim_countries = "SELECT COUNT(*) FROM dim_countries;"
+DQ_dim_exposure = "SELECT COUNT(*) FROM dim_exposure;"
+DQ_dim_vaccination = "SELECT COUNT(*) FROM dim_vaccination;"
+DQ_fact_covid = "SELECT COUNT(*) FROM fact_covid;"
+
 create_table_queries  = [dim_countries_create, dim_exposure_create, dim_vaccination_create, fact_covid_create]
 drop_table_queries = [dim_countries_drop, dim_exposure_drop, dim_vaccination_drop, fact_covid_drop]
+Data_quality_queries = [DQ_dim_countries, DQ_dim_exposure, DQ_dim_vaccination, DQ_fact_covid]

@@ -13,8 +13,6 @@ Data is composed of 4 datasets.
 
 #### [JHU CSSE COVID-19 Dataset](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data)
 
-JHU CSSE COVID-19 Dataset
-
 This folder contains daily case reports. All timestamps are in UTC (GMT+0).
 
 ##### Field description
