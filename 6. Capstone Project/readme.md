@@ -1,5 +1,14 @@
 # Capstone project about COVID
 
+----
+
+{:.no_toc}
+
+- TOC
+{Step 1: Scope the Project and Gather Data:toc}
+
+----
+
 ## Step 1: Scope the Project and Gather Data
 
 ### Scope
@@ -104,8 +113,10 @@ See ERD below:
 
 ![Data Pipeline](images/data-pipeline.png)
 
-* Reads all the CSV/JSON from "data\csse_covid_19_data\csse_covid_19_daily_reports" to fill fact_covid table
+* Reads all the CSV files from "data\csse_covid_19_data\csse_covid_19_daily_reports\" to fill fact_covid table
 * Read static CSV files:
   * countries.csv in dim_countries
   * exposure.csv in dim_exposure
-  * vaccination on dim_vaccination
+  * vaccination.csv on dim_vaccination
+
+## Step4: Run ETL to Model the Data
