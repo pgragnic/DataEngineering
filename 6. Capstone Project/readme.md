@@ -103,3 +103,9 @@ See ERD below:
 ### Data Pipeline
 
 ![Data Pipeline](images/data-pipeline.png)
+
+* Reads all the CSV/JSON from "data\csse_covid_19_data\csse_covid_19_daily_reports" to fill fact_covid table
+* Read static CSV files:
+  * countries.csv in dim_countries
+  * exposure.csv in dim_exposure
+  * vaccination on dim_vaccination
