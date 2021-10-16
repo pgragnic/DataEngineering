@@ -135,9 +135,6 @@ The database needed to be accessed by 100+ people: I would use Redshift as it ca
 
 ## SQL queries
 
-- economic exposure of contries
-- evolution of the cases
-
 You can find result of below queries in the folder results.
 
 Q1: number of positive cases per country
@@ -152,14 +149,28 @@ ORDER BY total_confirmed DESC
 Q2: number of positive cases per region
 
 ``` sql
-WITH t1 AS (SELECT country , max(confirmed) as total_confirmed
+WITH t1 AS (SELECT country , MAX(confirmed) AS total_confirmed
 FROM public.fact_covid
 GROUP BY country
-ORDER BY total_confirmed DESC)	
-SELECT dc.region, count(t1.country), sum(total_confirmed) 
+ORDER BY total_confirmed DESC)
+SELECT dc.region, COUNT(t1.country), SUM(total_confirmed) 
 FROM t1
 JOIN dim_countries dc ON t1.country = dc.country
 GROUP BY dc.region
 ```
 
-Q3: 
+Q3: total confirmed per income classification
+(HIC: High InCome, MIC: Middle InCome, LIC: low income)
+
+``` sql
+WITH t1 AS (SELECT country , MAX(confirmed) AS total_confirmed
+FROM public.fact_covid
+GROUP BY country
+ORDER BY total_confirmed DESC)
+SELECT COUNT(t1.country) AS total_countries, SUM(t1.total_confirmed) AS total_confirmed, de.income_classification
+FROM t1
+JOIN dim_exposure AS de ON t1.country = de.country
+JOIN dim_countries AS dc ON t1.country = dc.country
+GROUP BY de.income_classification
+ORDER BY total_countries DESC
+```
