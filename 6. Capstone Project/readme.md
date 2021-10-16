@@ -135,7 +135,8 @@ The database needed to be accessed by 100+ people: I would use Redshift as it ca
 
 ## SQL queries
 
-You can find result of below queries in the folder results.
+Here are 3 SQL queries using the data model.
+You can find result of below queries in the results folder.
 
 Q1: number of positive cases per country
 
@@ -160,7 +161,7 @@ GROUP BY dc.region
 ```
 
 Q3: total confirmed per income classification
-(HIC: High InCome, MIC: Middle InCome, LIC: low income)
+(HIC: High InCome, MIC: Middle InCome, LIC: Low InCome)
 
 ``` sql
 WITH t1 AS (SELECT country , MAX(confirmed) AS total_confirmed
