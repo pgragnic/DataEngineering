@@ -89,7 +89,6 @@ fact_covid_create = ("""
         Recovered integer,
         Active integer,
         Combined_Key text,
-        Incident_Rate real,
         Case_Fatality_Ratio real,
         Longtitude real,
         Latitude real
