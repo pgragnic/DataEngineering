@@ -3,7 +3,7 @@ import configparser
 from sql_queries import Data_quality_queries
 
 
-def data_quality_check(cur, conn, dim_countries_limit, dim_exposure_limit, dim_vaccination_limit, fact_covid_limit):
+def data_quality_checks(cur, conn, dim_countries_limit, dim_exposure_limit, dim_vaccination_limit, fact_covid_limit):
 
     for query in Data_quality_queries:
         cur.execute(query)
@@ -22,15 +22,23 @@ def data_quality_check(cur, conn, dim_countries_limit, dim_exposure_limit, dim_v
 
         if table == "dim_countries" and records[0] < dim_countries_limit:
             print(f"Number of row {records[0]} is under {dim_countries_limit} for table \"{table}\"")
+        else:
+            print(f"Number of row {records[0]} in table \"{table}\" is correct")
 
         if table == "dim_exposure" and records[0] < dim_exposure_limit:
             print(f"Number of row {records[0]} is under {dim_exposure_limit} for table \"{table}\"")
+        else:
+            print(f"Number of row {records[0]} in table \"{table}\" is correct")
         
         if table == "dim_vaccination" and records[0] < dim_vaccination_limit:
             print(f"Number of row {records[0]} is under {dim_vaccination_limit} for table \"{table}\"")
-
+        else:
+            print(f"Number of row {records[0]} in table \"{table}\" is correct")
+        
         if table == "fact_covid" and records[0] < fact_covid_limit:
             print(f"Number of row {records[0]} is under {fact_covid_limit} for table \"{table}\"")
+        else:
+            print(f"Number of row {records[0]} in table \"{table}\" is correct")
 
 
 def main():
@@ -45,7 +53,7 @@ def main():
     conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['postgresql_sql'].values()))
     cur = conn.cursor()
 
-    data_quality_check(cur, conn, dim_countries_limit, dim_exposure_limit, dim_vaccination_limit, fact_covid_limit)
+    data_quality_checks(cur, conn, dim_countries_limit, dim_exposure_limit, dim_vaccination_limit, fact_covid_limit)
 
 if __name__ == "__main__":
     main()
