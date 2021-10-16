@@ -3,7 +3,7 @@ import configparser
 from sql_queries import Data_quality_queries
 
 
-def data_quality_check(dim_countries_limit, dim_exposure_limit, dim_vaccination_limit, fact_covid_limit):
+def data_quality_check(cur, conn, dim_countries_limit, dim_exposure_limit, dim_vaccination_limit, fact_covid_limit):
 
     for query in Data_quality_queries:
         cur.execute(query)
@@ -45,7 +45,7 @@ def main():
     conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['postgresql_sql'].values()))
     cur = conn.cursor()
 
-    data_quality_check(dim_countries_limit, dim_exposure_limit, dim_vaccination_limit, fact_covid_limit)
+    data_quality_check(cur, conn, dim_countries_limit, dim_exposure_limit, dim_vaccination_limit, fact_covid_limit)
 
 if __name__ == "__main__":
     main()
