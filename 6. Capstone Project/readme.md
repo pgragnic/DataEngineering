@@ -161,7 +161,6 @@ GROUP BY dc.region
 ```
 
 Q3: total confirmed per income classification
-(HIC: High InCome, MIC: Middle InCome, LIC: Low InCome)
 
 ``` sql
 WITH t1 AS (SELECT country , MAX(confirmed) AS total_confirmed
