@@ -13,12 +13,13 @@
   - [How To](#how-to)
   - [Tools](#tools)
   - [Other Scenarios](#other-scenarios)
+  - [SQL queries](#sql-queries)
 
 ## Scope
 
 Johns Hopkins University (JHU) is a reference for COVID19 data.
 The goal of this project is to provide a Datawarehouse containing information coming from JHU and aggregate with other sources, vaccination, economic exposure and countries.
-This datawarehouse can be used to do analytics about COVID: number of positive cases per country/region, evolution of the cases, economic exposure of contries...
+This datawarehouse can be used to do analytics about COVID: number of positive cases per country/region, evolution of the cases, economic exposure of contries... (see examples queries in section [SQL queries](#sql-queries))
 
 ## Datasets
 
@@ -131,3 +132,5 @@ These 2 AWS services offer performance and scability.
 The pipelines would be run on a daily basis by 7 am every day: Apache Airflow could be used for building up a ETL data pipeline to regularly update the date.
 
 The database needed to be accessed by 100+ people: I would use Redshift as it can accept up to 500 concurrent connections.
+
+## SQL queries
