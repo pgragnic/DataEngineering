@@ -135,7 +135,10 @@ The database needed to be accessed by 100+ people: I would use Redshift as it ca
 
 ## SQL queries
 
-This datawarehouse can be used to do analytics about COVID: number of positive cases per country/region, evolution of the cases, economic exposure of contries... (see examples queries in section [SQL queries](#sql-queries))
+- economic exposure of contries
+- evolution of the cases
+
+You can find result of below queries in the folder results.
 
 Q1: number of positive cases per country
 
@@ -145,3 +148,18 @@ FROM public.fact_covid
 GROUP BY country
 ORDER BY total_confirmed DESC 
 ```
+
+Q2: number of positive cases per region
+
+``` sql
+WITH t1 AS (SELECT country , max(confirmed) as total_confirmed
+FROM public.fact_covid
+GROUP BY country
+ORDER BY total_confirmed DESC)	
+SELECT dc.region, count(t1.country), sum(total_confirmed) 
+FROM t1
+JOIN dim_countries dc ON t1.country = dc.country
+GROUP BY dc.region
+```
+
+Q3: 
