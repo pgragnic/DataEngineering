@@ -14,6 +14,5 @@ Spark/Project/data/
 *.parquet
 *.pem
 *.sh
-*.xlsx
 *.zip
 *.yaml
