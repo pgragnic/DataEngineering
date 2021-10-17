@@ -88,7 +88,7 @@ Vaccination
 
 Since the purpose of this datawarehouse is for OLAP and BI app usage, we will model these data sets with star schema data modeling.
 
-You will find the data dictionary here: ![Data dictionary ]()
+You will find the data dictionary here: ![Data dictionary ](data_dictionary.xlsx)
 
 See ERD below:
 ![ERD](images/erd.png)
