@@ -63,11 +63,13 @@ Covid19 dataset
 - Rename Long_ field to Longitude and Lat to Latitude
 - Convert Confirmed, Deaths, Recovered and Active to integer
 - Convert Longitude, Latitude, Incident_Rate and Case_Fatality_Ratio to float
+- Remove unnecessary fields
 
 Countries dataset
 
 - Rename columns with spaces
 - Convert fields to integer or numeric depending of their type
+- Remove unnecessary fields
 
 Exposure dataset
 
@@ -75,6 +77,7 @@ Exposure dataset
 - Replace , by . for numbers in Spark dataframe
 - Replace "x", "No data" and "0" by NULL
 - Convert fields to integer or float depending of their type
+- Remove unnecessary fields
 
 Vaccination
 
