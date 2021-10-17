@@ -13,21 +13,13 @@ dim_countries_create = ("""
         Population integer,
         Area integer,
         PopulationDensity text,
-        Coastline real,
         GDP real,
-        Literacy bigint,
-        Phones real,
-        Arable real,
-        Crops real,
-        Other real,
         Climate text,
         Birthrate text,
         Deathrate text,
         Agriculture text,
         Industry text,
         Service text,
-        InfantMortality real,
-        NetMigration real
     );
 """)
 

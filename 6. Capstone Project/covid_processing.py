@@ -134,7 +134,8 @@ def get_countries(file_path, spark, table, db_url, db_user, db_password):
         .withColumn("Arable", col("Arable").cast("float")) \
         .withColumn("Crops", col("Crops").cast("float")) \
         .withColumn("Other", col("Other").cast("float")) \
-        .drop("Net migration", "Infant mortality") \
+        .drop("Net migration", "Infant mortality", "Coastline",\
+            "literacy", "phones","arable","crops","other") \
         .write \
         .mode("append") \
         .format("jdbc") \
@@ -143,7 +144,6 @@ def get_countries(file_path, spark, table, db_url, db_user, db_password):
         .option("user", db_user) \
         .option("password", db_password) \
         .save()
-
 
 def get_exposure(file_path, spark, table, db_url, db_user, db_password):
 
