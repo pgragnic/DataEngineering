@@ -91,7 +91,7 @@ Since the purpose of this datawarehouse is for OLAP and BI app usage, we will mo
 
 ## Data dictionary
 
-You will find the data dictionary here: [Data dictionary](data_dictionary.xlsx)
+You will find the data dictionary here: [data_dictionary.xlsx](data_dictionary.xlsx)
 
 See ERD below:
 ![ERD](images/erd.png)
