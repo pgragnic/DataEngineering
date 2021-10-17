@@ -19,7 +19,7 @@ dim_countries_create = ("""
         Deathrate text,
         Agriculture text,
         Industry text,
-        Service text,
+        Service text
     );
 """)
 

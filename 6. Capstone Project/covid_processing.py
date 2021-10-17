@@ -124,10 +124,6 @@ def get_countries(file_path, spark, table, db_url, db_user, db_password):
         .withColumn("Area", col("Area").cast("integer")) \
         .withColumn("Country", rtrim(col("Country"))) \
         .withColumn("Region", rtrim(col("Region"))) \
-        .withColumn("InfantMortality", col("Infant mortality").cast("float")) \
-        .withColumn("NetMigration", col("Net migration")) \
-        .withColumn("Coastline", col("Coastline").cast("float")) \
-        .withColumn("NetMigration", col("Net migration").cast("float")) \
         .withColumn("GDP", col("GDP").cast("float")) \
         .withColumn("Literacy", col("Literacy").cast("long")) \
         .withColumn("Phones", col("Phones").cast("float")) \
