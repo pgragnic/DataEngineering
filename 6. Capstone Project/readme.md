@@ -4,12 +4,12 @@
   - [Scope](#scope)
   - [Datasets](#datasets)
     - [JHU CSSE COVID-19 Dataset](#jhu-csse-covid-19-dataset)
-      - [Covid-19 Economic Exposure Index](#covid-19-economic-exposure-index)
-      - [Countries of the World](#countries-of-the-world)
-      - [Coronavirus (COVID-19) Vaccinations](#coronavirus-covid-19-vaccinations)
+    - [Covid-19 Economic Exposure Index](#covid-19-economic-exposure-index)
+    - [Countries of the World](#countries-of-the-world)
+    - [Coronavirus (COVID-19) Vaccinations](#coronavirus-covid-19-vaccinations)
   - [Data transformation](#data-transformation)
-  - [Data Model](#data-model)
   - [Data dictionary](#data-dictionary)
+  - [Data Model](#data-model)
   - [Data Pipeline](#data-pipeline)
   - [How To](#how-to)
   - [Tools](#tools)
@@ -34,19 +34,19 @@ This folder contains daily case reports. All timestamps are in UTC (GMT+0).
 
 Number of lines: 2 214 879
 
-#### [Covid-19 Economic Exposure Index](https://data.humdata.org/dataset/covid-19-economic-exposure-index)
+### [Covid-19 Economic Exposure Index](https://data.humdata.org/dataset/covid-19-economic-exposure-index)
 
 Country's economic exposure due to COVID-19. Composite indicator based on World Bank's datasets on remittances, food import dependence, primary commodity export dependence, tourism dependence, government indebtedness and foreign currency reserves.
 
 Number of lines: 191
 
-#### [Countries of the World](https://www.kaggle.com/fernandol/countries-of-the-world)
+### [Countries of the World](https://www.kaggle.com/fernandol/countries-of-the-world)
 
 Information on population, region, area size, infant mortality and more.
 
 Number of lines: 227
 
-#### [Coronavirus (COVID-19) Vaccinations](https://ourworldindata.org/covid-vaccinations)
+### [Coronavirus (COVID-19) Vaccinations](https://ourworldindata.org/covid-vaccinations)
 
 This vaccination dataset uses the most recent official numbers from governments and health ministries worldwide. Population estimates for per-capita metrics are based on the United Nations World Population Prospects. Income groups are based on the World Bank classification. A full list of our country-specific sources is available at the bottom of this page, and we also answer frequently-asked questions there.
 
@@ -85,13 +85,13 @@ Vaccination
 - Rename location column to country
 - Convert fields to integer or numeric depending of their type
 
-## Data Model
-
-Since the purpose of this datawarehouse is for OLAP and BI app usage, we will model these data sets with star schema data modeling.
-
 ## Data dictionary
 
 You will find the data dictionary here: [data_dictionary.xlsx](data_dictionary.xlsx)
+
+## Data Model
+
+Since the purpose of this datawarehouse is for OLAP and BI app usage, we will model these data sets with star schema data modeling.
 
 See ERD below:
 ![ERD](images/erd.png)
