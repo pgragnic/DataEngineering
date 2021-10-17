@@ -102,17 +102,17 @@ See below Data pipeline steps.
 
 ![Data Pipeline](images/data-pipeline.png)
 
-covid_api_sraping.ipynb
+**covid_api_sraping.ipynb**
 
 - Retrieve the COVID19 data from GitHub API and save them in directory "data\csse_covid_19_data\csse_covid_19_daily_reports\"
 
-covid_processing.ipynb
+**covid_processing.ipynb**
 
 - Read CSV files
 - Transform data with Pandas and Spark
 - Write the data in PostGresSQL
 
-data_quality.ipynb
+**data_quality.ipynb**
 
 - check data quality: more than 0 rows and depending on the tables, check if the size is greater than a size limit
 
