@@ -9,6 +9,7 @@
       - [Coronavirus (COVID-19) Vaccinations](#coronavirus-covid-19-vaccinations)
   - [Data transformation](#data-transformation)
   - [Data Model](#data-model)
+  - [Data dictionary](#data-dictionary)
   - [Data Pipeline](#data-pipeline)
   - [How To](#how-to)
   - [Tools](#tools)
@@ -87,6 +88,8 @@ Vaccination
 ## Data Model
 
 Since the purpose of this datawarehouse is for OLAP and BI app usage, we will model these data sets with star schema data modeling.
+
+## Data dictionary
 
 You will find the data dictionary here: [Data dictionary](data_dictionary.xlsx)
 
