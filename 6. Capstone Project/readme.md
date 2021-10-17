@@ -121,7 +121,7 @@ data_quality.ipynb
 
 ## Tools
 
-**Requests**: this is a very basic library for web scraping. This tool does not parse the HTML data retrieved but in my case it was not necessary as the raw data is in CSV format
+**Requests**: this is a very simple and efficient library for API scraping if you don't need to parse the files. In my case it was not necessary as the raw data is in CSV format.
 
 **Pandas**: for data transoformation pandas is very efficient and offers a good data representation
 
