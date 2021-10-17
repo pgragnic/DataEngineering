@@ -93,6 +93,8 @@ See ERD below:
 
 ## Data Pipeline
 
+See below Data pipeline steps.
+
 ![Data Pipeline](images/data-pipeline.png)
 
 covid_api_sraping.ipynb
@@ -113,9 +115,9 @@ data_quality.ipynb
 
 - create a project folder
 - unzip files/directories in the project folder
-- run `covid_api_scraping.ipynb` (optional, you already have 100 csv files in the zip file)
-- run `covid_processing.ipynb`
-- run `covid_data_quality.ipynb`
+- run `covid_api_scraping.py` (optional, you already have 50 csv files in the zip file)
+- run `covid_processing.py`
+- run `covid_data_quality.py`
 
 ## Tools
 
