@@ -1,8 +1,9 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 import requests
 import uuid
 
 app = Flask(__name__)
+app.secret_key = "etoro-agent-local-secret"
 
 API_KEY = "sdgdskldFPLGfjHn1421dgnlxdGTbngdflg6290bRjslfihsjhSDsdgGHH25hjf"
 BASE = "https://public-api.etoro.com/api/v1"
@@ -21,7 +22,15 @@ def etoro_headers(user_key):
     }
 
 def user_key():
-    return request.headers.get("X-User-Key", "")
+    return session.get("user_key", "")
+
+@app.route("/api/setkey", methods=["POST"])
+def setkey():
+    key = (request.json or {}).get("key", "").strip()
+    if not key:
+        return jsonify({"error": "Clé vide"}), 400
+    session["user_key"] = key
+    return jsonify({"ok": True})
 
 @app.route("/")
 def index():
@@ -238,7 +247,7 @@ function getKey() {
 function saveKey(k) { localStorage.setItem('etoro_key', k); }
 
 function apiHeaders() {
-  return { 'Content-Type': 'application/json', 'X-User-Key': getKey() };
+  return { 'Content-Type': 'application/json' };
 }
 
 function showTab(name) {
@@ -252,10 +261,21 @@ function showTab(name) {
 async function loadPortfolio() {
   const key = document.getElementById('user-key').value.trim();
   if (!key) return;
-  saveKey(key);
-  document.getElementById('portfolio-loading').textContent = 'Chargement...';
+  localStorage.setItem('etoro_key', key);
+  document.getElementById('portfolio-loading').textContent = 'Connexion...';
   document.getElementById('portfolio-content').innerHTML = '';
   try {
+    // Envoyer la clé via POST body vers la session Flask
+    const sk = await fetch('/api/setkey', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key })
+    });
+    if (!sk.ok) {
+      document.getElementById('portfolio-loading').textContent = 'Erreur setkey: ' + await sk.text();
+      return;
+    }
+    document.getElementById('portfolio-loading').textContent = 'Chargement portfolio...';
     const r = await fetch('/api/portfolio', { headers: apiHeaders() });
     const text = await r.text();
     if (!r.ok) {
