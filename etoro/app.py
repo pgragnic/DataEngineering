@@ -155,6 +155,7 @@ HTML = """<!DOCTYPE html>
 
   .pending-badge { font-size: 11px; background: #e67e2233; color: #e67e22; padding: 2px 7px; border-radius: 10px; }
   .loading { text-align: center; color: #555; padding: 40px; font-size: 14px; }
+  .version { font-size: 10px; color: #444; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -163,6 +164,7 @@ HTML = """<!DOCTYPE html>
   <h1>eToro Agent Portfolio</h1>
   <div class="equity" id="equity">—</div>
   <div class="sub" id="equity-sub">Chargement...</div>
+  <div class="version">v1.2 &middot; 12 mai 2026</div>
 </div>
 
 <div class="key-bar">
