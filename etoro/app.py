@@ -41,10 +41,6 @@ def setkey():
     session["user_key"] = key
     return jsonify({"ok": True})
 
-@app.route("/")
-def index():
-    return HTML
-
 @app.route("/api/test")
 def test():
     try:
