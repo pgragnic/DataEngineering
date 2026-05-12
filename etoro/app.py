@@ -242,12 +242,17 @@ async function loadPortfolio() {
   document.getElementById('portfolio-content').innerHTML = '';
   try {
     const r = await fetch('/api/portfolio', { headers: apiHeaders() });
-    portfolioData = await r.json();
+    const text = await r.text();
+    if (!r.ok) {
+      document.getElementById('portfolio-loading').textContent = 'Erreur HTTP ' + r.status + ': ' + text;
+      return;
+    }
+    portfolioData = JSON.parse(text);
     renderPortfolio();
     renderSell();
     renderPending();
   } catch(e) {
-    document.getElementById('portfolio-loading').textContent = 'Erreur: ' + e.message;
+    document.getElementById('portfolio-loading').textContent = 'Erreur: ' + e.message + ' — Vérifiez que Flask tourne dans Termux.';
   }
 }
 
