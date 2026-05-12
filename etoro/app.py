@@ -5,6 +5,10 @@ import uuid
 app = Flask(__name__)
 app.secret_key = "etoro-agent-local-secret"
 
+# ── CONFIGURATION ──────────────────────────────────────────
+USER_KEY = ""   # ← Collez votre clé agent-portfolio ici
+# ───────────────────────────────────────────────────────────
+
 API_KEY = "sdgdskldFPLGfjHn1421dgnlxdGTbngdflg6290bRjslfihsjhSDsdgGHH25hjf"
 BASE = "https://public-api.etoro.com/api/v1"
 
@@ -22,7 +26,7 @@ def etoro_headers(user_key):
     }
 
 def user_key():
-    return session.get("user_key", "")
+    return USER_KEY or session.get("user_key", "")
 
 @app.route("/api/setkey", methods=["POST"])
 def setkey():
