@@ -27,9 +27,21 @@ def user_key():
 def index():
     return HTML
 
+@app.route("/api/test")
+def test():
+    try:
+        r = requests.get(f"{BASE}/trading/info/real/pnl", headers=etoro_headers(user_key()), timeout=10)
+        return jsonify({"status": r.status_code, "ok": r.ok, "body_preview": r.text[:200]})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/api/portfolio")
 def portfolio():
-    r = requests.get(f"{BASE}/trading/info/real/pnl", headers=etoro_headers(user_key()))
+    try:
+        r = requests.get(f"{BASE}/trading/info/real/pnl", headers=etoro_headers(user_key()), timeout=10)
+        r.raise_for_status()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     p = r.json().get("clientPortfolio", {})
     cash = p.get("credit", 0)
     positions = p.get("positions", [])
@@ -57,7 +69,7 @@ def portfolio():
 
 @app.route("/api/search/<symbol>")
 def search(symbol):
-    r = requests.get(f"{BASE}/market-data/search?internalSymbolFull={symbol}", headers=etoro_headers(user_key()))
+    r = requests.get(f"{BASE}/market-data/search?internalSymbolFull={symbol}", headers=etoro_headers(user_key()), timeout=10)
     items = r.json().get("items", [])
     match = next((i for i in items if i.get("internalSymbolFull") == symbol), None)
     if match:
@@ -70,7 +82,8 @@ def buy():
     r = requests.post(
         f"{BASE}/trading/execution/market-open-orders/by-amount",
         headers=etoro_headers(user_key()),
-        json={"InstrumentID": body["instrumentId"], "IsBuy": True, "Leverage": 1, "Amount": body["amount"]}
+        json={"InstrumentID": body["instrumentId"], "IsBuy": True, "Leverage": 1, "Amount": body["amount"]},
+        timeout=10
     )
     return jsonify(r.json()), r.status_code
 
