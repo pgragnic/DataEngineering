@@ -28,6 +28,11 @@ def etoro_headers(user_key):
 def user_key():
     return USER_KEY or session.get("user_key", "")
 
+@app.route("/")
+def index():
+    # Injecte USER_KEY dans la page pour auto-chargement
+    return HTML.replace("__AUTO_KEY__", USER_KEY)
+
 @app.route("/api/setkey", methods=["POST"])
 def setkey():
     key = (request.json or {}).get("key", "").strip()
@@ -417,8 +422,15 @@ function showStatus(el, msg, ok) {
   el.style.display = 'block';
 }
 
-// Restore key from localStorage
-window.onload = () => {
+window.onload = async () => {
+  // Clé injectée depuis app.py (USER_KEY)
+  const autoKey = "__AUTO_KEY__";
+  if (autoKey) {
+    document.getElementById('user-key').value = autoKey;
+    await loadPortfolio();
+    return;
+  }
+  // Sinon, restaurer depuis localStorage
   const k = localStorage.getItem('etoro_key');
   if (k) { document.getElementById('user-key').value = k; loadPortfolio(); }
 };
