@@ -1,0 +1,316 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0F1117;
+  color: #E8ECF4;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+header {
+  background: #1A1D24;
+  padding: 20px 16px 14px;
+  text-align: center;
+  border-bottom: 1px solid #2A2D35;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header-title {
+  font-size: 0.75rem;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.header-equity {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #E8ECF4;
+  line-height: 1.1;
+}
+.header-sub { font-size: 0.85rem; margin-top: 3px; }
+.header-time { color: #6B7280; }
+
+/* ── Nav ─────────────────────────────────────────────────── */
+nav {
+  display: flex;
+  background: #1A1D24;
+  border-bottom: 1px solid #2A2D35;
+  position: sticky;
+  top: 88px;
+  z-index: 9;
+}
+nav button {
+  flex: 1;
+  padding: 12px 4px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #6B7280;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+nav button.active { color: #00C288; border-bottom-color: #00C288; }
+
+/* ── Tab content ─────────────────────────────────────────── */
+.tab-content { padding: 12px; }
+
+/* ── Cards ───────────────────────────────────────────────── */
+.card {
+  background: #1A1D24;
+  border: 1px solid #2A2D35;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.card.selectable { cursor: pointer; transition: border-color 0.15s; }
+.card.selectable:hover { border-color: #3A3D45; }
+.card.selected { border-color: #00C288; background: #0E1A16; }
+
+.card-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.card-left { flex: 1; min-width: 0; }
+.card-name { font-weight: 600; font-size: 0.95rem; color: #E8ECF4; }
+.card-sub { font-size: 0.75rem; color: #6B7280; margin-top: 2px; }
+.card-rates { font-size: 0.72rem; color: #6B7280; margin-top: 4px; }
+.card-right { text-align: right; flex-shrink: 0; }
+.card-amount { font-size: 0.95rem; font-weight: 600; }
+.card-pnl { font-size: 0.82rem; font-weight: 500; margin-top: 2px; }
+
+/* ── Colors ──────────────────────────────────────────────── */
+.pos { color: #00C288; }
+.neg { color: #FF4D6D; }
+
+/* ── Summary row ─────────────────────────────────────────── */
+.summary-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.summary-card {
+  flex: 1;
+  background: #1A1D24;
+  border: 1px solid #2A2D35;
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.summary-label { font-size: 0.68rem; color: #6B7280; margin-bottom: 3px; text-transform: uppercase; }
+.summary-value { font-size: 0.88rem; font-weight: 600; }
+
+/* ── Sort row ────────────────────────────────────────────── */
+.sort-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.sort-btn {
+  padding: 5px 10px;
+  background: #1A1D24;
+  border: 1px solid #2A2D35;
+  border-radius: 20px;
+  color: #6B7280;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sort-btn.active {
+  background: #00C288;
+  border-color: #00C288;
+  color: #0F1117;
+  font-weight: 600;
+}
+
+/* ── Action buttons ──────────────────────────────────────── */
+.btn-sell {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  background: #2A1018;
+  border: 1px solid #FF4D6D;
+  border-radius: 6px;
+  color: #FF4D6D;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-sell:active { background: #3D1525; }
+
+.btn-cancel-order {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  background: #1A1D24;
+  border: 1px solid #4B5563;
+  border-radius: 6px;
+  color: #9CA3AF;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-cancel-order:active { opacity: 0.75; }
+
+.btn-buy {
+  width: 100%;
+  padding: 13px;
+  background: #00C288;
+  border: none;
+  border-radius: 8px;
+  color: #0F1117;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+.btn-buy:active { background: #00A070; }
+
+/* ── Inputs ──────────────────────────────────────────────── */
+input[type=text],
+input[type=number] {
+  width: 100%;
+  padding: 12px 14px;
+  background: #1A1D24;
+  border: 1px solid #2A2D35;
+  border-radius: 8px;
+  color: #E8ECF4;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  transition: border-color 0.15s;
+}
+input:focus { outline: none; border-color: #00C288; }
+
+/* ── Selected banner ─────────────────────────────────────── */
+.selected-banner {
+  background: #0E1A16;
+  border: 1px solid #00C288;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  color: #00C288;
+}
+
+/* ── Modal ───────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: #1A1D24;
+  border: 1px solid #2A2D35;
+  border-radius: 14px;
+  padding: 24px 20px;
+  width: 86%;
+  max-width: 340px;
+  text-align: center;
+}
+.modal-title { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+.modal-name { font-size: 0.9rem; color: #9CA3AF; margin-bottom: 4px; }
+.modal-amount { font-size: 1.15rem; font-weight: 700; margin-bottom: 20px; }
+.modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+.btn-modal-back {
+  flex: 1; padding: 11px;
+  background: #2A2D35; border: none; border-radius: 8px;
+  color: #E8ECF4; font-size: 0.9rem; cursor: pointer;
+}
+.btn-modal-sell {
+  flex: 1; padding: 11px;
+  background: #FF4D6D; border: none; border-radius: 8px;
+  color: white; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+}
+.btn-modal-cancel {
+  flex: 1; padding: 11px;
+  background: #4B5563; border: none; border-radius: 8px;
+  color: white; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+}
+
+/* ── ResponseBox ─────────────────────────────────────────── */
+.resp-box {
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+}
+.resp-box.loading {
+  background: #1A1D24;
+  border: 1px solid #2A2D35;
+  color: #6B7280;
+}
+.resp-box.ok {
+  background: #0A1F14;
+  border: 1px solid #00C288;
+  color: #00C288;
+}
+.resp-box.err {
+  background: #1F0A0E;
+  border: 1px solid #FF4D6D;
+  color: #FF4D6D;
+}
+.resp-box pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: 'Courier New', monospace;
+  font-size: 0.72rem;
+  margin-top: 4px;
+}
+
+/* ── Stats ───────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.stat-card {
+  background: #1A1D24;
+  border: 1px solid #2A2D35;
+  border-radius: 10px;
+  padding: 14px 12px;
+}
+.stat-label {
+  font-size: 0.7rem;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 5px;
+}
+.stat-value { font-size: 1.2rem; font-weight: 700; }
+
+.section-title {
+  font-size: 0.75rem;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 14px 0 6px;
+}
+
+/* ── Pie chart ───────────────────────────────────────────── */
+.pie-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.pie-svg { width: 180px; height: 180px; }
+.pie-legend { width: 100%; }
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.8rem;
+  border-bottom: 1px solid #1F2229;
+}
+.legend-item:last-child { border-bottom: none; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-name { flex: 1; color: #E8ECF4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.legend-pct { color: #6B7280; font-size: 0.75rem; flex-shrink: 0; }
+
+/* ── Bar chart ───────────────────────────────────────────── */
+.bar-card { overflow-x: auto; }
+.bar-svg { width: 100%; min-width: 200px; display: block; }
+
+/* ── Misc ────────────────────────────────────────────────── */
+.spinner { text-align: center; padding: 30px; color: #6B7280; font-size: 0.9rem; }
+.empty { text-align: center; padding: 40px 16px; color: #6B7280; font-size: 0.9rem; }

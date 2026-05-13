@@ -20,3 +20,5 @@ Spark/Project/data/
 !etoro/template.yaml
 !etoro/azure/host.json
 !etoro/build_lambda.sh
+!etoro-react/package.json
+!etoro-react/vite.config.js
