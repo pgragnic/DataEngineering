@@ -1,0 +1,116 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "etoro/**"
+      - "etoro-react/**"
+  workflow_dispatch:
+
+jobs:
+  # ── Backend : Azure Functions ──────────────────────────────────────────────
+  deploy-backend:
+    name: Backend (Azure Functions)
+    runs-on: ubuntu-latest
+    outputs:
+      api_url:          ${{ steps.infra.outputs.apiUrl }}
+      func_app_name:    ${{ steps.infra.outputs.functionAppName }}
+      web_storage_name: ${{ steps.infra.outputs.webStorageName }}
+      cdn_endpoint:     ${{ steps.infra.outputs.cdnEndpoint }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Bicep (infra)
+        id: infra
+        uses: azure/arm-deploy@v2
+        with:
+          resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
+          template: etoro/azure/main.bicep
+          parameters: >
+            etoroAgentKey="${{ secrets.ETORO_AGENT_KEY }}"
+            etoroApiKey="${{ secrets.ETORO_API_KEY }}"
+            etoroInvestment="${{ vars.ETORO_INVESTMENT }}"
+            allowedOrigin="https://${{ vars.AZURE_CDN_ENDPOINT }}"
+          failOnStdErr: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Package Function App
+        run: |
+          cp etoro/lambda_app.py etoro/azure/lambda_app.py
+          cd etoro/azure
+          pip install -r requirements.txt \
+            -t .python_packages/lib/site-packages --quiet
+
+      - name: Deploy Function App
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ steps.infra.outputs.functionAppName }}
+          package: etoro/azure
+          scm-do-build-during-deployment: false
+
+  # ── Frontend : React → Blob Storage → CDN ─────────────────────────────────
+  deploy-frontend:
+    name: Frontend (Blob Storage + CDN)
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: etoro-react/package-lock.json
+
+      - name: Build React
+        working-directory: etoro-react
+        env:
+          VITE_API_URL: ${{ needs.deploy-backend.outputs.api_url }}
+        run: |
+          npm ci
+          npm run build
+
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Activer site statique sur Blob Storage
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob service-properties update \
+              --account-name ${{ needs.deploy-backend.outputs.web_storage_name }} \
+              --static-website \
+              --index-document index.html \
+              --404-document index.html
+
+      - name: Sync React build → Blob Storage
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob sync \
+              --account-name ${{ needs.deploy-backend.outputs.web_storage_name }} \
+              --container '$web' \
+              --source etoro-react/dist \
+              --delete-destination true
+
+      - name: Purger le cache CDN
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az cdn endpoint purge \
+              --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
+              --profile-name etoro-portfolio-cdn \
+              --name etoro-portfolio-web \
+              --content-paths "/*" \
+              --no-wait
