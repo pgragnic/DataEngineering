@@ -1,0 +1,7 @@
+[default.deploy.parameters]
+stack_name    = "etoro-portfolio"
+region        = "eu-west-1"
+capabilities  = "CAPABILITY_IAM"
+resolve_s3    = true
+confirm_changeset = false
+fail_on_empty_changeset = false

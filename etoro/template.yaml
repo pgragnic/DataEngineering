@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: eToro Portfolio API
+
+Parameters:
+  EtoroAgentKey:
+    Type: String
+    NoEcho: true
+  EtoroApiKey:
+    Type: String
+    NoEcho: true
+  EtoroInvestment:
+    Type: String
+    Default: "14892"
+  AllowedOrigin:
+    Type: String
+    Default: "*"
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Handler: lambda_app.handler
+    Timeout: 30
+    MemorySize: 256
+    Environment:
+      Variables:
+        ETORO_AGENT_KEY: !Ref EtoroAgentKey
+        ETORO_API_KEY: !Ref EtoroApiKey
+        ETORO_INVESTMENT: !Ref EtoroInvestment
+        ALLOWED_ORIGIN: !Ref AllowedOrigin
+
+Resources:
+  EtoroFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Events:
+        ApiProxy:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+        ApiRoot:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+
+Outputs:
+  ApiUrl:
+    Description: URL de l'API Gateway
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Export:
+      Name: EtoroApiUrl

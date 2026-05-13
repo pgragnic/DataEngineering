@@ -17,4 +17,5 @@ Spark/Project/data/
 *.zip
 *.yaml
 !.github/workflows/*.yaml
+!etoro/template.yaml
 !etoro/build_lambda.sh
