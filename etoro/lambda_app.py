@@ -90,7 +90,7 @@ def portfolio():
         } for p in positions], key=lambda x: -x["amount"])
 
         pending_list = [{
-            "orderId":     o.get("orderId"),
+            "orderId":     o.get("orderID") or o.get("orderId") or o.get("id"),
             "instrumentID": o.get("instrumentID"),
             "name":        names.get(o.get("instrumentID"), f"ID:{o.get('instrumentID')}"),
             "amount":      round(float(o.get("amount", 0)) * RATIO, 2),
