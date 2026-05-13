@@ -193,7 +193,7 @@ def cancel(oid):
         return jsonify({}), 200
     try:
         r = requests.delete(
-            f"{BASE}/trading/execution/orders/{oid}",
+            f"{BASE}/trading/execution/market-open-orders/{oid}",
             headers=hdrs(), timeout=15)
         return jsonify(r.json() if r.content else {"ok": True})
     except Exception as e:
