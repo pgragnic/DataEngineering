@@ -15,35 +15,5 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
-    build: ./backend
-    ports:
-      - "8000:8000"
-    env_file: .env
-    environment:
-      DATABASE_URL: postgresql+psycopg://uc28:uc28@postgres:5432/uc28
-      CHROMA_PERSIST_DIR: /app/storage/chroma
-      STORAGE_DIR: /app/storage/files
-    volumes:
-      - ./backend:/app
-      - backend_storage:/app/storage
-    depends_on:
-      postgres:
-        condition: service_healthy
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
-    command: npm run dev
-
 volumes:
   postgres_data:
-  backend_storage:

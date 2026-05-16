@@ -1,7 +1,7 @@
 from logging.config import fileConfig
+from pathlib import Path
 
 from sqlalchemy import engine_from_config, pool
-
 from alembic import context
 
 config = context.config
@@ -9,8 +9,15 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+# Read DATABASE_URL from .env if not already set via alembic.ini
+if not config.get_main_option("sqlalchemy.url", None):
+    from dotenv import load_dotenv
+    import os
+    load_dotenv(Path(__file__).parent.parent / ".env")
+    config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
+
 from app.db import Base  # noqa: E402
-import app.models  # noqa: E402, F401 — ensure models are registered
+import app.models  # noqa: E402, F401
 
 target_metadata = Base.metadata
 
