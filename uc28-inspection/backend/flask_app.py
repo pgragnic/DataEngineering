@@ -45,29 +45,59 @@ def health():
 
 @app.get("/api/dashboard/kpis")
 def dashboard_kpis():
-    db = load_db()
     return jsonify({
-        "audits_today_count": len(db["inspections"]),
-        "audits_month_count": len(db["inspections"]),
-        "avg_delay_days": 0,
-        "pending_recurrences_count": 1,
+        "audits_today_count": 4,
+        "audits_month_count": 18,
+        "avg_delay_days": 2,
+        "pending_recurrences_count": 3,
     })
 
 @app.get("/api/dashboard/audits_today")
 def dashboard_audits_today():
     db = load_db()
-    result = []
-    for i, (iid, ins) in enumerate(db["inspections"].items()):
-        result.append({
-            "id": iid,
-            "scheduled_at": ins.get("created_at", now_iso()),
-            "client_name": ins["client_name"],
-            "location": ins["site_name"],
-            "scope": ins["scope"][:80],
-            "status": ins["status"],
-            "is_next": i == 0,
-        })
-    return jsonify(result)
+    today = datetime.now().strftime("%Y-%m-%d")
+    # Real inspection ID from DB (first found), fallback to fixture ID
+    alpha_id = next(iter(db["inspections"]), "ins_alpha_20260512")
+    alpha_status = db["inspections"].get(alpha_id, {}).get("status", "prepared")
+
+    return jsonify([
+        {
+            "id": "demo_bureau_0800",
+            "scheduled_at": f"{today}T08:00:00+02:00",
+            "client_name": "Vérif. matinale · planning",
+            "location": "Bureau Lyon",
+            "scope": "Préparation des audits du jour · revue des briefs",
+            "status": "completed",
+            "is_next": False,
+        },
+        {
+            "id": "demo_omega_1000",
+            "scheduled_at": f"{today}T10:00:00+02:00",
+            "client_name": "Fournisseur OMEGA Industries",
+            "location": "Site Vénissieux",
+            "scope": "Audit ISO 9001 · Processus production",
+            "status": "completed",
+            "is_next": False,
+        },
+        {
+            "id": alpha_id,
+            "scheduled_at": f"{today}T14:30:00+02:00",
+            "client_name": "Fournisseur ALPHA",
+            "location": "Tours · Bâtiment B",
+            "scope": "Audit ISO 9001 · Processus achats et contrôle réception",
+            "status": alpha_status,
+            "is_next": alpha_status != "completed",
+        },
+        {
+            "id": "demo_delta_1700",
+            "scheduled_at": f"{today}T17:00:00+02:00",
+            "client_name": "Sous-traitant DELTA Logistics",
+            "location": "Visioconférence",
+            "scope": "Audit ISO 9001 · Suivi NC mineures 2025",
+            "status": "prepared",
+            "is_next": False,
+        },
+    ])
 
 @app.get("/api/dashboard/recurrences")
 def dashboard_recurrences():
