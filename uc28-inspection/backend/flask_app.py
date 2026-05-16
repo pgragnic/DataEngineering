@@ -18,9 +18,10 @@ CORS(app)
 
 # --- JSON datastore ---
 
-DB_PATH = Path("data/db.json")
-STORAGE_DIR = Path(os.getenv("STORAGE_DIR", "./storage/files"))
-FIXTURES_PATH = Path("data/fixtures/alpha.json")
+_BASE = Path(__file__).parent
+DB_PATH = _BASE / "data" / "db.json"
+STORAGE_DIR = Path(os.getenv("STORAGE_DIR", str(_BASE / "storage" / "files")))
+FIXTURES_PATH = _BASE / "data" / "fixtures" / "alpha.json"
 
 def load_db() -> dict:
     if not DB_PATH.exists():
