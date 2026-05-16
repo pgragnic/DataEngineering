@@ -166,5 +166,11 @@ while kill -0 "$BACKEND_PID" 2>/dev/null && kill -0 "$FRONTEND_PID" 2>/dev/null;
     sleep 2
 done
 
-err "Un service s'est arrêté de façon inattendue."
+if ! kill -0 "$FRONTEND_PID" 2>/dev/null; then
+    err "Frontend arrêté — derniers logs :"
+    tail -30 "$FRONTEND_LOG"
+else
+    err "Backend arrêté — derniers logs :"
+    tail -20 "$BACKEND_LOG"
+fi
 cleanup
