@@ -4,8 +4,10 @@
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKEND_DIR="$ROOT/backend"
 FRONTEND_DIR="$ROOT/frontend"
-BACKEND_LOG="/tmp/uc28-backend.log"
-FRONTEND_LOG="/tmp/uc28-frontend.log"
+# Sur Termux, /tmp n'existe pas — utiliser $TMPDIR (ou $HOME en fallback)
+_TMP="${TMPDIR:-${HOME:-/tmp}}"
+BACKEND_LOG="$_TMP/uc28-backend.log"
+FRONTEND_LOG="$_TMP/uc28-frontend.log"
 BACKEND_PID=""
 FRONTEND_PID=""
 PG_STARTED_BY_US=0
@@ -71,11 +73,11 @@ if command -v pg_ctl > /dev/null 2>&1; then
         if [ ! -f "$PG_DATA/PG_VERSION" ]; then
             warn "Cluster non initialisé — initdb..."
             initdb -D "$PG_DATA" --locale=C --encoding=UTF8 \
-                > /tmp/uc28-pgctl.log 2>&1 || true
+                > $_TMP/uc28-pgctl.log 2>&1 || true
         fi
 
         # Démarrer PostgreSQL (ne pas planter le script si ça échoue)
-        pg_ctl -D "$PG_DATA" start -l /tmp/uc28-postgres.log > /dev/null 2>&1 || true
+        pg_ctl -D "$PG_DATA" start -l $_TMP/uc28-postgres.log > /dev/null 2>&1 || true
 
         # Attendre jusqu'à 15s
         PG_READY=0
@@ -96,7 +98,7 @@ if command -v pg_ctl > /dev/null 2>&1; then
                 ok "Base uc28 créée"
             fi
         else
-            warn "PostgreSQL n'a pas démarré (voir /tmp/uc28-postgres.log) — mode JSON utilisé"
+            warn "PostgreSQL n'a pas démarré (voir $_TMP/uc28-postgres.log) — mode JSON utilisé"
         fi
     fi
 else
