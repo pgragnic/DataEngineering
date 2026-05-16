@@ -1,0 +1,3 @@
+# Override root *.json rule — all JSON files here are source, not data
+!*.json
+!**/*.json
