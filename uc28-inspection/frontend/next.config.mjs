@@ -6,14 +6,16 @@ const nextConfig = {
   },
   webpack: (config, { dev }) => {
     if (dev) {
-      const projectDir = process.cwd();
-      // Restrict watcher to project dir only — prevents EACCES flood on Android
-      // that crashes Watchpack with unhandled errors after compilation
+      // Webpack 13.2 only accepts RegExp|string|string[] for ignored (no functions).
+      // Build a regex that ignores node_modules and anything outside $HOME,
+      // so Watchpack never tries to scan /data, /proc, /sys etc. on Android.
+      const home = (process.env.HOME || process.cwd()).replace(
+        /[.*+?^${}()|[\]\\]/g, "\\$&"
+      );
       config.watchOptions = {
         poll: 2000,
         aggregateTimeout: 500,
-        ignored: (absPath) =>
-          absPath.includes("node_modules") || !absPath.startsWith(projectDir),
+        ignored: new RegExp(`(node_modules|^(?!${home}))`),
       };
     }
     return config;
