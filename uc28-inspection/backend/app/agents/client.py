@@ -4,7 +4,10 @@ from anthropic import Anthropic
 
 from app.config import settings
 
-_client = Anthropic(api_key=settings.anthropic_api_key)
+_client = Anthropic(
+    api_key=settings.anthropic_api_key,
+    base_url=settings.anthropic_base_url,
+)
 
 
 def call_claude_json(

@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     anthropic_api_key: str
+    anthropic_base_url: str = "https://api.anthropic.com"  # remplacer par l'URL Capgemini si hackathon
     database_url: str = "postgresql+psycopg://uc28:uc28@localhost:5432/uc28"
     chroma_persist_dir: str = "./storage/chroma"
     storage_dir: str = "./storage/files"
