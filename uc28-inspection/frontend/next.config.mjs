@@ -6,11 +6,14 @@ const nextConfig = {
   },
   webpack: (config, { dev }) => {
     if (dev) {
-      // On Android/Termux inotify causes EACCES spam → use polling instead
+      const projectDir = process.cwd();
+      // Restrict watcher to project dir only — prevents EACCES flood on Android
+      // that crashes Watchpack with unhandled errors after compilation
       config.watchOptions = {
         poll: 2000,
         aggregateTimeout: 500,
-        ignored: /node_modules/,
+        ignored: (absPath) =>
+          absPath.includes("node_modules") || !absPath.startsWith(projectDir),
       };
     }
     return config;

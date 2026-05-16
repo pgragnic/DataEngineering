@@ -137,7 +137,7 @@ done
 
 # ── démarrer le frontend ─────────────────────────────────────────────────────
 info "Frontend Next.js → http://localhost:3000"
-(cd "$FRONTEND_DIR" && NODE_OPTIONS="--max-old-space-size=512" npm run dev) > "$FRONTEND_LOG" 2>&1 &
+(cd "$FRONTEND_DIR" && WATCHPACK_POLLING=true NODE_OPTIONS="--max-old-space-size=512" npm run dev) > "$FRONTEND_LOG" 2>&1 &
 FRONTEND_PID=$!
 sleep 3
 
