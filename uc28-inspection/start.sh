@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Démarre PostgreSQL + Flask (backend :8000) + Next.js (frontend :3000)
-set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKEND_DIR="$ROOT/backend"
@@ -9,6 +8,7 @@ BACKEND_LOG="/tmp/uc28-backend.log"
 FRONTEND_LOG="/tmp/uc28-frontend.log"
 BACKEND_PID=""
 FRONTEND_PID=""
+PG_STARTED_BY_US=0
 
 # Répertoire de données PostgreSQL (Termux : $PREFIX/var/lib/postgresql)
 PG_PREFIX="${PREFIX:-/data/data/com.termux/files/usr}"
@@ -26,13 +26,11 @@ err()  { echo -e "${C_RED}✗${C_RESET} $*" >&2; }
 cleanup() {
     echo ""
     warn "Arrêt des services..."
-    [ -n "$BACKEND_PID" ]  && kill "$BACKEND_PID"  2>/dev/null && ok "Backend arrêté"
-    [ -n "$FRONTEND_PID" ] && kill "$FRONTEND_PID" 2>/dev/null && ok "Frontend arrêté"
-    # PostgreSQL : ne l'arrêter que si c'est nous qui l'avons démarré
-    if [ "${PG_STARTED_BY_US:-0}" = "1" ]; then
+    [ -n "$BACKEND_PID" ]  && kill "$BACKEND_PID"  2>/dev/null; ok "Backend arrêté"
+    [ -n "$FRONTEND_PID" ] && kill "$FRONTEND_PID" 2>/dev/null; ok "Frontend arrêté"
+    if [ "$PG_STARTED_BY_US" = "1" ]; then
         pg_ctl -D "$PG_DATA" stop -m fast > /dev/null 2>&1 && ok "PostgreSQL arrêté"
     fi
-    # tuer les tail -f fils
     jobs -p | xargs -r kill 2>/dev/null
     exit 0
 }
@@ -59,30 +57,50 @@ if command -v pg_ctl > /dev/null 2>&1; then
         ok "PostgreSQL déjà en cours d'exécution"
     else
         info "Démarrage de PostgreSQL ($PG_DATA)..."
+
+        # Supprimer un fichier PID obsolète (processus mort)
+        if [ -f "$PG_DATA/postmaster.pid" ]; then
+            DEAD_PID=$(head -1 "$PG_DATA/postmaster.pid" 2>/dev/null || true)
+            if [ -n "$DEAD_PID" ] && ! kill -0 "$DEAD_PID" 2>/dev/null; then
+                warn "PID obsolète ($DEAD_PID) — suppression du lock..."
+                rm -f "$PG_DATA/postmaster.pid"
+            fi
+        fi
+
         # Initialiser le cluster si besoin
         if [ ! -f "$PG_DATA/PG_VERSION" ]; then
-            warn "Cluster non initialisé — initdb en cours..."
-            pg_ctl -D "$PG_DATA" initdb -o "--locale=C --encoding=UTF8" > /tmp/uc28-pgctl.log 2>&1
-            ok "Cluster initialisé"
+            warn "Cluster non initialisé — initdb..."
+            initdb -D "$PG_DATA" --locale=C --encoding=UTF8 \
+                > /tmp/uc28-pgctl.log 2>&1 || true
         fi
-        pg_ctl -D "$PG_DATA" start -l /tmp/uc28-postgres.log > /dev/null 2>&1
-        # Attendre que PostgreSQL soit prêt (max 15s)
+
+        # Démarrer PostgreSQL (ne pas planter le script si ça échoue)
+        pg_ctl -D "$PG_DATA" start -l /tmp/uc28-postgres.log > /dev/null 2>&1 || true
+
+        # Attendre jusqu'à 15s
+        PG_READY=0
         for i in $(seq 1 15); do
             sleep 1
-            pg_isready -q 2>/dev/null && break
-            [ "$i" -eq 15 ] && { err "PostgreSQL n'a pas démarré — voir /tmp/uc28-postgres.log"; exit 1; }
+            if pg_isready -q 2>/dev/null; then
+                PG_READY=1; break
+            fi
         done
-        PG_STARTED_BY_US=1
-        ok "PostgreSQL prêt"
-        # Créer la base uc28 si elle n'existe pas
-        if ! psql -lqt 2>/dev/null | cut -d'|' -f1 | grep -qw uc28; then
-            info "Création de la base uc28..."
-            createuser --superuser uc28 2>/dev/null || true
-            createdb -O uc28 uc28 2>/dev/null && ok "Base uc28 créée" || warn "Base uc28 déjà existante"
+
+        if [ "$PG_READY" = "1" ]; then
+            PG_STARTED_BY_US=1
+            ok "PostgreSQL prêt"
+            # Créer user + base uc28 si absents
+            if ! psql -lqt 2>/dev/null | cut -d'|' -f1 | grep -qw uc28; then
+                createuser --superuser uc28 2>/dev/null || true
+                createdb -O uc28 uc28 2>/dev/null || true
+                ok "Base uc28 créée"
+            fi
+        else
+            warn "PostgreSQL n'a pas démarré (voir /tmp/uc28-postgres.log) — mode JSON utilisé"
         fi
     fi
 else
-    warn "pg_ctl introuvable — PostgreSQL ignoré (le backend Flask n'en a pas besoin)"
+    warn "pg_ctl introuvable — PostgreSQL ignoré (Flask JSON mode)"
 fi
 
 # ── vérifier node_modules ────────────────────────────────────────────────────
