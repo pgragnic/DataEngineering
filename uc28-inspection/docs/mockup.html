@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<title>UC 28 — Inspection Augmentée · Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     UC 28 — Design tokens
+  ============================================================ */
+  :root {
+    --bg-dark:   #0F2027;
+    --bg-panel:  #164E5E;
+    --panel:     #F8FAFC;
+    --primary:   #134E5E;
+    --primary-2: #2C7A7B;
+    --accent:    #10B981;
+    --accent-lt: #6EE7B7;
+    --accent-50: #ECFDF5;
+    --alert:     #F59E0B;
+    --alert-lt:  #FCD34D;
+    --danger:    #DC2626;
+    --text-dark: #0F172A;
+    --text-body: #334155;
+    --text-mute: #64748B;
+    --text-on-dk:#CBD5E1;
+    --border:    #E2E8F0;
+    --border-strong: #CBD5E1;
+    --white:     #FFFFFF;
+    --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+    --shadow-md: 0 4px 12px -2px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #EEF2F4;
+    color: var(--text-body);
+    font-size: 14px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* App frame (1440x900 ratio inside a centered viewport) */
+  .app {
+    width: min(1440px, 100vw);
+    height: 100vh;
+    max-height: 900px;
+    margin: 0 auto;
+    background: var(--panel);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgb(15 23 42 / 0.12);
+  }
+
+  /* ============================================================
+     HEADER
+  ============================================================ */
+  header {
+    height: 72px;
+    background: var(--bg-dark);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 24px;
+    flex-shrink: 0;
+    border-bottom: 1px solid #0a181c;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--accent-lt);
+    letter-spacing: 0.1em;
+    border-right: 1px solid #2a4750;
+    padding-right: 20px;
+    margin-right: 4px;
+  }
+  .inspection-title { flex: 1; }
+  .inspection-title .t1 {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--white);
+  }
+  .inspection-title .t2 {
+    font-size: 12px;
+    color: #94A3B8;
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .ref-selector {
+    background: var(--bg-panel);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    color: var(--white);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 150ms ease;
+  }
+  .ref-selector:hover { background: #1d5a6b; }
+  .ref-selector svg { width: 12px; height: 12px; opacity: 0.7; }
+
+  .qr-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--white);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: transform 150ms ease;
+  }
+  .qr-btn:hover { transform: scale(1.05); }
+  .qr-btn svg { width: 24px; height: 24px; }
+  .qr-label {
+    font-size: 11px;
+    color: var(--accent-lt);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent-lt);
+    min-width: 60px;
+    text-align: right;
+  }
+
+  /* ============================================================
+     MAIN GRID (Checklist / Capture / Findings)
+  ============================================================ */
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 22% 1fr 28%;
+    gap: 16px;
+    padding: 16px;
+    min-height: 0;
+  }
+
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .panel-header {
+    padding: 12px 20px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .panel-header .title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .panel-header .subtitle {
+    font-size: 11px;
+    color: var(--text-mute);
+    font-style: italic;
+    margin-top: 3px;
+  }
+
+  /* ============================================================
+     CHECKLIST
+  ============================================================ */
+  .checklist {
+    background: var(--panel);
+  }
+  .checklist .body {
+    padding: 14px 16px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .section {
+    margin-bottom: 6px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-body);
+    border-radius: 6px;
+  }
+  .section-header:hover { background: #ECEFF1; }
+  .section.expanded .section-header {
+    color: var(--primary);
+    font-weight: 600;
+  }
+  .section-header .caret {
+    font-size: 10px;
+    color: var(--text-mute);
+    transition: transform 150ms;
+  }
+  .section.expanded .section-header .caret { color: var(--primary); }
+
+  .points {
+    padding: 4px 0 8px 18px;
+    display: none;
+  }
+  .section.expanded .points { display: block; }
+  .point {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 4px;
+    font-size: 12px;
+    color: var(--text-body);
+  }
+  .point .marker {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .point.validated .marker {
+    background: var(--accent);
+    color: var(--white);
+  }
+  .point.active .marker {
+    background: var(--alert);
+    color: var(--white);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .point.todo .marker {
+    background: var(--white);
+    border: 1.5px solid var(--border-strong);
+  }
+  .point .ref { color: var(--text-mute); font-size: 11px; font-weight: 500; margin-right: 4px; }
+  .point.active { font-weight: 500; color: var(--text-dark); }
+
+  .legend {
+    border-top: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    gap: 14px;
+    font-size: 10px;
+    color: var(--text-mute);
+    flex-wrap: wrap;
+  }
+  .legend .lab { display: flex; align-items: center; gap: 5px; }
+  .legend .lab .marker {
+    width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+  }
+  .legend .lab.valid .marker { background: var(--accent); }
+  .legend .lab.active .marker { background: var(--alert); }
+  .legend .lab.todo  .marker { background: var(--white); border: 1.5px solid var(--border-strong); }
+
+  /* ============================================================
+     CAPTURE ZONE
+  ============================================================ */
+  .capture .body {
+    flex: 1;
+    padding: 14px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Mic + waveform box */
+  .mic-box {
+    background: var(--bg-dark);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mic-box::after {
+    /* subtle grain overlay */
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgb(255 255 255 / 0.02) 1px, transparent 1px);
+    background-size: 4px 4px;
+    pointer-events: none;
+  }
+  .mic {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--danger);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 0 0 0 rgb(220 38 38 / 0.5);
+    animation: mic-pulse 1.6s ease-in-out infinite;
+  }
+  .mic::before {
+    content: "";
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--alert);
+  }
+  @keyframes mic-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgb(220 38 38 / 0.6); }
+    50%      { box-shadow: 0 0 0 14px rgb(220 38 38 / 0); }
+  }
+
+  .waveform {
+    flex: 1;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+  }
+  .wave-bar {
+    width: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    transform-origin: center;
+    animation: wave 0.9s ease-in-out infinite;
+  }
+  @keyframes wave {
+    0%, 100% { height: 8%; }
+    50%      { height: var(--h, 60%); }
+  }
+
+  .transcript {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--accent-lt);
+    font-style: italic;
+    padding: 0 6px;
+    line-height: 1.35;
+  }
+  .transcript .cursor {
+    display: inline-block;
+    width: 7px;
+    height: 14px;
+    background: var(--accent-lt);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Classification card — the magic */
+  .classification {
+    background: var(--bg-dark);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: var(--white);
+    position: relative;
+    animation: fadeSlideUp 240ms ease-out;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .badges-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 4px 9px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge.nc-majeure { background: var(--danger); color: var(--white); }
+  .badge.nc-mineure { background: var(--alert); color: var(--white); }
+  .badge.observation { background: var(--primary-2); color: var(--white); }
+  .badge.conforme { background: var(--accent); color: var(--white); }
+  .badge.norm-ref {
+    background: var(--primary-2);
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  .badge.sourced {
+    background: var(--white);
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  .badge.sourced::before { content: "✓ "; }
+
+  .classification .label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent-lt);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .classification .reformulated {
+    font-size: 14px;
+    color: var(--white);
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+  .classification .action {
+    font-size: 12px;
+    color: var(--text-on-dk);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .actions-row {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+  }
+  .btn {
+    height: 42px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 100ms ease, box-shadow 100ms ease, background 100ms ease;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: #0ea271; transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--primary);
+    color: var(--white);
+  }
+  .btn-secondary:hover { background: #0f3f4d; transform: translateY(-1px); }
+  .btn-ghost {
+    background: var(--white);
+    color: var(--text-body);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-ghost:hover { background: #F1F5F9; }
+
+  /* ============================================================
+     FINDINGS LIST
+  ============================================================ */
+  .findings { background: var(--panel); }
+  .findings .body {
+    padding: 12px 14px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .constat {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px 10px 14px;
+    position: relative;
+    cursor: pointer;
+    transition: all 150ms ease;
+    animation: slideInRight 280ms ease-out;
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .constat:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .constat::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+  }
+  .constat.nc-majeure::before { background: var(--danger); }
+  .constat.nc-mineure::before { background: var(--alert); }
+  .constat.observation::before { background: var(--primary-2); }
+  .constat.conforme::before { background: var(--accent); }
+
+  .constat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .constat .badge {
+    font-size: 9px;
+    padding: 3px 7px;
+  }
+  .constat .ref {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-mute);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .constat .text {
+    font-size: 12px;
+    color: var(--text-dark);
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    padding-right: 0;
+  }
+  .constat.with-photo .text {
+    padding-right: 40px;
+  }
+  .constat .photo {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    width: 32px;
+    height: 24px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, #475569 0%, #64748B 50%, #94A3B8 100%);
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2);
+  }
+  .constat .photo::before {
+    content: "";
+    width: 12px;
+    height: 9px;
+    background: var(--white);
+    opacity: 0.6;
+    border-radius: 1px;
+  }
+
+  /* ============================================================
+     RAG TRANSPARENCY BAND
+  ============================================================ */
+  .rag {
+    background: var(--accent-50);
+    border-top: 2px solid var(--accent);
+    padding: 12px 16px 14px;
+    flex-shrink: 0;
+  }
+  .rag-head {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .rag-head .title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .rag-head .subtitle {
+    font-size: 11px;
+    color: var(--text-body);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .rag-chunks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .chunk {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px 10px;
+    position: relative;
+    animation: fadeUp 320ms ease-out backwards;
+  }
+  .chunk:nth-child(1) { animation-delay: 0ms; }
+  .chunk:nth-child(2) { animation-delay: 80ms; }
+  .chunk:nth-child(3) { animation-delay: 160ms; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .chunk .title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+  }
+  .chunk .excerpt {
+    font-size: 11px;
+    color: var(--text-body);
+    line-height: 1.45;
+    margin-bottom: 8px;
+  }
+  .chunk-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .chunk .sim-label {
+    font-size: 10px;
+    color: var(--text-mute);
+    font-style: italic;
+  }
+  .score-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--white);
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+  .score-chip.high { background: var(--accent); }
+  .score-chip.mid  { background: var(--alert); }
+  .score-chip.low  { background: var(--text-mute); }
+
+  /* ============================================================
+     FOOTER
+  ============================================================ */
+  footer {
+    height: 110px;
+    background: var(--bg-dark);
+    color: var(--white);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    border-top: 1px solid #0a181c;
+  }
+  .stats .lab {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent-lt);
+    letter-spacing: 0.1em;
+  }
+  .stats .main-line {
+    font-size: 15px;
+    color: var(--white);
+    margin: 6px 0 4px;
+  }
+  .stats .main-line .sep { color: var(--text-mute); margin: 0 8px; }
+  .stats .sub-line {
+    font-size: 12px;
+    color: #94A3B8;
+    font-style: italic;
+  }
+
+  .cta {
+    height: 64px;
+    padding: 0 28px;
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 17px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 150ms ease;
+    box-shadow: 0 4px 12px rgb(16 185 129 / 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 20px rgb(16 185 129 / 0.35);
+    background: #0ea271;
+  }
+  .cta:active { transform: translateY(0); }
+  .cta .arrow {
+    transition: transform 150ms ease;
+  }
+  .cta:hover .arrow { transform: translateX(4px); }
+
+  /* ============================================================
+     MODAL (Report generation)
+  ============================================================ */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgb(15 32 39 / 0.92);
+    backdrop-filter: blur(6px);
+    display: grid;
+    place-items: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+  .modal.open { opacity: 1; pointer-events: auto; }
+  .modal-content {
+    text-align: center;
+    color: var(--white);
+    transform: translateY(8px);
+    transition: transform 220ms ease;
+  }
+  .modal.open .modal-content { transform: translateY(0); }
+
+  .modal .spinner {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid rgb(110 231 183 / 0.2);
+    border-top-color: var(--accent);
+    animation: spin 1.1s linear infinite;
+    margin: 0 auto 28px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .modal .h {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .modal .msg {
+    font-size: 14px;
+    color: var(--accent-lt);
+    font-style: italic;
+    min-height: 22px;
+  }
+  .modal .close-hint {
+    margin-top: 36px;
+    font-size: 11px;
+    color: #64748B;
+  }
+
+  /* Annotation labels (only visible in mockup, hidden in real app) */
+  .mockup-label {
+    position: fixed;
+    background: #0F2027;
+    color: var(--accent-lt);
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-family: 'JetBrains Mono', monospace;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  /* Sidebar caption (off-frame note) */
+  .caption {
+    position: fixed;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-mute);
+    font-size: 10px;
+    font-style: italic;
+    z-index: 50;
+    text-align: center;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- ====== HEADER ====== -->
+  <header>
+    <div class="logo">BV·INSPECT</div>
+    <div class="inspection-title">
+      <div class="t1">Audit ISO 9001 · Fournisseur ALPHA</div>
+      <div class="t2">Site de Tours · Auditeur : J. Dupont</div>
+    </div>
+    <button class="ref-selector" title="Changer de référentiel — bascule platform">
+      ISO 9001
+      <svg viewBox="0 0 12 12" fill="currentColor"><path d="M2 4l4 4 4-4z"/></svg>
+    </button>
+    <button class="qr-btn" title="QR pour les spectateurs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0F2027" stroke-width="2">
+        <rect x="3" y="3" width="6" height="6"/>
+        <rect x="15" y="3" width="6" height="6"/>
+        <rect x="3" y="15" width="6" height="6"/>
+        <rect x="13" y="13" width="3" height="3"/>
+        <rect x="18" y="13" width="3" height="3"/>
+        <rect x="13" y="18" width="3" height="3"/>
+        <rect x="18" y="18" width="3" height="3"/>
+      </svg>
+    </button>
+    <div class="qr-label">JURY QR</div>
+    <div class="timer" id="timer">02:30</div>
+  </header>
+
+  <!-- ====== MAIN GRID ====== -->
+  <main>
+
+    <!-- CHECKLIST -->
+    <section class="panel checklist">
+      <div class="panel-header">
+        <div class="title">Check-list dynamique</div>
+        <div class="subtitle">générée par l'Agent 1</div>
+      </div>
+      <div class="body">
+        <div class="section expanded">
+          <div class="section-header">
+            <span class="caret">▾</span>
+            <span>S1 — Documents (§7.5)</span>
+          </div>
+          <div class="points">
+            <div class="point validated">
+              <span class="marker">✓</span>
+              <span class="ref">P1</span>
+              <span>Procédure achats à jour</span>
+            </div>
+            <div class="point active">
+              <span class="marker">●</span>
+              <span class="ref">P2</span>
+              <span>Contrôle réception tracé</span>
+            </div>
+            <div class="point todo">
+              <span class="marker"></span>
+              <span class="ref">P3</span>
+              <span>Revues management</span>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <span class="caret">▸</span>
+            <span>S2 — Achats (§8.4)</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <span class="caret">▸</span>
+            <span>S3 — Compétences (§7.2)</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <span class="caret">▸</span>
+            <span>S4 — Sécurité site (§7.1.4)</span>
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="lab valid"><span class="marker"></span>validé</div>
+        <div class="lab active"><span class="marker"></span>actif</div>
+        <div class="lab todo"><span class="marker"></span>à venir</div>
+      </div>
+    </section>
+
+    <!-- CAPTURE -->
+    <section class="panel capture">
+      <div class="panel-header">
+        <div class="title">Capture en cours</div>
+        <div class="subtitle">voice-to-text → classification temps réel</div>
+      </div>
+      <div class="body">
+
+        <!-- Mic + waveform -->
+        <div>
+          <div class="mic-box">
+            <div class="mic" id="mic"></div>
+            <div class="waveform" id="waveform"></div>
+          </div>
+          <div class="transcript">
+            « sortie de secours obstruée par un chariot »<span class="cursor"></span>
+          </div>
+        </div>
+
+        <!-- Classification card -->
+        <div class="classification" id="classification">
+          <div class="badges-row">
+            <span class="badge nc-majeure">NC Majeure</span>
+            <span class="badge norm-ref">ISO 9001 §7.1.4</span>
+            <span class="badge sourced">sourcé</span>
+          </div>
+          <div class="label">Constat reformulé</div>
+          <div class="reformulated">
+            La sortie de secours du bâtiment B est obstruée par un chariot de stockage.
+          </div>
+          <div class="label">Action corrective suggérée</div>
+          <div class="action">
+            Libérer la sortie · rappel des consignes au magasinier · ajout au plan d'audit sécurité annuel.
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions-row">
+          <button class="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Ajouter photo
+          </button>
+          <button class="btn btn-secondary" id="validateBtn">
+            Valider
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </button>
+          <button class="btn btn-ghost">Refaire</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINDINGS LIST -->
+    <section class="panel findings">
+      <div class="panel-header">
+        <div class="title">Constats <span id="constatCount">(4)</span></div>
+        <div class="subtitle">défilent au fur et à mesure</div>
+      </div>
+      <div class="body" id="findingsList">
+
+        <div class="constat nc-majeure with-photo">
+          <div class="photo"></div>
+          <div class="constat-head">
+            <span class="badge nc-majeure">NC Majeure</span>
+            <span class="ref">ISO 9001 §7.1.4</span>
+          </div>
+          <div class="text">Sortie de secours obstruée par un chariot de stockage</div>
+        </div>
+
+        <div class="constat nc-mineure">
+          <div class="constat-head">
+            <span class="badge nc-mineure">NC Mineure</span>
+            <span class="ref">ISO 9001 §8.4.3</span>
+          </div>
+          <div class="text">Procédure de contrôle réception non documentée — cahier manuscrit utilisé</div>
+        </div>
+
+        <div class="constat observation">
+          <div class="constat-head">
+            <span class="badge observation">Observation</span>
+            <span class="ref">—</span>
+          </div>
+          <div class="text">Magasinier bien formé sur le geste malgré l'absence de procédure</div>
+        </div>
+
+        <div class="constat conforme">
+          <div class="constat-head">
+            <span class="badge conforme">Conforme</span>
+            <span class="ref">ISO 9001 §7.5.3</span>
+          </div>
+          <div class="text">Procédure achats v3 à jour, datée de mars 2026</div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====== RAG TRANSPARENCY BAND ====== -->
+  <section class="rag">
+    <div class="rag-head">
+      <div class="title">RAG · Articles normatifs remontés en temps réel</div>
+      <div class="subtitle">Pendant la classification, les 3 chunks normatifs les plus proches s'affichent — le jury voit que c'est sourcé.</div>
+    </div>
+    <div class="rag-chunks">
+      <div class="chunk">
+        <div class="title">§7.1.4 — Environnement</div>
+        <div class="excerpt">L'organisme doit déterminer, fournir et maintenir l'environnement nécessaire au fonctionnement de ses processus et à l'obtention de la conformité…</div>
+        <div class="chunk-foot">
+          <span class="sim-label">similarité</span>
+          <span class="score-chip high">0.92</span>
+        </div>
+      </div>
+      <div class="chunk">
+        <div class="title">§7.1.3 — Infrastructure</div>
+        <div class="excerpt">L'organisme doit déterminer, fournir et maintenir l'infrastructure nécessaire au fonctionnement de ses processus, incluant locaux et services associés…</div>
+        <div class="chunk-foot">
+          <span class="sim-label">similarité</span>
+          <span class="score-chip mid">0.78</span>
+        </div>
+      </div>
+      <div class="chunk">
+        <div class="title">§8.5.1 — Maîtrise production</div>
+        <div class="excerpt">L'organisme doit mettre en œuvre la production et la prestation de service dans des conditions maîtrisées, incluant la disponibilité d'informations…</div>
+        <div class="chunk-foot">
+          <span class="sim-label">similarité</span>
+          <span class="score-chip low">0.61</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer>
+    <div class="stats">
+      <div class="lab">INSPECTION EN COURS</div>
+      <div class="main-line">
+        <strong>4 constats</strong>
+        <span class="sep">·</span> 1 NC majeure
+        <span class="sep">·</span> 1 NC mineure
+        <span class="sep">·</span> 1 observation
+        <span class="sep">·</span> 1 conforme
+      </div>
+      <div class="sub-line">Démarré à 14:32 · Durée : 02:30</div>
+    </div>
+    <button class="cta" id="generateBtn">
+      Générer le pré-rapport
+      <span class="arrow">→</span>
+    </button>
+  </footer>
+
+</div>
+
+<!-- ====== MODAL ====== -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="spinner"></div>
+    <div class="h">Génération du pré-rapport</div>
+    <div class="msg" id="modalMsg">Synthèse exécutive…</div>
+    <div class="close-hint">Le DOCX s'ouvrira dans un viewer intégré</div>
+  </div>
+</div>
+
+<div class="caption">Mockup statique · pour validation visuelle avant implémentation</div>
+
+<script>
+  // ============================================================
+  // Waveform — random bars with varied animation
+  // ============================================================
+  (function buildWaveform() {
+    const wf = document.getElementById('waveform');
+    const N = 60;
+    for (let i = 0; i < N; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'wave-bar';
+      const height = 25 + Math.random() * 75; // 25%-100%
+      const delay = (Math.random() * 0.9).toFixed(2);
+      const duration = (0.55 + Math.random() * 0.6).toFixed(2);
+      bar.style.setProperty('--h', height + '%');
+      bar.style.animationDelay = `-${delay}s`;
+      bar.style.animationDuration = `${duration}s`;
+      // Alternate accent colors
+      bar.style.background = (i % 2 === 0) ? '#10B981' : '#6EE7B7';
+      wf.appendChild(bar);
+    }
+  })();
+
+  // ============================================================
+  // Timer increment (visual only)
+  // ============================================================
+  (function timer() {
+    let sec = 150;
+    setInterval(() => {
+      sec++;
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = `${m}:${s}`;
+    }, 1000);
+  })();
+
+  // ============================================================
+  // Validate button — adds a new constat to the list with animation
+  // ============================================================
+  document.getElementById('validateBtn').addEventListener('click', () => {
+    const list = document.getElementById('findingsList');
+    const newConstat = document.createElement('div');
+    newConstat.className = 'constat nc-majeure with-photo';
+    newConstat.innerHTML = `
+      <div class="photo"></div>
+      <div class="constat-head">
+        <span class="badge nc-majeure">NC Majeure</span>
+        <span class="ref">ISO 9001 §7.1.4</span>
+      </div>
+      <div class="text">Sortie de secours obstruée par un chariot (nouveau constat)</div>
+    `;
+    list.insertBefore(newConstat, list.firstChild);
+    // Update count
+    const countEl = document.getElementById('constatCount');
+    const current = parseInt(countEl.textContent.replace(/\D/g, '')) || 0;
+    countEl.textContent = `(${current + 1})`;
+  });
+
+  // ============================================================
+  // Generate report — cycle modal messages
+  // ============================================================
+  const modal = document.getElementById('modal');
+  const modalMsg = document.getElementById('modalMsg');
+  const messages = [
+    "Synthèse exécutive…",
+    "Regroupement des constats par thème…",
+    "Construction du plan d'action priorisé…",
+    "Mise en forme du document…",
+    "Génération du DOCX…",
+    "Ouverture dans le viewer…"
+  ];
+
+  document.getElementById('generateBtn').addEventListener('click', () => {
+    modal.classList.add('open');
+    let i = 0;
+    modalMsg.textContent = messages[0];
+    const interval = setInterval(() => {
+      i++;
+      if (i >= messages.length) {
+        clearInterval(interval);
+        setTimeout(() => modal.classList.remove('open'), 800);
+        return;
+      }
+      modalMsg.style.opacity = '0';
+      setTimeout(() => {
+        modalMsg.textContent = messages[i];
+        modalMsg.style.opacity = '1';
+      }, 200);
+    }, 1800);
+  });
+
+  // Close modal on click outside
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('open');
+  });
+
+  // ============================================================
+  // Section toggle
+  // ============================================================
+  document.querySelectorAll('.section-header').forEach(h => {
+    h.addEventListener('click', () => {
+      const section = h.parentElement;
+      section.classList.toggle('expanded');
+      const caret = h.querySelector('.caret');
+      caret.textContent = section.classList.contains('expanded') ? '▾' : '▸';
+    });
+  });
+</script>
+
+</body>
+</html>
