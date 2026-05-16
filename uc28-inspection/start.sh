@@ -106,9 +106,12 @@ else
 fi
 
 # ── vérifier node_modules ────────────────────────────────────────────────────
-if [ ! -d "$FRONTEND_DIR/node_modules" ]; then
-    info "node_modules absent — npm install en cours..."
-    (cd "$FRONTEND_DIR" && npm install --silent)
+# Forcer npm install si node_modules absent OU si @next/swc-android-arm64
+# manque (cas où node_modules vient d'un next@14 sans binaire ARM64)
+_SWC_DIR="$FRONTEND_DIR/node_modules/@next/swc-android-arm64"
+if [ ! -d "$FRONTEND_DIR/node_modules" ] || [ ! -d "$_SWC_DIR" ]; then
+    info "Installation des dépendances npm (next@13 + SWC android-arm64)..."
+    (cd "$FRONTEND_DIR" && npm install)
     ok "npm install terminé"
 fi
 
