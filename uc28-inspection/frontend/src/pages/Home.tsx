@@ -62,7 +62,7 @@ export default function Home() {
   const { data: audits = [] } = useQuery({ queryKey: ["audits_today"], queryFn: getAuditsToday });
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-uc-panel">
+    <div className="h-dvh w-dvw flex flex-col overflow-hidden bg-uc-panel">
       <HeaderBar
         variant="dashboard"
         title={`Mes audits — ${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}`}
