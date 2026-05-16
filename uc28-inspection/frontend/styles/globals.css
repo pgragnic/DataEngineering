@@ -8,6 +8,7 @@ html,
 body {
   height: 100%;
   overflow: hidden;
+  @apply font-sans bg-uc-panel text-uc-text-dark antialiased;
 }
 
 @layer utilities {

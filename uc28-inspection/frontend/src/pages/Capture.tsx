@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -20,8 +20,8 @@ import NCBadge from "@/components/NCBadge";
 type CaptureState = "idle" | "processing" | "result" | "validated";
 
 export default function CapturePage() {
-  const router = useRouter();
-  const id = router.query.id as string | undefined;
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const qc = useQueryClient();
 
   const { data: inspection, refetch } = useQuery({
@@ -64,7 +64,7 @@ export default function CapturePage() {
     mutationFn: () => generateReport(id!),
     onSuccess: () => {
       setShowGeneratingModal(false);
-      router.push(`/inspection/${id}/report`);
+      navigate(`/inspection/${id}/report`);
     },
   });
 
