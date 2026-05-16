@@ -6,10 +6,11 @@ const nextConfig = {
   },
   webpack: (config, { dev }) => {
     if (dev) {
-      // On Android/Termux the watcher lacks permission to scan system dirs
+      // On Android/Termux inotify causes EACCES spam → use polling instead
       config.watchOptions = {
-        ...config.watchOptions,
-        ignored: ["**/node_modules/**", "/data/**", "/proc/**", "/sys/**"],
+        poll: 2000,
+        aggregateTimeout: 500,
+        ignored: /node_modules/,
       };
     }
     return config;
