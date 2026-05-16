@@ -44,7 +44,7 @@ export default function BriefPage() {
   const hasChecklist = Boolean(inspection?.checklist_json);
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-uc-panel">
+    <div className="h-dvh w-dvw flex flex-col overflow-hidden bg-uc-panel">
       <HeaderBar
         variant="brief"
         title={`Audit ${inspection?.referential ?? ""} · ${inspection?.client_name ?? ""}`}

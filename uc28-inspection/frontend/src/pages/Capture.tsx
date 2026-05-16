@@ -133,7 +133,7 @@ export default function CapturePage() {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden bg-uc-panel">
+    <div className="h-dvh w-dvw flex flex-col overflow-hidden bg-uc-panel">
       <HeaderBar
         variant="capture"
         title={`Audit ${inspection?.referential ?? ""} · ${inspection?.client_name ?? ""}`}
