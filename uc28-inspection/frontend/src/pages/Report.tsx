@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getInspection } from "@/lib/api";
 import HeaderBar from "@/components/HeaderBar";
 import NCBadge from "@/components/NCBadge";
 import type { NCLevel } from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function ReportPage() {
-  const router = useRouter();
-  const id = router.query.id as string | undefined;
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [sent, setSent] = useState(false);
 
   const { data: inspection } = useQuery({
@@ -35,7 +35,7 @@ export default function ReportPage() {
     },
     onSuccess: () => {
       setSent(true);
-      setTimeout(() => router.push("/"), 2000);
+      setTimeout(() => navigate("/"), 2000);
     },
   });
 

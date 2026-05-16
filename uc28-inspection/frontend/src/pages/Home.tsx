@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { getDashboardKpis, getAuditsToday, type AuditToday } from "@/lib/api";
 import HeaderBar from "@/components/HeaderBar";
 
@@ -56,14 +56,10 @@ function AuditCard({ audit, onStart }: { audit: AuditToday; onStart: () => void 
   );
 }
 
-export default function DashboardPage() {
-  const router = useRouter();
+export default function Home() {
+  const navigate = useNavigate();
   const { data: kpis } = useQuery({ queryKey: ["kpis"], queryFn: getDashboardKpis });
   const { data: audits = [] } = useQuery({ queryKey: ["audits_today"], queryFn: getAuditsToday });
-
-  const handleStart = (audit: AuditToday) => {
-    router.push(`/inspection/${audit.id}/brief`);
-  };
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden bg-uc-panel">
@@ -83,11 +79,11 @@ export default function DashboardPage() {
           <h2 className="text-sm font-bold text-uc-text-mute uppercase tracking-wider">Audits du jour</h2>
           {audits.length === 0 ? (
             <div className="bg-white rounded-lg p-8 text-center text-uc-text-mute">
-              Aucun audit planifié aujourd&apos;hui
+              Aucun audit planifié aujourd'hui
             </div>
           ) : (
             audits.map((a) => (
-              <AuditCard key={a.id} audit={a} onStart={() => handleStart(a)} />
+              <AuditCard key={a.id} audit={a} onStart={() => navigate(`/inspection/${a.id}/brief`)} />
             ))
           )}
         </div>

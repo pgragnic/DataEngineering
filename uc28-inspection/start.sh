@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Démarre PostgreSQL + Flask (backend :8000) + Next.js (frontend :3000)
+# Démarre PostgreSQL + Flask (backend :8000) + Vite/React (frontend :3000)
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKEND_DIR="$ROOT/backend"
@@ -106,11 +106,10 @@ else
 fi
 
 # ── vérifier node_modules ────────────────────────────────────────────────────
-# Forcer npm install si node_modules absent OU si @next/swc-android-arm64
-# manque (cas où node_modules vient d'un next@14 sans binaire ARM64)
-_SWC_DIR="$FRONTEND_DIR/node_modules/@next/swc-android-arm64"
-if [ ! -d "$FRONTEND_DIR/node_modules" ] || [ ! -d "$_SWC_DIR" ]; then
-    info "Installation des dépendances npm (next@13 + SWC android-arm64)..."
+# Forcer npm install si node_modules absent ou si vite manque
+_VITE_BIN="$FRONTEND_DIR/node_modules/.bin/vite"
+if [ ! -d "$FRONTEND_DIR/node_modules" ] || [ ! -f "$_VITE_BIN" ]; then
+    info "Installation des dépendances npm (Vite + React)..."
     (cd "$FRONTEND_DIR" && npm install)
     ok "npm install terminé"
 fi
@@ -136,8 +135,8 @@ for i in $(seq 1 10); do
 done
 
 # ── démarrer le frontend ─────────────────────────────────────────────────────
-info "Frontend Next.js → http://localhost:3000"
-(cd "$FRONTEND_DIR" && WATCHPACK_POLLING=true NODE_OPTIONS="--max-old-space-size=512" npm run dev) > "$FRONTEND_LOG" 2>&1 &
+info "Frontend Vite → http://localhost:3000"
+(cd "$FRONTEND_DIR" && npm run dev) > "$FRONTEND_LOG" 2>&1 &
 FRONTEND_PID=$!
 sleep 3
 

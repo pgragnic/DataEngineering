@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { getInspection, generateChecklist, updateInspection } from "@/lib/api";
@@ -7,8 +7,8 @@ import HeaderBar from "@/components/HeaderBar";
 import ChecklistView from "@/components/ChecklistView";
 
 export default function BriefPage() {
-  const router = useRouter();
-  const id = router.query.id as string | undefined;
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const qc = useQueryClient();
 
   const { data: inspection } = useQuery({
@@ -31,7 +31,7 @@ export default function BriefPage() {
 
   const startMutation = useMutation({
     mutationFn: () => updateInspection(id!, { status: "ongoing" }),
-    onSuccess: () => router.push(`/inspection/${id}/capture`),
+    onSuccess: () => navigate(`/inspection/${id}/capture`),
   });
 
   useEffect(() => {
