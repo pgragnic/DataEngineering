@@ -1,16 +1,18 @@
 """
 Client eToro (API publique non officielle).
 
-Les endpoints utilisés correspondent aux appels réseau effectués par le
-navigateur lors de la consultation de https://www.etoro.com/people/{username}.
-Si eToro modifie ses routes, inspecter l'onglet Réseau du navigateur pour
-trouver les nouveaux chemins.
+Endpoints confirmés par inspection réseau du navigateur sur eToro :
+  1. CID lookup  : GET /api/logininfo/v1.1/users/{username}
+  2. Portfolio   : GET /sapi/trade-data-real/live/public/portfolios
+  3. Historique  : GET /sapi/trade-data-real/history/public/credit/flat
 """
 
 from __future__ import annotations
 
 import logging
+import uuid
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Any
 
 import requests
@@ -82,58 +84,69 @@ class PortfolioSnapshot:
 class EtoroClient:
     def __init__(self, username: str):
         self.username = username
+        self._cid: str | None = None
         self._session = requests.Session()
         self._session.headers.update(_HEADERS)
 
     # ------------------------------------------------------------------
-    # Public helpers
+    # Public
     # ------------------------------------------------------------------
 
     def get_snapshot(self) -> PortfolioSnapshot:
-        """Récupère le portfolio public actuel du trader."""
-        from datetime import datetime, timezone
-
-        raw = self._fetch_portfolio()
+        cid = self._get_cid()
+        raw = self._fetch_portfolio(cid)
         positions = self._parse_positions(raw)
-        stats = self._fetch_stats()
+        equity = float(raw.get("Equity", raw.get("equity", 0.0)))
 
         return PortfolioSnapshot(
             username=self.username,
             fetched_at=datetime.now(timezone.utc).isoformat(),
             positions=positions,
-            equity=stats.get("equity", 0.0),
-            gain_pct=stats.get("gain", 0.0),
+            equity=equity,
         )
 
     # ------------------------------------------------------------------
-    # Internal API calls
+    # CID resolution
     # ------------------------------------------------------------------
 
-    def _fetch_portfolio(self) -> dict[str, Any]:
-        """
-        Endpoint public portfolio eToro.
-        Retourne les positions ouvertes du trader (profil public activé).
-        """
-        url = f"{_BASE}/api/logininfo/v1.1/users/{self.username}/portfolio/public"
+    def _get_cid(self) -> str:
+        """Résout le CID numérique à partir du pseudo eToro (mis en cache)."""
+        if self._cid:
+            return self._cid
+
+        url = f"{_BASE}/api/logininfo/v1.1/users/{self.username}"
         resp = self._session.get(url, timeout=15)
         resp.raise_for_status()
-        return resp.json()
+        data = resp.json()
 
-    def _fetch_stats(self) -> dict[str, Any]:
-        """Récupère les statistiques publiques (gain, équité)."""
-        url = f"{_BASE}/sapi/userstats/gain"
-        params = {"username": self.username, "period": "CurrYear"}
-        try:
-            resp = self._session.get(url, params=params, timeout=15)
-            resp.raise_for_status()
-            data = resp.json()
-            return {
-                "gain": data.get("gain", 0.0),
-                "equity": data.get("equity", 0.0),
-            }
-        except Exception as exc:
-            logger.warning("Impossible de récupérer les stats : %s", exc)
-            return {}
+        # La réponse contient "realCID", "cid" ou "customerId"
+        cid = (
+            data.get("realCID")
+            or data.get("cid")
+            or data.get("customerId")
+            or data.get("CID")
+        )
+        if not cid:
+            raise ValueError(f"CID introuvable dans la réponse : {data}")
+
+        self._cid = str(cid)
+        logger.info("CID de %s : %s", self.username, self._cid)
+        return self._cid
+
+    # ------------------------------------------------------------------
+    # Portfolio live
+    # ------------------------------------------------------------------
+
+    def _fetch_portfolio(self, cid: str) -> dict[str, Any]:
+        url = f"{_BASE}/sapi/trade-data-real/live/public/portfolios"
+        params = {
+            "format": "json",
+            "cid": cid,
+            "client_request_id": str(uuid.uuid4()),
+        }
+        resp = self._session.get(url, params=params, timeout=15)
+        resp.raise_for_status()
+        return resp.json()
 
     # ------------------------------------------------------------------
     # Parsing
@@ -141,22 +154,29 @@ class EtoroClient:
 
     def _parse_positions(self, raw: dict) -> list[Position]:
         positions = []
-        # eToro retourne les positions dans raw["AggregatedPositions"] ou "Positions"
-        items = raw.get("AggregatedPositions") or raw.get("Positions") or []
+        # L'API retourne les positions dans "PublicPortfolio" → "Positions"
+        portfolio = raw.get("PublicPortfolio") or raw
+        items = (
+            portfolio.get("Positions")
+            or portfolio.get("AggregatedPositions")
+            or []
+        )
         for item in items:
             try:
                 pos = Position(
-                    instrument=item.get("InstrumentID") or item.get("Instrument", ""),
+                    instrument=str(item.get("InstrumentID", item.get("Instrument", ""))),
                     direction="buy" if item.get("IsBuy", True) else "sell",
-                    amount=float(item.get("InvestedAmount", 0)),
+                    amount=float(item.get("InvestedAmount", item.get("Amount", 0))),
                     open_rate=float(item.get("OpenRate", 0)),
                     current_rate=float(item.get("CurrentRate", 0)),
-                    profit_pct=float(item.get("NetProfit", 0)),
+                    profit_pct=float(item.get("NetProfit", item.get("Profit", 0))),
                     leverage=int(item.get("Leverage", 1)),
                     opened_at=str(item.get("OpenDateTime", "")),
-                    position_id=str(item.get("PositionID", item.get("CopyPositionID", ""))),
+                    position_id=str(
+                        item.get("PositionID", item.get("CopyPositionID", ""))
+                    ),
                 )
                 positions.append(pos)
             except Exception as exc:
-                logger.debug("Position ignorée (%s): %s", exc, item)
+                logger.debug("Position ignorée (%s) : %s", exc, item)
         return positions
