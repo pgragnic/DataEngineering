@@ -17,7 +17,7 @@ SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-ALERT_EMAIL_TO = os.getenv("ALERT_EMAIL_TO", "")
+ALERT_EMAIL_TO = os.getenv("ALERT_EMAIL_TO", "pgragnic@hotmail.com")
 
 # Polling interval en secondes (défaut : 5 minutes)
 POLL_INTERVAL_SECONDS = int(os.getenv("POLL_INTERVAL_SECONDS", "300"))
