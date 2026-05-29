@@ -157,6 +157,52 @@ function GroupedCard({ group, setConfirm }) {
   )
 }
 
+function TrackCard({ p }) {
+  const [expanded, setExpanded] = useState(false)
+  const sym = (p.name || '').split('/')[0].split(' ')[0]
+  const hasSub = p.sub && p.sub.length > 0
+  return (
+    <div className="card">
+      <div className="card-row" onClick={() => hasSub && setExpanded(e => !e)}
+           style={hasSub ? { cursor: 'pointer' } : {}}>
+        <div className="card-left">
+          <div className="card-logo-name">
+            <Logo symbol={sym} />
+            <div>
+              <div className="card-name">
+                {p.name}
+                {hasSub && <span className="badge">{p.sub.length}</span>}
+              </div>
+              <div className="card-sub">
+                {p.isBuy ? '▲ Long' : '▼ Short'}
+                {hasSub ? ` · ${expanded ? '▲ réduire' : '▼ détail'}` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="card-right">
+          <div className="card-amount">{fmt(p.amount)}%</div>
+          <div className={`card-pnl ${pnlCls(p.pnl)}`}>{sign(p.pnl)}{fmt(Math.abs(p.pnl))}%</div>
+        </div>
+      </div>
+      {expanded && hasSub && (
+        <div className="sub-positions">
+          {p.sub.map((s, i) => (
+            <div key={i} className="sub-pos">
+              <div className="sub-pos-info">
+                <span>{s.isBuy ? '▲' : '▼'} {s.openDate}</span>
+                {s.openRate > 0 && <span>Ouv {s.openRate}</span>}
+                {s.leverage > 1 && <span>x{s.leverage}</span>}
+                <span className={pnlCls(s.pnl)}>{sign(s.pnl)}{fmt(Math.abs(s.pnl))}%</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ResponseBox({ state, data }) {
   if (!state) return null
   if (state === 'loading') return <div className="resp-box loading">Traitement en cours…</div>
@@ -629,21 +675,7 @@ export default function App() {
             <>
               <div className="section-title">Positions ouvertes ({trackData.positions.length})</div>
               {trackData.positions.map((p, i) => (
-                <div key={i} className="card">
-                  <div className="card-row">
-                    <div className="card-left">
-                      <div className="card-name">{p.name}</div>
-                      <div className="card-sub">{p.isBuy ? '▲ Long' : '▼ Short'} · {p.openDate}</div>
-                      {p.openRate > 0 && (
-                        <div className="card-rates">Ouv {p.openRate}{p.closeRate > 0 ? ` · Act ${p.closeRate}` : ''}</div>
-                      )}
-                    </div>
-                    <div className="card-right">
-                      <div className="card-amount">{fmt(p.amount)}%</div>
-                      <div className={`card-pnl ${pnlCls(p.pnl)}`}>{sign(p.pnl)}{fmt(Math.abs(p.pnl))}%</div>
-                    </div>
-                  </div>
-                </div>
+                <TrackCard key={i} p={p} />
               ))}
             </>
           )}
