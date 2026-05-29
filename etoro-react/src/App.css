@@ -311,6 +311,132 @@ input:focus { outline: none; border-color: #00C288; }
 .bar-card { overflow-x: auto; }
 .bar-svg { width: 100%; min-width: 200px; display: block; }
 
+/* ── Logos ───────────────────────────────────────────────── */
+.pos-logo-wrap {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #2A2D35;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.pos-logo { width: 40px; height: 40px; object-fit: cover; }
+.pos-logo-init {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #9CA3AF;
+}
+.card-logo-name {
+  display: flex; align-items: flex-start; gap: 10px;
+}
+
+/* ── Badge & grouped positions ───────────────────────────── */
+.badge {
+  display: inline-block;
+  background: #00C288;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 6px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.sub-positions { border-top: 1px solid #2A2D35; margin-top: 8px; padding-top: 8px; }
+.sub-pos {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #1F2229;
+}
+.sub-pos:last-child { border-bottom: none; }
+.sub-pos-info { display: flex; gap: 12px; font-size: 0.78rem; color: #9CA3AF; flex-wrap: wrap; }
+.btn-sell-sm {
+  background: transparent;
+  border: 1px solid #FF4D6D;
+  color: #FF4D6D;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Futures banner ──────────────────────────────────────── */
+.futures-banner {
+  background: #12151C;
+  border-bottom: 1px solid #2A2D35;
+  padding: 6px 0;
+  overflow: hidden;
+}
+.futures-label {
+  font-size: 9px; color: #6B7280; text-align: center;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
+}
+.futures-scroll {
+  display: flex; gap: 10px; overflow-x: auto; padding: 2px 12px;
+  scrollbar-width: none;
+}
+.futures-scroll::-webkit-scrollbar { display: none; }
+.futures-card {
+  flex-shrink: 0; text-align: center; min-width: 60px;
+}
+.futures-name { font-size: 10px; color: #6B7280; }
+.futures-price { font-size: 12px; font-weight: 600; }
+.futures-chg { font-size: 10px; }
+
+/* ── Update indicator ────────────────────────────────────── */
+.update-live { color: #00C288; }
+.update-cache { color: #6B7280; }
+
+/* ── Movers ──────────────────────────────────────────────── */
+.movers-card {
+  background: #1A1D24; border: 1px solid #2A2D35;
+  border-radius: 12px; padding: 14px 10px; margin-bottom: 12px;
+}
+.movers-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.movers-title {
+  font-size: 11px; color: #9CA3AF;
+  text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+}
+.movers-toggle { display: flex; gap: 4px; }
+.movers-toggle button {
+  background: #2A2D35; border: none; color: #9CA3AF;
+  padding: 5px 13px; border-radius: 8px; font-size: 15px; cursor: pointer;
+}
+.movers-toggle button.active { background: #00C288; color: #fff; }
+.movers-chart {
+  display: flex; justify-content: space-around; align-items: flex-end; gap: 2px;
+}
+.mover-col {
+  display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1;
+}
+.mover-pct { font-size: 11px; font-weight: 700; text-align: center; }
+.mover-bar-wrap {
+  height: 100px; display: flex; align-items: flex-end;
+  width: 100%; justify-content: center;
+}
+.mover-bar { width: 70%; max-width: 34px; border-radius: 4px 4px 0 0; }
+.mover-logo { width: 28px; height: 28px; }
+.mover-logo .pos-logo-wrap,
+.mover-logo .pos-logo,
+.mover-logo .pos-logo-init { width: 28px !important; height: 28px !important; font-size: 9px !important; }
+.mover-sym { font-size: 10px; color: #9CA3AF; text-align: center; }
+
+/* ── Suivi tab ───────────────────────────────────────────── */
+.track-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0 12px;
+}
+.track-username { font-size: 16px; font-weight: 700; color: #00C288; }
+.btn-refresh {
+  background: #2A2D35; border: none; color: #9CA3AF;
+  padding: 6px 14px; border-radius: 8px; font-size: 14px; cursor: pointer;
+}
+.card-closed { opacity: 0.75; }
+
 /* ── Misc ────────────────────────────────────────────────── */
 .spinner { text-align: center; padding: 30px; color: #6B7280; font-size: 0.9rem; }
 .empty { text-align: center; padding: 40px 16px; color: #6B7280; font-size: 0.9rem; }
