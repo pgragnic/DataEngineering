@@ -648,13 +648,8 @@ export default function App() {
           </div>
           {trackLoading && <div className="spinner">Chargement…</div>}
           {trackData?.error && <div className="empty">Erreur : {trackData.error}</div>}
-          {trackData?.positions?.length > 0 && (
-            <>
-              <div className="section-title">Positions ouvertes ({trackData.positions.length})</div>
-              {trackData.positions.map((p, i) => (
-                <TrackCard key={i} p={p} />
-              ))}
-            </>
+          {trackData && !trackData.error && !trackData.history?.length && !trackLoading && (
+            <div className="empty">Aucun mouvement détecté pour l'instant — revenez plus tard.</div>
           )}
           {trackData?.history?.length > 0 && (
             <>
