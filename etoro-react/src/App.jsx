@@ -640,8 +640,8 @@ export default function App() {
                       )}
                     </div>
                     <div className="card-right">
-                      <div className="card-amount">${fmt(p.amount)}</div>
-                      <div className={`card-pnl ${pnlCls(p.pnl)}`}>{sign(p.pnl)}${fmt(p.pnl)}</div>
+                      <div className="card-amount">{fmt(p.amount)}%</div>
+                      <div className={`card-pnl ${pnlCls(p.pnl)}`}>{sign(p.pnl)}{fmt(Math.abs(p.pnl))}%</div>
                     </div>
                   </div>
                 </div>
