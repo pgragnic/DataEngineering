@@ -656,24 +656,37 @@ export default function App() {
               ))}
             </>
           )}
-          {trackData?.closed?.length > 0 && (
+          {trackData?.history?.length > 0 && (
             <>
-              <div className="section-title">Transactions récentes</div>
-              {trackData.closed.map((c, i) => (
-                <div key={i} className="card card-closed">
-                  <div className="card-row">
-                    <div className="card-left">
-                      <div className="card-name">{c.name}</div>
-                      <div className="card-sub">
-                        {c.isBuy ? '▲ Achat' : '▼ Vente'} · {c.openDate} → {c.closeDate}
+              <div className="section-title">Mouvements récents</div>
+              {trackData.history.map((h, i) => {
+                const sym = (h.name || '').split('/')[0].split(' ')[0]
+                const isOpen = h.action === 'open'
+                return (
+                  <div key={i} className="card">
+                    <div className="card-row">
+                      <div className="card-left">
+                        <div className="card-logo-name">
+                          <Logo symbol={sym} />
+                          <div>
+                            <div className="card-name">{h.name}</div>
+                            <div className="card-sub">
+                              <span className={isOpen ? 'pnl-pos' : 'pnl-neg'}>
+                                {isOpen ? '● Ouvert' : '○ Fermé'}
+                              </span>
+                              {' · '}{h.isBuy ? '▲ Long' : '▼ Short'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="card-right">
+                        {h.amount > 0 && <div className="card-amount">{fmt(h.amount)}%</div>}
+                        <div className="card-sub">{h.date}</div>
                       </div>
                     </div>
-                    <div className="card-right">
-                      <div className={`card-pnl ${pnlCls(c.pnl)}`}>{sign(c.pnl)}${fmt(c.pnl)}</div>
-                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </>
           )}
         </div>

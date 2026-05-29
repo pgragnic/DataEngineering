@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Run from Termux: python3 ~/DataEngineering/etoro-react/patch_app.py
-Patches ~/app.py — track_user route with recent trades history
+Patches ~/app.py — track_user route with snapshot-diff history
 """
 import re, shutil, sys
 from pathlib import Path
@@ -19,7 +19,18 @@ src = APP.read_text()
 NEW_ROUTE = '''@app.route("/api/track/<username>")
 def track_user(username):
     try:
-        from datetime import datetime, timedelta
+        import json as _json
+        from datetime import datetime
+        from pathlib import Path
+
+        EVENTS_FILE = Path.home() / "etoro_track_events.json"
+
+        def load_events():
+            try: return _json.loads(EVENTS_FILE.read_text())
+            except: return {}
+
+        def save_events(data):
+            EVENTS_FILE.write_text(_json.dumps(data, ensure_ascii=False))
 
         # 1. CID
         r = requests.get(
@@ -36,72 +47,73 @@ def track_user(username):
         )
         r.raise_for_status()
         data = r.json()
-        agg_positions = data.get("AggregatedPositions", [])
+        agg = data.get("AggregatedPositions", [])
 
-        # 3. Historique récent (90 derniers jours)
-        start = (datetime.utcnow() - timedelta(days=90)).strftime("%Y-%m-%dT%H:%M:%S")
-        end   = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
-        rh = requests.get(
-            "https://www.etoro.com/sapi/trade-data-real/history/public/credit/flat",
-            params={"cid": cid, "startTime": start, "endTime": end,
-                    "pageNumber": 1, "pageSize": 40},
-            timeout=12
-        )
-        history_items = []
-        if rh.status_code == 200:
-            hdata = rh.json()
-            # response peut être une liste ou {"items": [...]}
-            if isinstance(hdata, list):
-                history_items = hdata
-            elif isinstance(hdata, dict):
-                for key in ("items", "Items", "PositionActions", "data", "Data"):
-                    if key in hdata and isinstance(hdata[key], list):
-                        history_items = hdata[key]
-                        break
-                if not history_items:
-                    history_items = [hdata]  # debug fallback
-
-        # 4. Noms des instruments
-        hist_ids = list({p.get("InstrumentID") or p.get("instrumentId") or 0
-                         for p in history_items} - {0})
-        all_ids  = list({p["InstrumentID"] for p in agg_positions} | set(hist_ids))
+        # 3. Noms des instruments
+        ids = [p["InstrumentID"] for p in agg]
         r = requests.get(
-            f"https://api.etorostatic.com/sapi/instrumentsmetadata/V1.1/instruments?ids={','.join(map(str, all_ids))}",
+            f"https://api.etorostatic.com/sapi/instrumentsmetadata/V1.1/instruments?ids={','.join(map(str,ids))}",
             timeout=12
         )
-        meta = {
-            m["InstrumentID"]: m["SymbolFull"]
-            for m in r.json().get("InstrumentDisplayDatas", [])
-        }
+        meta = {m["InstrumentID"]: m["SymbolFull"]
+                for m in r.json().get("InstrumentDisplayDatas", [])}
 
-        # 5. Positions ouvertes
+        # 4. Positions actuelles
         positions = []
-        for p in agg_positions:
+        current_map = {}
+        for p in agg:
             iid = p["InstrumentID"]
-            positions.append({
+            entry = {
+                "iid":    iid,
                 "name":   meta.get(iid, f"#{iid}"),
                 "amount": round(p.get("Value", 0), 2),
                 "pnl":    round(p.get("NetProfit", 0), 2),
                 "isBuy":  p.get("Direction") != "Sell",
-            })
+            }
+            current_map[iid] = entry
+            positions.append({k: v for k, v in entry.items() if k != "iid"})
         positions.sort(key=lambda x: -x["amount"])
 
-        # 6. Historique
-        history = []
-        for h in history_items[:30]:
-            iid    = h.get("InstrumentID") or h.get("instrumentId")
-            action = h.get("Action") or h.get("action") or ""
-            dt     = h.get("CloseDateTime") or h.get("OpenDateTime") or h.get("Date") or h.get("date") or ""
-            pnl    = h.get("NetProfit") or h.get("netProfit") or h.get("PNL") or 0
-            history.append({
-                "name":   meta.get(iid, f"#{iid}") if iid else "?",
-                "action": action,
-                "date":   dt[:10] if dt else "",
-                "pnl":    round(float(pnl), 2),
-                "raw":    h,  # debug — à retirer après validation
-            })
+        # 5. Diff avec le snapshot précédent
+        events = load_events()
+        key = username.lower()
+        user = events.get(key, {"last": {}, "history": []})
+        last_map = user.get("last", {})
+        today = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
 
-        return jsonify({"positions": positions, "history": history, "_histKeys": list(history_items[0].keys()) if history_items else []})
+        new_events = []
+        # Positions ouvertes depuis la dernière visite
+        for iid, p in current_map.items():
+            siid = str(iid)
+            if siid not in last_map:
+                new_events.append({
+                    "name":   p["name"],
+                    "action": "open",
+                    "isBuy":  p["isBuy"],
+                    "amount": p["amount"],
+                    "date":   today,
+                })
+        # Positions fermées depuis la dernière visite
+        for siid, p in last_map.items():
+            if int(siid) not in current_map:
+                new_events.append({
+                    "name":   p["name"],
+                    "action": "close",
+                    "isBuy":  p["isBuy"],
+                    "date":   today,
+                })
+
+        history = user.get("history", [])
+        if new_events:
+            history = new_events + history
+
+        # Sauvegarde snapshot
+        user["last"]    = {str(iid): p for iid, p in current_map.items()}
+        user["history"] = history[:50]
+        events[key] = user
+        save_events(events)
+
+        return jsonify({"positions": positions, "history": history[:20]})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
