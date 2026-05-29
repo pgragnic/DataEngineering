@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+const CACHE_KEY = 'etoro_portfolio'
+const CACHE_TTL = 5 * 60 * 1000
+
 const fmt = n => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
 const pnlCls = n => n > 0 ? 'pos' : n < 0 ? 'neg' : ''
 const sign = n => n > 0 ? '+' : ''
@@ -31,6 +34,129 @@ function sortPositions(positions, key) {
   })
 }
 
+function Logo({ symbol }) {
+  const [err, setErr] = useState(false)
+  const sym = (symbol || '').split('/')[0].split(' ')[0].toLowerCase()
+  if (err) {
+    return (
+      <div className="pos-logo-wrap">
+        <div className="pos-logo-init">{(symbol || '').slice(0, 3).toUpperCase()}</div>
+      </div>
+    )
+  }
+  return (
+    <div className="pos-logo-wrap">
+      <img
+        className="pos-logo"
+        src={`https://etoro-cdn.etorostatic.com/market-avatars/${sym}/150x150.png`}
+        onError={() => setErr(true)}
+        alt={symbol}
+      />
+    </div>
+  )
+}
+
+function FuturesBanner({ futures, marketOpen }) {
+  if (marketOpen || !futures.length) return null
+  return (
+    <div className="futures-banner">
+      <div className="futures-scroll">
+        {futures.map((f, i) => (
+          <div key={i} className="futures-card">
+            <div className="futures-name">{f.name}</div>
+            <div className={`futures-price ${pnlCls(f.changePct)}`}>
+              {f.price ? `$${fmt(f.price)}` : '—'}
+            </div>
+            {f.changePct != null && (
+              <div className={`futures-chg ${pnlCls(f.changePct)}`}>
+                {sign(f.changePct)}{f.changePct.toFixed(2)}%
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function GroupedCard({ group, setConfirm }) {
+  const [expanded, setExpanded] = useState(false)
+  const total    = group.reduce((s, p) => s + p.amount, 0)
+  const totalPnl = group.reduce((s, p) => s + p.pnl, 0)
+  const first    = group[0]
+  const sym      = (first.name || '').split('/')[0].split(' ')[0]
+
+  if (group.length === 1) {
+    const p = group[0]
+    return (
+      <div className="card">
+        <div className="card-row">
+          <div className="card-left">
+            <div className="card-logo-name">
+              <Logo symbol={sym} />
+              <div>
+                <div className="card-name">{p.name}</div>
+                <div className="card-sub">{p.isBuy ? '▲ Long' : '▼ Short'} · {p.openDate}</div>
+                {p.openRate > 0 && (
+                  <div className="card-rates">Ouv {p.openRate}{p.closeRate > 0 ? ` · Act ${p.closeRate}` : ''}</div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="card-right">
+            <div className="card-amount">${fmt(p.amount)}</div>
+            <div className={`card-pnl ${pnlCls(p.pnl)}`}>{sign(p.pnl)}${fmt(p.pnl)}</div>
+          </div>
+        </div>
+        <button
+          className="btn-sell"
+          onClick={() => setConfirm({ type: 'sell', pid: p.positionID, name: p.name, amount: p.amount })}
+        >Vendre</button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="card">
+      <div className="card-row" onClick={() => setExpanded(!expanded)} style={{ cursor: 'pointer' }}>
+        <div className="card-left">
+          <div className="card-logo-name">
+            <Logo symbol={sym} />
+            <div>
+              <div className="card-name">
+                {first.name}
+                <span className="badge">{group.length}</span>
+              </div>
+              <div className="card-sub">{group.length} positions · {expanded ? '▲ réduire' : '▼ détail'}</div>
+            </div>
+          </div>
+        </div>
+        <div className="card-right">
+          <div className="card-amount">${fmt(total)}</div>
+          <div className={`card-pnl ${pnlCls(totalPnl)}`}>{sign(totalPnl)}${fmt(totalPnl)}</div>
+        </div>
+      </div>
+      {expanded && (
+        <div className="sub-positions">
+          {group.map(p => (
+            <div key={p.positionID} className="sub-pos">
+              <div className="sub-pos-info">
+                <span>{p.isBuy ? '▲' : '▼'} {p.openDate}</span>
+                <span>Ouv {p.openRate}</span>
+                <span className={pnlCls(p.pnl)}>{sign(p.pnl)}${fmt(p.pnl)}</span>
+              </div>
+              <button
+                className="btn-sell-sm"
+                onClick={() => setConfirm({ type: 'sell', pid: p.positionID, name: p.name, amount: p.amount })}
+              >Vendre</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ResponseBox({ state, data }) {
   if (!state) return null
   if (state === 'loading') return <div className="resp-box loading">Traitement en cours…</div>
@@ -54,13 +180,7 @@ function PieChart({ positions }) {
     const pct = p.amount / total
     const startAngle = cumAngle
     cumAngle += pct * 360
-    return {
-      dash: pct * circ,
-      startAngle,
-      color: COLORS[i % COLORS.length],
-      name: p.name,
-      pct,
-    }
+    return { dash: pct * circ, startAngle, color: COLORS[i % COLORS.length], name: p.name, pct }
   })
 
   return (
@@ -70,9 +190,7 @@ function PieChart({ positions }) {
         {slices.map((s, i) => (
           <circle
             key={i} cx={cx} cy={cy} r={r}
-            fill="none"
-            stroke={s.color}
-            strokeWidth="34"
+            fill="none" stroke={s.color} strokeWidth="34"
             strokeDasharray={`${s.dash} ${circ - s.dash}`}
             transform={`rotate(${s.startAngle} ${cx} ${cy})`}
           />
@@ -92,20 +210,16 @@ function PieChart({ positions }) {
 }
 
 function BarChart({ positions }) {
-  const top = [...positions]
-    .sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl))
-    .slice(0, 8)
+  const top = [...positions].sort((a, b) => Math.abs(b.pnl) - Math.abs(a.pnl)).slice(0, 8)
   if (!top.length) return null
-
   const maxAbs = Math.max(...top.map(p => Math.abs(p.pnl)), 0.01)
-  const H = 110
-  const W = top.length * 38
+  const H = 110, W = top.length * 38
 
   return (
     <svg viewBox={`0 0 ${W} ${H + 30}`} className="bar-svg">
       {top.map((p, i) => {
-        const bh = Math.max((Math.abs(p.pnl) / maxAbs) * H, 2)
-        const x = i * 38 + 5
+        const bh   = Math.max((Math.abs(p.pnl) / maxAbs) * H, 2)
+        const x    = i * 38 + 5
         const fill = p.pnl >= 0 ? '#00C288' : '#FF4D6D'
         return (
           <g key={i}>
@@ -124,40 +238,128 @@ function BarChart({ positions }) {
   )
 }
 
+function DailyMovers({ positions }) {
+  const [mode, setMode] = useState('gainers')
+
+  const withPct = positions
+    .filter(p => p.amount > 0 && (p.amount - p.pnl) !== 0)
+    .map(p => ({ ...p, pnlPct: (p.pnl / (p.amount - p.pnl)) * 100 }))
+
+  const items = mode === 'gainers'
+    ? [...withPct].sort((a, b) => b.pnlPct - a.pnlPct).slice(0, 5)
+    : [...withPct].sort((a, b) => a.pnlPct - b.pnlPct).slice(0, 5)
+
+  if (!items.length) return null
+  const maxAbs = Math.max(...items.map(p => Math.abs(p.pnlPct)), 0.01)
+
+  return (
+    <div className="movers-card">
+      <div className="movers-header">
+        <span className="movers-title">Performances</span>
+        <div className="movers-toggle">
+          <button className={mode === 'gainers' ? 'active' : ''} onClick={() => setMode('gainers')}>↗</button>
+          <button className={mode === 'losers'  ? 'active' : ''} onClick={() => setMode('losers')}>↘</button>
+        </div>
+      </div>
+      <div className="movers-chart">
+        {items.map(p => {
+          const pct   = p.pnlPct
+          const bh    = Math.max((Math.abs(pct) / maxAbs) * 100, 4)
+          const color = pct >= 0 ? '#00C288' : '#FF4D6D'
+          const sym   = (p.name || '').split('/')[0].split(' ')[0]
+          return (
+            <div key={p.positionID} className="mover-col">
+              <div className="mover-pct" style={{ color }}>
+                {pct >= 0 ? '+' : ''}{pct.toFixed(2)}%
+              </div>
+              <div className="mover-bar-wrap">
+                <div className="mover-bar" style={{ height: bh, background: color + 'CC' }} />
+              </div>
+              <div className="mover-logo"><Logo symbol={sym} /></div>
+              <div className="mover-sym">{sym.slice(0, 7)}</div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
-  const [tab, setTab] = useState('portfolio')
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [tab, setTab]               = useState('portfolio')
+  const [data, setData]             = useState(null)
+  const [loading, setLoading]       = useState(true)
   const [lastUpdate, setLastUpdate] = useState(null)
-  const [sortKey, setSortKey] = useState('amount_desc')
-  const [confirm, setConfirm] = useState(null)
+  const [fromCache, setFromCache]   = useState(false)
+  const [sortKey, setSortKey]       = useState('amount_desc')
+  const [confirm, setConfirm]       = useState(null)
+  const [futures, setFutures]       = useState([])
+  const [marketOpen, setMarketOpen] = useState(true)
 
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery,   setSearchQuery]   = useState('')
   const [searchResults, setSearchResults] = useState([])
-  const [searching, setSearching] = useState(false)
-  const [selected, setSelected] = useState(null)
-  const [buyPct, setBuyPct] = useState('')
-  const [buyResp, setBuyResp] = useState(null)
-  const [buyRespData, setBuyRespData] = useState(null)
+  const [searching,     setSearching]     = useState(false)
+  const [selected,      setSelected]      = useState(null)
+  const [buyPct,        setBuyPct]        = useState('')
+  const [buyResp,       setBuyResp]       = useState(null)
+  const [buyRespData,   setBuyRespData]   = useState(null)
 
-  const [actionResp, setActionResp] = useState(null)
+  const [actionResp,     setActionResp]     = useState(null)
   const [actionRespData, setActionRespData] = useState(null)
 
-  const API = import.meta.env.VITE_API_URL || ''
+  const [trackData,    setTrackData]    = useState(null)
+  const [trackLoading, setTrackLoading] = useState(false)
 
-  const load = () => {
-    setLoading(true)
+  const API        = import.meta.env.VITE_API_URL || ''
+  const TRACK_USER = 'Thomaspj'
+
+  const load = (silent = false) => {
+    if (!silent) setLoading(true)
     fetch(`${API}/api/portfolio`)
       .then(r => r.json())
       .then(d => {
         setData(d)
         setLastUpdate(new Date().toLocaleTimeString('fr-FR'))
+        setFromCache(false)
         setLoading(false)
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ data: d, time: Date.now() })) } catch {}
       })
       .catch(() => setLoading(false))
   }
 
-  useEffect(() => { load() }, [])
+  const loadFutures = () => {
+    fetch(`${API}/api/futures`)
+      .then(r => r.json())
+      .then(d => { setFutures(d.futures || []); setMarketOpen(d.marketOpen ?? true) })
+      .catch(() => {})
+  }
+
+  const loadTrack = () => {
+    setTrackLoading(true)
+    fetch(`${API}/api/track/${TRACK_USER}`)
+      .then(r => r.json())
+      .then(d => { setTrackData(d); setTrackLoading(false) })
+      .catch(() => setTrackLoading(false))
+  }
+
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY)
+      if (cached) {
+        const { data: d, time } = JSON.parse(cached)
+        if (Date.now() - time < CACHE_TTL) {
+          setData(d)
+          setLastUpdate(new Date(time).toLocaleTimeString('fr-FR'))
+          setFromCache(true)
+          setLoading(false)
+        }
+      }
+    } catch {}
+    load()
+    loadFutures()
+    const iv = setInterval(() => { load(true); loadFutures() }, CACHE_TTL)
+    return () => clearInterval(iv)
+  }, [])
 
   const positions = data?.positions || []
   const pending   = data?.pending   || []
@@ -166,6 +368,13 @@ export default function App() {
   const totalPnl  = positions.reduce((s, p) => s + p.pnl, 0)
   const invested  = positions.reduce((s, p) => s + p.amount, 0)
   const sorted    = sortPositions(positions, sortKey)
+
+  const groupMap = sorted.reduce((acc, p) => {
+    if (!acc[p.name]) acc[p.name] = []
+    acc[p.name].push(p)
+    return acc
+  }, {})
+  const groupList = Object.values(groupMap)
 
   async function doSearch(q) {
     if (!q.trim()) { setSearchResults([]); return }
@@ -217,26 +426,33 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* HEADER — always visible */}
       <header>
         <div className="header-title">eToro Portfolio</div>
         <div className="header-equity">${fmt(equity)}</div>
         <div className="header-sub">
           <span className={pnlCls(totalPnl)}>{sign(totalPnl)}${fmt(totalPnl)}</span>
-          {lastUpdate && <span className="header-time"> · {lastUpdate}</span>}
+          {lastUpdate && (
+            <span className={`header-time ${fromCache ? 'update-cache' : 'update-live'}`}>
+              {' · '}{fromCache ? '▷' : '●'} MàJ {lastUpdate}
+            </span>
+          )}
         </div>
       </header>
 
-      {/* NAV */}
+      <FuturesBanner futures={futures} marketOpen={marketOpen} />
+
       <nav>
-        {['portfolio', 'acheter', 'pending', 'stats'].map(t => (
+        {['portfolio', 'acheter', 'pending', 'stats', 'suivi'].map(t => (
           <button key={t} className={tab === t ? 'active' : ''} onClick={() => setTab(t)}>
-            {t === 'portfolio' ? 'Portfolio' : t === 'acheter' ? 'Acheter' : t === 'pending' ? 'En Attente' : 'Stats'}
+            {t === 'portfolio' ? 'Portfolio'
+              : t === 'acheter' ? 'Acheter'
+              : t === 'pending' ? 'En Attente'
+              : t === 'stats'   ? 'Stats'
+              : 'Suivi'}
           </button>
         ))}
       </nav>
 
-      {/* CONFIRM MODAL */}
       {confirm && (
         <div className="modal-overlay" onClick={() => setConfirm(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
@@ -258,7 +474,6 @@ export default function App() {
         </div>
       )}
 
-      {/* PORTFOLIO */}
       {tab === 'portfolio' && (
         <div className="tab-content">
           <div className="summary-row">
@@ -277,43 +492,20 @@ export default function App() {
           </div>
           <div className="sort-row">
             {SORTS.map(s => (
-              <button
-                key={s.key}
-                className={`sort-btn${sortKey === s.key ? ' active' : ''}`}
-                onClick={() => setSortKey(s.key)}
-              >{s.label}</button>
+              <button key={s.key} className={`sort-btn${sortKey === s.key ? ' active' : ''}`} onClick={() => setSortKey(s.key)}>
+                {s.label}
+              </button>
             ))}
           </div>
           <ResponseBox state={actionResp} data={actionRespData} />
           {loading && <div className="spinner">Chargement…</div>}
-          {sorted.map(p => (
-            <div key={p.positionID} className="card">
-              <div className="card-row">
-                <div className="card-left">
-                  <div className="card-name">{p.name}</div>
-                  <div className="card-sub">{p.isBuy ? '▲ Long' : '▼ Short'} · {p.openDate}</div>
-                  {p.openRate > 0 && (
-                    <div className="card-rates">
-                      Ouv {p.openRate}{p.closeRate > 0 ? ` · Act ${p.closeRate}` : ''}
-                    </div>
-                  )}
-                </div>
-                <div className="card-right">
-                  <div className="card-amount">${fmt(p.amount)}</div>
-                  <div className={`card-pnl ${pnlCls(p.pnl)}`}>{sign(p.pnl)}${fmt(p.pnl)}</div>
-                </div>
-              </div>
-              <button
-                className="btn-sell"
-                onClick={() => setConfirm({ type: 'sell', pid: p.positionID, name: p.name, amount: p.amount })}
-              >Vendre</button>
-            </div>
+          {groupList.map((group, i) => (
+            <GroupedCard key={group[0].name + i} group={group} setConfirm={setConfirm} />
           ))}
           {!loading && !positions.length && <div className="empty">Aucune position ouverte</div>}
         </div>
       )}
 
-      {/* ACHETER */}
       {tab === 'acheter' && (
         <div className="tab-content">
           <input
@@ -358,7 +550,6 @@ export default function App() {
         </div>
       )}
 
-      {/* EN ATTENTE */}
       {tab === 'pending' && (
         <div className="tab-content">
           <ResponseBox state={actionResp} data={actionRespData} />
@@ -384,9 +575,9 @@ export default function App() {
         </div>
       )}
 
-      {/* STATS */}
       {tab === 'stats' && (
         <div className="tab-content">
+          <DailyMovers positions={positions} />
           <div className="stats-grid">
             <div className="stat-card">
               <div className="stat-label">Equity</div>
@@ -405,14 +596,12 @@ export default function App() {
               <div className="stat-value">${fmt(cash)}</div>
             </div>
           </div>
-
           {positions.length > 0 && (
             <>
               <div className="section-title">Répartition du portefeuille</div>
               <div className="card">
                 <PieChart positions={sorted} />
               </div>
-
               <div className="section-title">P&L par position (top 8)</div>
               <div className="card bar-card">
                 <BarChart positions={positions} />
@@ -421,6 +610,64 @@ export default function App() {
           )}
           {loading && <div className="spinner">Chargement…</div>}
           {!loading && !positions.length && <div className="empty">Aucune donnée disponible</div>}
+        </div>
+      )}
+
+      {tab === 'suivi' && (
+        <div className="tab-content">
+          <div className="track-header">
+            <span className="track-username">@{TRACK_USER}</span>
+            <button className="btn-refresh" onClick={loadTrack}>↻ Actualiser</button>
+          </div>
+          {!trackData && !trackLoading && (
+            <div className="empty">
+              <button className="btn-buy" onClick={loadTrack}>Charger le portfolio</button>
+            </div>
+          )}
+          {trackLoading && <div className="spinner">Chargement…</div>}
+          {trackData?.error && <div className="empty">Erreur : {trackData.error}</div>}
+          {trackData?.positions?.length > 0 && (
+            <>
+              <div className="section-title">Positions ouvertes ({trackData.positions.length})</div>
+              {trackData.positions.map((p, i) => (
+                <div key={i} className="card">
+                  <div className="card-row">
+                    <div className="card-left">
+                      <div className="card-name">{p.name}</div>
+                      <div className="card-sub">{p.isBuy ? '▲ Long' : '▼ Short'} · {p.openDate}</div>
+                      {p.openRate > 0 && (
+                        <div className="card-rates">Ouv {p.openRate}{p.closeRate > 0 ? ` · Act ${p.closeRate}` : ''}</div>
+                      )}
+                    </div>
+                    <div className="card-right">
+                      <div className="card-amount">${fmt(p.amount)}</div>
+                      <div className={`card-pnl ${pnlCls(p.pnl)}`}>{sign(p.pnl)}${fmt(p.pnl)}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+          {trackData?.closed?.length > 0 && (
+            <>
+              <div className="section-title">Transactions récentes</div>
+              {trackData.closed.map((c, i) => (
+                <div key={i} className="card card-closed">
+                  <div className="card-row">
+                    <div className="card-left">
+                      <div className="card-name">{c.name}</div>
+                      <div className="card-sub">
+                        {c.isBuy ? '▲ Achat' : '▼ Vente'} · {c.openDate} → {c.closeDate}
+                      </div>
+                    </div>
+                    <div className="card-right">
+                      <div className={`card-pnl ${pnlCls(c.pnl)}`}>{sign(c.pnl)}${fmt(c.pnl)}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>
