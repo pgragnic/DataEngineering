@@ -106,12 +106,12 @@ function GroupedCard({ group, setConfirm }) {
           <div className="card-right">
             <div className="card-amount">${fmt(p.amount)}</div>
             <div className={`card-pnl ${pnlCls(p.pnl)}`}>{sign(p.pnl)}${fmt(p.pnl)}</div>
+            <button
+              className="btn-sell"
+              onClick={() => setConfirm({ type: 'sell', pid: p.positionID, name: p.name, amount: p.amount })}
+            >Vendre</button>
           </div>
         </div>
-        <button
-          className="btn-sell"
-          onClick={() => setConfirm({ type: 'sell', pid: p.positionID, name: p.name, amount: p.amount })}
-        >Vendre</button>
       </div>
     )
   }
