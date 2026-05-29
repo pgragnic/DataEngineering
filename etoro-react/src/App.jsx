@@ -361,6 +361,10 @@ export default function App() {
     return () => clearInterval(iv)
   }, [])
 
+  useEffect(() => {
+    if (tab === 'suivi' && !trackData && !trackLoading) loadTrack()
+  }, [tab])
+
   const positions = data?.positions || []
   const pending   = data?.pending   || []
   const equity    = data?.equity    ?? 0
@@ -619,11 +623,6 @@ export default function App() {
             <span className="track-username">@{TRACK_USER}</span>
             <button className="btn-refresh" onClick={loadTrack}>↻ Actualiser</button>
           </div>
-          {!trackData && !trackLoading && (
-            <div className="empty">
-              <button className="btn-buy" onClick={loadTrack}>Charger le portfolio</button>
-            </div>
-          )}
           {trackLoading && <div className="spinner">Chargement…</div>}
           {trackData?.error && <div className="empty">Erreur : {trackData.error}</div>}
           {trackData?.positions?.length > 0 && (
