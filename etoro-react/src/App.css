@@ -223,31 +223,31 @@ nav button.active {
   align-self: flex-end;
   min-height: 28px;
   padding: 4px 12px;
-  background: var(--red-dim);
-  border: 1px solid var(--red);
+  background: var(--blue);
+  border: none;
   border-radius: var(--r-sm);
-  color: var(--red);
+  color: #FFFFFF;
   font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: background var(--t-fast);
 }
-.btn-sell:active { background: var(--red-mid); }
+.btn-sell:active { background: #165AA0; }
 
 .btn-sell-sm {
   min-height: 28px;
   padding: 4px 12px;
   background: transparent;
-  border: 1px solid var(--red);
+  border: 1px solid var(--blue);
   border-radius: var(--r-sm);
-  color: var(--red);
+  color: var(--blue);
   font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   flex-shrink: 0;
   transition: background var(--t-fast);
 }
-.btn-sell-sm:active { background: var(--red-dim); }
+.btn-sell-sm:active { background: #EEF5FD; }
 
 .btn-cancel-order {
   min-height: 44px;
@@ -349,11 +349,11 @@ input::placeholder { color: var(--text-muted); }
 
 .btn-modal-sell {
   flex: 1; min-height: 46px; padding: 0;
-  background: var(--red); border: none; border-radius: var(--r-md);
+  background: var(--blue); border: none; border-radius: var(--r-md);
   color: #fff; font-size: var(--text-base); font-weight: 700; cursor: pointer;
-  transition: opacity var(--t-fast);
+  transition: background var(--t-fast);
 }
-.btn-modal-sell:active { opacity: 0.85; }
+.btn-modal-sell:active { background: #165AA0; }
 
 .btn-modal-cancel {
   flex: 1; min-height: 46px; padding: 0;
