@@ -6,9 +6,9 @@ import { getInspection, generateChecklist, updateInspection } from "@/lib/api";
 import HeaderBar from "@/components/HeaderBar";
 
 const PREV_AUDITS = [
-  { date: "2025-06-15", label: "Audit ok", nc: "NC mineure → à vérifier", alert: true },
-  { date: "2024-07-22", label: "Audit ok", nc: "3 observations", alert: false },
-  { date: "2023-09-04", label: "NC mineure", nc: "1 observation", alert: false },
+  { date: "2025-03-12", label: "NC mineure (ouverte)", nc: "§7.1.5 étalonnage calibreurs → à vérifier", alert: true },
+  { date: "2024-04-08", label: "Audit ok", nc: "2 observations clôturées", alert: false },
+  { date: "2023-06-15", label: "NC mineure clôturée", nc: "§7.2 habilitations — plan de formation mis en place", alert: false },
 ];
 
 export default function BriefPage() {
@@ -99,8 +99,8 @@ export default function BriefPage() {
 
               <div>
                 <p className="text-[10px] font-bold text-uc-text-mute uppercase tracking-wider">Contact</p>
-                <p className="text-xs text-uc-text-body mt-0.5">Marie Lemaitre</p>
-                <p className="text-[10px] text-uc-text-mute">Responsable Qualité</p>
+                <p className="text-xs text-uc-text-body mt-0.5">Karim Benali</p>
+                <p className="text-[10px] text-uc-text-mute">Responsable Qualité — Direction du Matériel</p>
               </div>
 
               <div>
@@ -199,7 +199,7 @@ export default function BriefPage() {
           <div className="bg-uc-bg-dark rounded-lg p-3 border-l-4 border-uc-alert mt-1">
             <p className="text-xs font-bold text-uc-alert mb-1">⚠ Point d&apos;attention</p>
             <p className="text-xs text-uc-accent-lt leading-snug">
-              La NC mineure de 2025 n&apos;est pas clôturée → point S2 inclus automatiquement par l&apos;Agent 1 — ne pas l&apos;ignorer
+              NC mineure §7.1.5 ouverte depuis mars 2025 (étalonnage calibreurs) → point S2.P2 inclus automatiquement par l&apos;Agent 1 — vérifier clôture obligatoire
             </p>
           </div>
         </div>

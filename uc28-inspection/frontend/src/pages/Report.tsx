@@ -25,7 +25,7 @@ export default function ReportPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          to: ["marie.lemaitre@alpha.fr"],
+          to: ["karim.benali@ratp.fr"],
           cc: ["audit.bv@bureauveritas.com"],
           subject: `Pré-rapport audit ${inspection?.client_name} — ${new Date().toLocaleDateString("fr-FR")}`,
           message: "Veuillez trouver ci-joint le pré-rapport de votre audit ISO 9001.",
@@ -125,7 +125,7 @@ export default function ReportPage() {
           <h2 className="text-xs font-bold text-uc-text-mute uppercase tracking-wider">Envoi au client</h2>
           <div className="flex flex-col gap-2 text-sm">
             {[
-              ["À", "marie.lemaitre@alpha.fr"],
+              ["À", "karim.benali@ratp.fr"],
               ["CC", "audit.bv@bureauveritas.com"],
               ["Objet", `Pré-rapport audit ${inspection?.client_name} — ${new Date().toLocaleDateString("fr-FR")}`],
             ].map(([label, value]) => (
@@ -170,7 +170,7 @@ export default function ReportPage() {
           <div className="bg-white rounded-2xl p-8 text-center shadow-2xl">
             <p className="text-4xl mb-3">✅</p>
             <p className="text-lg font-bold text-uc-text-dark">Rapport envoyé</p>
-            <p className="text-sm text-uc-text-mute">à Marie Lemaitre · {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</p>
+            <p className="text-sm text-uc-text-mute">à Karim Benali (RATP) · {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</p>
           </div>
         </div>
       )}

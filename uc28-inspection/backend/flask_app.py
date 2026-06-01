@@ -57,43 +57,43 @@ def dashboard_audits_today():
     db = load_db()
     today = datetime.now().strftime("%Y-%m-%d")
     # Real inspection ID from DB (first found), fallback to fixture ID
-    alpha_id = next(iter(db["inspections"]), "ins_alpha_20260512")
-    alpha_status = db["inspections"].get(alpha_id, {}).get("status", "prepared")
+    ratp_id = next(iter(db["inspections"]), "ins_ratp_championnet_20260601")
+    ratp_status = db["inspections"].get(ratp_id, {}).get("status", "prepared")
 
     return jsonify([
         {
-            "id": "demo_bureau_0800",
+            "id": "demo_bv_ouverture_0800",
             "scheduled_at": f"{today}T08:00:00+02:00",
-            "client_name": "Vérif. matinale · planning",
-            "location": "Bureau Lyon",
-            "scope": "Préparation des audits du jour · revue des briefs",
+            "client_name": "Réunion d'ouverture BV · briefing terrain",
+            "location": "Bureau BV Paris 8e",
+            "scope": "Revue des dossiers RATP · préparation checklists · coordination équipe audit",
             "status": "completed",
             "is_next": False,
         },
         {
-            "id": "demo_omega_1000",
-            "scheduled_at": f"{today}T10:00:00+02:00",
-            "client_name": "Fournisseur OMEGA Industries",
-            "location": "Site Vénissieux",
-            "scope": "Audit ISO 9001 · Processus production",
+            "id": "demo_ratp_massy_1030",
+            "scheduled_at": f"{today}T10:30:00+02:00",
+            "client_name": "RATP — Atelier Massy-Palaiseau (RER B)",
+            "location": "Massy-Palaiseau · Dépôt RER B",
+            "scope": "Audit ISO 9001 · Maintenance matériel Coradia · habilitations soudeurs",
             "status": "completed",
             "is_next": False,
         },
         {
-            "id": alpha_id,
+            "id": ratp_id,
             "scheduled_at": f"{today}T14:30:00+02:00",
-            "client_name": "Fournisseur ALPHA",
-            "location": "Tours · Bâtiment B",
-            "scope": "Audit ISO 9001 · Processus achats et contrôle réception",
-            "status": alpha_status,
-            "is_next": alpha_status != "completed",
+            "client_name": "RATP — Centre Maintenance Championnet (Ligne 13)",
+            "location": "Paris 18e · Championnet",
+            "scope": "Audit ISO 9001 · Maintenance MF 77 · étalonnage · habilitations électriques",
+            "status": ratp_status,
+            "is_next": ratp_status != "completed",
         },
         {
-            "id": "demo_delta_1700",
-            "scheduled_at": f"{today}T17:00:00+02:00",
-            "client_name": "Sous-traitant DELTA Logistics",
-            "location": "Visioconférence",
-            "scope": "Audit ISO 9001 · Suivi NC mineures 2025",
+            "id": "demo_bv_cloture_1730",
+            "scheduled_at": f"{today}T17:30:00+02:00",
+            "client_name": "Clôture journée · synthèse Bureau Veritas",
+            "location": "Bureau BV Paris 8e",
+            "scope": "Rédaction des constats · validation chef de mission · envoi pré-rapports",
             "status": "prepared",
             "is_next": False,
         },
@@ -102,11 +102,11 @@ def dashboard_audits_today():
 @app.get("/api/dashboard/recurrences")
 def dashboard_recurrences():
     return jsonify([{
-        "inspection_id": "ins_alpha_20250615",
-        "client_name": "Fournisseur ALPHA",
-        "norm_reference": "ISO 9001 §8.4.3",
-        "opened_at": "2025-06-15",
-        "label": "Procédure contrôle réception à formaliser",
+        "inspection_id": "ins_ratp_championnet_20250312",
+        "client_name": "RATP — Championnet L13",
+        "norm_reference": "ISO 9001 §7.1.5",
+        "opened_at": "2025-03-12",
+        "label": "Étalonnage calibreurs de jeu de roues non archivé",
     }])
 
 # --- Inspections ---
@@ -367,9 +367,9 @@ def reset_demo():
     fixtures = json.loads(FIXTURES_PATH.read_text(encoding="utf-8"))
     db = load_db()
 
-    # Remove existing ALPHA inspections
+    # Remove existing RATP Championnet inspections
     to_remove = [iid for iid, ins in db["inspections"].items()
-                 if ins["client_name"] == "Fournisseur ALPHA"]
+                 if "RATP" in ins.get("client_name", "") or "Fournisseur ALPHA" in ins.get("client_name", "")]
     for iid in to_remove:
         del db["inspections"][iid]
         db["constats"] = [c for c in db["constats"] if c["inspection_id"] != iid]
@@ -408,7 +408,7 @@ def replay_constat(index):
     db = load_db()
     ins_entry = next(
         ((iid, ins) for iid, ins in db["inspections"].items()
-         if ins["client_name"] == "Fournisseur ALPHA"),
+         if "RATP" in ins.get("client_name", "")),
         None,
     )
     if not ins_entry:

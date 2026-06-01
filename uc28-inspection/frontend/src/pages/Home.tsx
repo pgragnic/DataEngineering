@@ -4,9 +4,9 @@ import { getDashboardKpis, getAuditsToday, type AuditToday } from "@/lib/api";
 import HeaderBar from "@/components/HeaderBar";
 
 const RECURRENCES = [
-  { client: "Fournisseur ALPHA", level: "NC mineure", ref: "§8.4.3", date: "2025-06-15", label: "Procédure contrôle réception", borderColor: "border-uc-alert", textColor: "text-uc-alert" },
-  { client: "Fournisseur OMEGA", level: "Observation", ref: "§7.2", date: "2025-11-08", label: "Polyvalence opérateurs", borderColor: "border-uc-primary-2", textColor: "text-uc-primary-2" },
-  { client: "Sous-traitant DELTA", level: "NC majeure", ref: "§7.1.4", date: "2026-02-21", label: "Sécurité quai chargement", borderColor: "border-uc-danger", textColor: "text-uc-danger" },
+  { client: "RATP — Championnet L13", level: "NC mineure", ref: "§7.1.5", date: "2025-03-12", label: "Étalonnage calibreurs non archivé", borderColor: "border-uc-alert", textColor: "text-uc-alert" },
+  { client: "RATP — Massy-Palaiseau RER B", level: "Observation", ref: "§7.2", date: "2025-09-18", label: "Matrice compétences soudeurs", borderColor: "border-uc-primary-2", textColor: "text-uc-primary-2" },
+  { client: "Alstom Transport", level: "NC majeure", ref: "§7.1.4", date: "2026-01-28", label: "Stockage batteries Li-ion hors norme", borderColor: "border-uc-danger", textColor: "text-uc-danger" },
 ];
 
 function KpiCard({ label, value, color }: { label: string; value: number | string; color: string }) {
@@ -90,7 +90,7 @@ export default function Home() {
       <HeaderBar
         variant="dashboard"
         title={`Mes audits — ${new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}`}
-        subtitle="Bureau Veritas Certification · Antoine Mercier · Lyon"
+        subtitle="Bureau Veritas Certification · Antoine Mercier · Paris"
       />
 
       <main className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
@@ -156,7 +156,7 @@ export default function Home() {
           Antoine Mercier · Lead Auditor
         </span>
         <span>
-          Lyon · {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} · UC 28 — Inspection Augmentée
+          Paris · {new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} · UC 28 — Inspection Augmentée
         </span>
       </footer>
     </div>
