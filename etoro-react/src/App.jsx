@@ -333,6 +333,10 @@ export default function App() {
   const [trackData,    setTrackData]    = useState(null)
   const [trackLoading, setTrackLoading] = useState(false)
 
+  const [showConfig,   setShowConfig]   = useState(false)
+  const [configRatio,  setConfigRatio]  = useState('')
+  const [configSaving, setConfigSaving] = useState(false)
+
   const API        = import.meta.env.VITE_API_URL || ''
   const TRACK_USER = 'Thomaspj'
 
@@ -363,6 +367,26 @@ export default function App() {
       .then(r => r.json())
       .then(d => { setTrackData(d); setTrackLoading(false) })
       .catch(() => setTrackLoading(false))
+  }
+
+  const openConfig = () => {
+    fetch(`${API}/api/config`)
+      .then(r => r.json())
+      .then(d => { setConfigRatio(String(d.ratio ?? 1)); setShowConfig(true) })
+      .catch(() => { setConfigRatio('1'); setShowConfig(true) })
+  }
+
+  const saveRatio = () => {
+    const r = parseFloat(configRatio)
+    if (isNaN(r) || r <= 0) return
+    setConfigSaving(true)
+    fetch(`${API}/api/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ratio: r }),
+    })
+      .then(() => { setShowConfig(false); setConfigSaving(false); load() })
+      .catch(() => setConfigSaving(false))
   }
 
   useEffect(() => {
@@ -454,6 +478,7 @@ export default function App() {
   return (
     <div className="app">
       <header>
+        <button className="btn-config" onClick={openConfig} aria-label="Paramètres">⚙</button>
         <div className="header-title">eToro Portfolio</div>
         <div className="header-equity">${fmt(equity)}</div>
         <div className="header-sub">
@@ -479,6 +504,32 @@ export default function App() {
           </button>
         ))}
       </nav>
+
+      {showConfig && (
+        <div className="modal-overlay" onClick={() => setShowConfig(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">Ratio d'affichage</div>
+            <div className="modal-name" style={{marginBottom:16}}>
+              Multiplie toutes les valeurs monétaires.<br/>
+              Exemple : 0.691 pour afficher ~69% du réel.
+            </div>
+            <input
+              type="number"
+              step="0.001"
+              min="0.001"
+              value={configRatio}
+              onChange={e => setConfigRatio(e.target.value)}
+              style={{textAlign:'center', fontSize:'1.2rem', fontWeight:700}}
+            />
+            <div className="modal-buttons">
+              <button className="btn-modal-back" onClick={() => setShowConfig(false)}>Annuler</button>
+              <button className="btn-modal-sell" onClick={saveRatio} disabled={configSaving}>
+                {configSaving ? '…' : 'Enregistrer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {confirm && (
         <div className="modal-overlay" onClick={() => setConfirm(null)}>
