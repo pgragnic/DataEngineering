@@ -284,7 +284,6 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                             ⚠ RATP
                           </span>
                         )}
-                        <span className="text-[10px] text-ink-muted font-mono">{section.clause}</span>
                       </div>
                     </div>
                     <div className="text-sm font-medium text-ink">{section.titre}</div>
@@ -365,7 +364,6 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand text-white">Auditeur</span>
                       <span className="text-xs font-bold text-brand">{sec.titre}</span>
-                      {sec.clause && <span className="text-[10px] text-ink-muted font-mono">{sec.clause}</span>}
                     </div>
                     <button onClick={() => setCustomSections(prev => prev.filter(s => s.id !== sec.id))} className="text-ink-muted hover:text-red-500 text-sm leading-none shrink-0">×</button>
                   </div>
