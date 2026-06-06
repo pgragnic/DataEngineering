@@ -127,6 +127,26 @@ SLIDE 2 — LE PERSONNAGE                                      ⏱ 0:45
    Il peut supprimer les points non pertinents pour ce site
    — un clic sur le × au survol de chaque item."
 
+  ┌─ COULISSES — Comment la checklist est générée ──────────────────────┐
+  │ L'Agent IA combine 5 sources pour construire cette checklist :       │
+  │                                                                      │
+  │  1. REFERENTIEL CHOISI     ISO 9001:2015 (sélectionnable)           │
+  │  2. SCOPE DE L'AUDIT       §7.1.5 Métrologie · §8.7 NC             │
+  │                            → S2 et S3 sont les sections directement │
+  │                              issues du scope de cette mission        │
+  │  3. CONTEXTE DU SITE       Atelier maintenance, 218 personnes,      │
+  │                            durée 2h30 → sections calibrées          │
+  │  4. HISTORIQUE NC          NC mineure §7.1.5 non clôturée (2024)   │
+  │                            → S2 marqué priorité haute               │
+  │  5. DOCUMENTS FOURNISSEUR  3 docs Mei Lin Zhang pré-analysés       │
+  │                            → alertes ⚠ RATP sur §7.1.5 et §8.7    │
+  │                                                                      │
+  │  S1 (§7.5) = documentaire générique                                 │
+  │  S2 (§7.1.5) = étalonnage, directement dans le scope               │
+  │  S3 (§8.7) = gestion NC, directement dans le scope + récidive      │
+  │  S4 (§7.2) = compétences, lié à l'effectif de 218 personnes        │
+  └──────────────────────────────────────────────────────────────────────┘
+
 [CLIC → survoler un item de la checklist → montrer le × → supprimer un item]
 
 [DIRE]
@@ -172,6 +192,27 @@ SLIDE 2 — LE PERSONNAGE                                      ⏱ 0:45
    Pas un template générique : §7.1.5, étalonnage, atelier Sucy."
 
 [POINTER la colonne réponses]
+
+  ┌─ COULISSES — Comment les questions suggérées sont générées ─────────┐
+  │ Déclencheur : clic sur un item de la checklist                      │
+  │ Appel réel  : POST /questions_oui_non (Claude via GEP)              │
+  │                                                                      │
+  │ Contexte envoyé à Claude :                                           │
+  │   • Texte de l'item   "Vérification des certificats d'étalonnage"  │
+  │   • Clause ISO        §7.1.5                                         │
+  │   • Titre de section  "Étalonnage & équipements de mesure"          │
+  │                                                                      │
+  │ Claude génère 3 questions de vérification terrain contextualisées,  │
+  │ pas des templates génériques :                                       │
+  │   "Les certificats sont-ils datés de moins de 12 mois ?"           │
+  │   "L'équipement est-il couvert par un laboratoire accrédité COFRAC?"│
+  │   "Le registre des équipements est-il à jour ?"                     │
+  │                                                                      │
+  │ Les réponses Oui/Non sélectionnées par Marc sont injectées          │
+  │ dans le prompt d'analyse → enrichissent le diagnostic Claude.       │
+  │                                                                      │
+  │ Fallback : 3 questions statiques si GEP indisponible.               │
+  └──────────────────────────────────────────────────────────────────────┘
 
 [DIRE]
   "Il peut qualifier rapidement : conforme, non conforme, non applicable.
@@ -232,6 +273,27 @@ SLIDE 2 — LE PERSONNAGE                                      ⏱ 0:45
    Marc n'a rien eu à chercher."
 
 [POINTER les articles RAG en bas de la colonne centrale]
+
+  ┌─ COULISSES — Comment les articles normatifs sont sélectionnés ──────┐
+  │ Déclencheur : clic sur un item de la checklist (même déclencheur    │
+  │              que les questions et les suggestions)                   │
+  │                                                                      │
+  │ Logique de sélection basée sur la clause de l'item :                │
+  │   clause contient "7.1.5" → articles §7.1.5 Métrologie             │
+  │   clause contient "8.7"   → articles §8.7 Non-conformités          │
+  │   autre clause            → articles par défaut (§9.2, §10.3, §6.1)│
+  │                                                                      │
+  │ Base documentaire : corpus ISO 9001:2015 indexé par                 │
+  │ sentence-transformers (modèle BERT multilingue, préchargé au        │
+  │ démarrage du backend pour éviter la latence).                       │
+  │                                                                      │
+  │ Chaque article affiche en tooltip au survol :                       │
+  │   • Numéro de clause complet                                        │
+  │   • Titre normatif officiel                                         │
+  │   • Extrait verbatim de la norme                                    │
+  │                                                                      │
+  │ Marc peut vérifier la source exacte sans sortir de l'application.   │
+  └──────────────────────────────────────────────────────────────────────┘
 
 [DIRE]
   "En bas : les articles de la norme ISO 9001 référencés.
@@ -406,12 +468,27 @@ R : "Claude vision reçoit l'image PNG du canvas et transcrit le texte.
      En fallback (GEP indisponible) : observation prédéfinie par item
      — le scénario de démo reste fluide dans les deux cas."
 
+Q : "Sur quels critères la checklist est-elle générée ?"
+R : "5 sources : le référentiel ISO sélectionné, le scope des clauses
+     de la mission (§7.1.5 et §8.7 pour Sucy-en-Brie), le contexte
+     du site (type d'atelier, effectif 218 personnes), l'historique
+     des NC précédentes, et les documents déposés par le fournisseur
+     pré-analysés par Claude. Les sections S2 et S3 sont directement
+     issues du scope — S1 et S4 sont génériques."
+
 Q : "Comment les questions oui/non sont-elles générées ?"
 R : "Appel POST /questions_oui_non à chaque sélection d'item.
      Claude génère 3 questions de vérification contextualisées
      par le texte de l'item, la clause ISO et le titre de section.
      Ces réponses sont ensuite injectées dans le prompt d'analyse
      pour enrichir le diagnostic."
+
+Q : "D'où viennent les articles ISO affichés ?"
+R : "Base documentaire ISO 9001:2015 indexée par sentence-transformers
+     (BERT multilingue), préchargée au démarrage du backend.
+     La sélection est déterministe : clause §7.1.5 → articles métrologie,
+     §8.7 → articles non-conformités. Le tooltip au survol affiche
+     le texte verbatim de la norme — Marc peut citer la source exacte."
 
 ════════════════════════════════════════════════════════════════════
 CHECKLIST AVANT DE MONTER SUR SCÈNE
