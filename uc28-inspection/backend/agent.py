@@ -15,6 +15,133 @@ from rag import trouver_clause
 
 load_dotenv()
 
+# Données fictives par point de contrôle (item_texte exact)
+_QUESTIONS_MOCK_ITEM = {
+    "Procédures d'étalonnage à jour": [
+        "La date de révision de la procédure est-elle visible ?",
+        "La version en vigueur est-elle affichée au poste ?",
+        "L'approbation de la dernière révision est-elle signée ?",
+    ],
+    "Registres de calibration accessibles": [
+        "Les registres sont-ils disponibles sur le poste de travail ?",
+        "Les dernières entrées sont-elles renseignées et lisibles ?",
+        "L'accès au registre numérique est-il fonctionnel ?",
+    ],
+    "Instructions de travail signées": [
+        "Chaque instruction porte-t-elle une signature d'approbation ?",
+        "Les opérateurs ont-ils signé les instructions qui les concernent ?",
+        "Les instructions signées sont-elles affichées au poste ?",
+    ],
+    "Plan qualité révisé < 12 mois": [
+        "La date de dernière révision du plan qualité est-elle < 12 mois ?",
+        "La revue du plan qualité est-elle documentée et signée ?",
+        "Les actions du plan qualité sont-elles suivies et à jour ?",
+    ],
+    "Clés dynamométriques étalonnées": [
+        "Les étiquettes d'étalonnage des clés sont-elles valides ?",
+        "Toutes les clés en service figurent-elles au registre ?",
+        "Les clés périmées sont-elles retirées du poste ?",
+    ],
+    "Étiquettes d'étalonnage visibles": [
+        "Chaque équipement porte-t-il une étiquette lisible ?",
+        "La date de prochain étalonnage est-elle visible ?",
+        "Les étiquettes sont-elles correctement fixées et non altérées ?",
+    ],
+    "Registre des équipements complet": [
+        "Tous les équipements de mesure figurent-ils au registre ?",
+        "Les dates d'étalonnage sont-elles renseignées pour chaque équipement ?",
+        "Le registre est-il mis à jour après chaque intervention ?",
+    ],
+    "Zone quarantaine délimitée": [
+        "La zone quarantaine est-elle physiquement délimitée et identifiée ?",
+        "L'accès à la zone quarantaine est-il contrôlé ?",
+        "La signalétique de la zone est-elle visible et conforme ?",
+    ],
+    "Étiquetage pièces NC conforme": [
+        "Chaque pièce NC porte-t-elle une étiquette de non-conformité ?",
+        "Les étiquettes NC mentionnent-elles la cause et la décision ?",
+        "Les pièces NC en attente de décision sont-elles identifiées ?",
+    ],
+    "Traçabilité des actions correctives": [
+        "Chaque NC fait-elle l'objet d'une fiche d'action corrective ?",
+        "Les délais de traitement des actions sont-ils respectés ?",
+        "L'efficacité des actions correctives est-elle vérifiée ?",
+    ],
+    "Habilitations opérateurs à jour": [
+        "Les habilitations de tous les opérateurs en poste sont-elles valides ?",
+        "Les habilitations périmées ont-elles été retirées ?",
+        "Le planning de renouvellement est-il tenu à jour ?",
+    ],
+    "Plan de formation documenté": [
+        "Le plan de formation annuel est-il formalisé et approuvé ?",
+        "Les formations réalisées sont-elles tracées avec présences ?",
+        "Les besoins identifiés en entretien sont-ils pris en compte ?",
+    ],
+}
+
+_SUGGESTIONS_MOCK_ITEM = {
+    "Procédures d'étalonnage à jour": [
+        "Procédure PE-07 v2 — version v3 approuvée non déployée au poste",
+        "Date de révision absente sur la procédure d'étalonnage affichée atelier",
+        "Procédure signée par responsable démissionnaire en 2023 — non mise à jour",
+    ],
+    "Registres de calibration accessibles": [
+        "Registre de calibration introuvable poste 12 — opérateur oriente vers bureau",
+        "Registre papier illisible — encre effacée sur les 3 dernières colonnes",
+        "Accès GPAO refusé — droits non mis à jour depuis mutation de l'opérateur",
+    ],
+    "Instructions de travail signées": [
+        "Fiche de travail FT-032 sans signature responsable — utilisée depuis 8 mois",
+        "3 opérateurs n'ont pas signé la mise à jour instruction freinage janv. 2025",
+        "Affichage poste 5 : instruction v1 de 2022 non remplacée par la v3 actuelle",
+    ],
+    "Plan qualité révisé < 12 mois": [
+        "Plan qualité daté de janvier 2024 — aucune révision depuis 17 mois",
+        "Revue annuelle plan qualité non réalisée — réunion annulée, non reprogrammée",
+        "5 actions du plan qualité 'en cours' depuis plus de 12 mois sans mise à jour",
+    ],
+    "Clés dynamométriques étalonnées": [
+        "Clé dynamométrique poste 7 — étiquette périmée depuis 14 mois, encore en service",
+        "3 clés sans étiquette d'étalonnage identifiées sur la ligne B",
+        "Clé retirée du registre mais toujours utilisée par l'opérateur de nuit",
+    ],
+    "Étiquettes d'étalonnage visibles": [
+        "Étiquette étalonnage illisible sur manomètre ligne C — usée par les solvants",
+        "4 équipements de contrôle sans étiquette — arrachée, non remplacée",
+        "Date de prochain étalonnage dépassée de 3 mois — non signalée au responsable",
+    ],
+    "Registre des équipements complet": [
+        "Registre des équipements : 6 appareils présents en atelier absents de la liste",
+        "Colonne 'dernier étalonnage' vide pour 8 équipements sur 22",
+        "Mise à jour du registre non réalisée depuis départ du responsable métrologie",
+    ],
+    "Zone quarantaine délimitée": [
+        "Zone quarantaine délimitée par ruban adhésif partiellement décollé — confusion possible",
+        "Aucun panneau 'QUARANTAINE' visible — opérateurs ne distinguent pas la zone",
+        "Pièces conformes stockées à 50 cm de la zone NC sans séparation physique",
+    ],
+    "Étiquetage pièces NC conforme": [
+        "10 pièces en zone quarantaine sans étiquette NC — statut inconnu des opérateurs",
+        "Étiquettes NC sans mention de la cause ni du responsable décision",
+        "Pièces 'dérogation en attente' non distinguées des pièces 'à rebuter'",
+    ],
+    "Traçabilité des actions correctives": [
+        "NC ouverte nov. 2024 sans action corrective associée — statut toujours 'ouvert'",
+        "3 fiches 8D dont le délai est dépassé — aucune relance documentée",
+        "Clôture d'action corrective sans vérification d'efficacité terrain",
+    ],
+    "Habilitations opérateurs à jour": [
+        "Habilitation de 3 techniciens expirée depuis janv. 2025 — actifs sur ligne",
+        "Nouvel opérateur réalise des opérations de freinage sans habilitation validée",
+        "Registre des habilitations non mis à jour depuis départ de l'ancienne RH",
+    ],
+    "Plan de formation documenté": [
+        "Plan de formation 2025 non établi — aucun document ni calendrier visible",
+        "Formations réalisées en mars 2025 sans émargement ni feuille de présence",
+        "3 besoins formation identifiés en entretien annuel absents du plan 2025",
+    ],
+}
+
 _QUESTIONS_MOCK = {
     "§7.5":   ["Les documents de référence sont-ils signés et à jour ?",
                "Les enregistrements sont-ils accessibles et lisibles ?",
@@ -175,7 +302,9 @@ def generer_suggestions(item_texte: str, clause: str, section_titre: str) -> lis
     result = _llm_json_list(prompt, max_tokens=300)
     if result:
         return result
-    # Fallback statique par clause
+    # Fallback statique : item d'abord, puis clause
+    if item_texte in _SUGGESTIONS_MOCK_ITEM:
+        return _SUGGESTIONS_MOCK_ITEM[item_texte]
     key = next((k for k in _SUGGESTIONS_MOCK if clause.startswith(k)), None)
     return _SUGGESTIONS_MOCK.get(key, _DEFAULT_SUGGESTIONS)
 
@@ -195,7 +324,9 @@ def generer_questions_oui_non(item_texte: str, clause: str, section_titre: str) 
     result = _llm_json_list(prompt, max_tokens=200)
     if result:
         return result
-    # Fallback statique par clause
+    # Fallback statique : item d'abord, puis clause
+    if item_texte in _QUESTIONS_MOCK_ITEM:
+        return _QUESTIONS_MOCK_ITEM[item_texte]
     key = next((k for k in _QUESTIONS_MOCK if clause.startswith(k)), None)
     return _QUESTIONS_MOCK.get(key, _DEFAULT_QUESTIONS)
 
