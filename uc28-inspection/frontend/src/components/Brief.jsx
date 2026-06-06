@@ -459,11 +459,11 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                   <div className="text-xs text-ink-muted">Auditeur : {audit.auditeur}</div>
                   <div className="flex gap-2 mt-1">
                     {audit.nc_majeures > 0 && (
-                      <span className="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-bold bg-red-100 text-red-700 px-1.5 py-0.5 rounded">
                         {audit.nc_majeures} NC maj.
                       </span>
                     )}
-                    <span className="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
                       {audit.nc_mineures} NC min.
                     </span>
                   </div>
@@ -473,7 +473,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     </div>
                   ))}
                   {audit.alerte && (
-                    <div className="mt-2 text-[10px] text-orange-700 font-medium border-t border-orange-200 pt-2 flex items-start gap-1">
+                    <div className="mt-2 text-[10px] text-orange-700 font-bold border-t border-orange-200 pt-2 flex items-start gap-1">
                       <AlertTriangle size={10} className="shrink-0 mt-0.5" />
                       NC mineure de 2024 non clôturée — à vérifier en priorité
                     </div>
