@@ -188,7 +188,7 @@ export default function InspectionCapture({ constats, onAddConstat, onGenererRap
 
   async function handleAnalyser() {
     if (!observation.trim()) return
-    setLoading(true); setError(null); setResultat(null); setWaveActive(true)
+    setLoading(true); setError(null); setResultat(null)
     try {
       const reponsesLignes = questionsOuiNon
         .map((q, i) => reponses[i] ? `- ${q} → ${reponses[i] === "oui" ? "Oui ✓" : "Non ✗"}` : null)
@@ -208,7 +208,7 @@ export default function InspectionCapture({ constats, onAddConstat, onGenererRap
         momentFortTimer.current = setTimeout(() => setMomentFort(false), 3500)
       }
     } catch (e) { setError(e.message) }
-    finally { setLoading(false); setWaveActive(false) }
+    finally { setLoading(false) }
   }
 
   function handleValider() {
