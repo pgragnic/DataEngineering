@@ -15,22 +15,69 @@ from rag import trouver_clause
 
 load_dotenv()
 
-_gep_client = None
-_anthropic_client = None
+_QUESTIONS_MOCK = {
+    "§7.5":   ["Les documents de référence sont-ils signés et à jour ?",
+               "Les enregistrements sont-ils accessibles et lisibles ?",
+               "La maîtrise des versions est-elle assurée ?"],
+    "§7.1.5": ["Les certificats d'étalonnage sont-ils valides ?",
+               "Les équipements affichent-ils une étiquette d'étalonnage ?",
+               "Le registre d'étalonnage est-il complet et à jour ?"],
+    "§8.7":   ["La zone quarantaine est-elle délimitée et identifiée ?",
+               "Les pièces NC sont-elles séparées des pièces conformes ?",
+               "Un responsable NC est-il désigné et informé ?"],
+    "§7.2":   ["Les habilitations des opérateurs sont-elles à jour ?",
+               "Les formations requises ont-elles été réalisées ?",
+               "Les fiches de compétences sont-elles disponibles ?"],
+    "§8.4":   ["Les fournisseurs critiques sont-ils évalués annuellement ?",
+               "Les critères de sélection fournisseurs sont-ils documentés ?",
+               "Les non-conformités fournisseurs sont-elles tracées ?"],
+    "§8.5":   ["Les paramètres de production sont-ils maîtrisés ?",
+               "La traçabilité des lots est-elle assurée ?",
+               "Les plans de contrôle sont-ils appliqués ?"],
+    "§9.1":   ["Les indicateurs de performance sont-ils mesurés régulièrement ?",
+               "Les résultats d'audit interne sont-ils documentés ?",
+               "Les actions correctives sont-elles suivies et clôturées ?"],
+    "§10.2":  ["Les non-conformités font-elles l'objet d'une analyse de cause ?",
+               "Les actions correctives sont-elles efficaces et vérifiées ?",
+               "Les récurrences sont-elles tracées et traitées ?"],
+}
+_DEFAULT_QUESTIONS = ["La situation observée est-elle conforme aux exigences ?",
+                      "Des preuves documentaires sont-elles disponibles ?",
+                      "Les responsables concernés sont-ils informés ?"]
 
-def _get_anthropic_client():
-    global _anthropic_client
-    if _anthropic_client is not None:
-        return _anthropic_client
-    key = os.getenv("ANTHROPIC_API_KEY", "")
-    if not key:
-        return None
-    try:
-        import anthropic
-        _anthropic_client = anthropic.Anthropic(api_key=key)
-        return _anthropic_client
-    except Exception:
-        return None
+_SUGGESTIONS_MOCK = {
+    "§7.5":   ["Procédure de contrôle v2 obsolète — version v3 non diffusée aux opérateurs",
+               "Enregistrements de contrôle de la semaine absents — classeur vide",
+               "Plan qualité non signé par le responsable depuis 14 mois"],
+    "§7.1.5": ["Clé dynamométrique poste 7 sans étiquette — dernier étalonnage non retrouvé",
+               "3 manomètres ligne B périmés depuis 6 mois — utilisés quotidiennement",
+               "Registre étalonnage vierge pour les équipements de contrôle thermique"],
+    "§8.7":   ["Zone quarantaine mal délimitée — pièces conformes et NC côte à côte",
+               "Bac NC sans étiquetage — opérateurs ne distinguent pas les statuts",
+               "10 pièces rebutées sans fiche de non-conformité associée"],
+    "§7.2":   ["Nouvel opérateur intervient seul sans habilitation validée",
+               "Habilitations de 3 techniciens expirées depuis janvier 2025",
+               "Plan de formation 2025 non établi — aucun calendrier visible"],
+    "§8.4":   ["Fournisseur acier non évalué depuis 2 ans — aucun audit planifié",
+               "Bon de commande sans référence aux exigences qualité applicables",
+               "NC fournisseur ouverte en nov. 2024 — aucune réponse reçue"],
+    "§8.5":   ["Paramètre de soudure hors tolérance non détecté avant expédition",
+               "Fiche suiveuse absente sur 4 lots en cours de fabrication",
+               "Contrôle intermédiaire non réalisé — opérateur n'a pas signé"],
+    "§9.1":   ["Tableau de bord qualité non mis à jour depuis 3 mois",
+               "Taux de rebut du mois non calculé — données brutes non consolidées",
+               "Indicateur livraison à l'heure à 62 % — objectif 90 % non atteint"],
+    "§10.2":  ["Même cause racine identifiée pour 3 NC consécutives — action non efficace",
+               "Fiche 8D ouverte en janvier — actions correctives non clôturées",
+               "Récidive §8.7 constatée — plan d'action précédent non appliqué"],
+}
+_DEFAULT_SUGGESTIONS = [
+    "Clé dynamométrique poste 7 sans étiquette d'étalonnage — dernier étalonnage non retrouvé",
+    "Zone quarantaine pièces non conformes mal délimitée — pièces conformes et NC côte à côte",
+    "Nouvel opérateur intervient seul sur opérations de freinage sans habilitation validée",
+]
+
+_gep_client = None
 
 def _get_gep_client():
     global _gep_client
@@ -84,30 +131,19 @@ Retourne ce JSON (sans markdown, sans explication, 1 phrase max par champ) :
         return None
 
 def _llm_json_list(prompt: str, max_tokens: int = 300) -> list[str]:
-    """Appelle GEP ou Anthropic et retourne une liste JSON de 3 chaînes."""
+    """Appelle GEP et retourne une liste JSON de 3 chaînes, ou [] si indisponible."""
     gep = _get_gep_client()
-    if gep:
-        try:
-            model = os.getenv("GEP_MODEL", "anthropic.claude-sonnet-4-6")
-            resp = gep.chat.completions.create(
-                model=model, max_completion_tokens=max_tokens,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            raw = resp.choices[0].message.content.strip()
-        except Exception:
-            raw = ""
-    else:
-        ant = _get_anthropic_client()
-        if ant is None:
-            return []
-        try:
-            resp = ant.messages.create(
-                model="claude-sonnet-4-6", max_tokens=max_tokens,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            raw = resp.content[0].text.strip()
-        except Exception:
-            return []
+    if not gep:
+        return []
+    try:
+        model = os.getenv("GEP_MODEL", "anthropic.claude-sonnet-4-6")
+        resp = gep.chat.completions.create(
+            model=model, max_completion_tokens=max_tokens,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        raw = resp.choices[0].message.content.strip()
+    except Exception:
+        return []
     if raw.startswith("```"):
         raw = raw.split("```", 2)[1]
         if raw.startswith("json"):
@@ -136,7 +172,12 @@ def generer_suggestions(item_texte: str, clause: str, section_titre: str) -> lis
         f"Retourne UNIQUEMENT un tableau JSON de 3 chaînes, sans markdown :\n"
         f'["observation 1", "observation 2", "observation 3"]'
     )
-    return _llm_json_list(prompt, max_tokens=300)
+    result = _llm_json_list(prompt, max_tokens=300)
+    if result:
+        return result
+    # Fallback statique par clause
+    key = next((k for k in _SUGGESTIONS_MOCK if clause.startswith(k)), None)
+    return _SUGGESTIONS_MOCK.get(key, _DEFAULT_SUGGESTIONS)
 
 
 def generer_questions_oui_non(item_texte: str, clause: str, section_titre: str) -> list[str]:
@@ -151,7 +192,12 @@ def generer_questions_oui_non(item_texte: str, clause: str, section_titre: str) 
         f"Retourne UNIQUEMENT un tableau JSON de 3 chaînes, sans markdown :\n"
         f'["question 1", "question 2", "question 3"]'
     )
-    return _llm_json_list(prompt, max_tokens=200)
+    result = _llm_json_list(prompt, max_tokens=200)
+    if result:
+        return result
+    # Fallback statique par clause
+    key = next((k for k in _QUESTIONS_MOCK if clause.startswith(k)), None)
+    return _QUESTIONS_MOCK.get(key, _DEFAULT_QUESTIONS)
 
 
 def synthetiser_observation(observation: str) -> str:
