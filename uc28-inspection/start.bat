@@ -1,81 +1,38 @@
 @echo off
-chcp 65001 >nul
-title UC 28 — Inspection Augmentée
+setlocal
 
-echo.
-echo ╔══════════════════════════════════════════╗
-echo ║  UC 28 — Inspection Augmentée           ║
-echo ╚══════════════════════════════════════════╝
-echo.
+echo ==============================================
+echo  UC 28 - Inspection Augmentee (Code Resonance)
+echo ==============================================
 
+:: Dossier racine du projet (dossier contenant ce .bat)
 set ROOT=%~dp0
-set BACKEND_DIR=%ROOT%backend
-set FRONTEND_DIR=%ROOT%frontend
 
-:: ── Vérifier .env ────────────────────────────────────────────────────────────
-if not exist "%BACKEND_DIR%\.env" (
-    echo [!] backend\.env introuvable — copie depuis .env.example...
-    copy "%ROOT%.env.example" "%BACKEND_DIR%\.env" >nul
-    echo [!] IMPORTANT : editez backend\.env et renseignez ANTHROPIC_API_KEY
+:: Verification du .env backend
+if not exist "%ROOT%backend\.env" (
+    echo [ERREUR] backend\.env introuvable.
+    echo Copiez backend\.env.example vers backend\.env et renseignez ANTHROPIC_API_KEY.
     pause
     exit /b 1
 )
-echo [OK] .env present
 
-:: ── Vérifier Python ──────────────────────────────────────────────────────────
-python --version >nul 2>&1
-if errorlevel 1 (
-    echo [!] Python introuvable. Installez Python 3.11+ depuis python.org
-    pause
-    exit /b 1
-)
-echo [OK] Python detecte
+:: -- Backend --------------------------------------------------
+echo.
+echo [1/2] Demarrage du backend FastAPI sur http://localhost:8000 ...
+start "Backend - FastAPI" cmd /k "cd /d "%ROOT%backend" && uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 
-:: ── Installer deps Python ────────────────────────────────────────────────────
-if not exist "%BACKEND_DIR%\.venv" (
-    echo [>>] Creation du venv Python...
-    python -m venv "%BACKEND_DIR%\.venv"
-    echo [>>] Installation des dependances Python...
-    "%BACKEND_DIR%\.venv\Scripts\pip" install -r "%BACKEND_DIR%\requirements.txt"
-    echo [OK] Dependances Python installees
-)
+:: Pause pour laisser uvicorn demarrer avant le frontend
+timeout /t 3 /nobreak > nul
 
-:: ── Vérifier Node ────────────────────────────────────────────────────────────
-node --version >nul 2>&1
-if errorlevel 1 (
-    echo [!] Node.js introuvable. Installez Node.js 20+ depuis nodejs.org
-    pause
-    exit /b 1
-)
-echo [OK] Node.js detecte
-
-:: ── Installer deps npm ───────────────────────────────────────────────────────
-if not exist "%FRONTEND_DIR%\node_modules\.bin\vite" (
-    echo [>>] Installation des dependances npm...
-    pushd "%FRONTEND_DIR%"
-    call npm install
-    popd
-    echo [OK] npm install termine
-)
-
-:: ── Démarrer le backend ──────────────────────────────────────────────────────
-echo [>>] Demarrage du backend Flask sur http://localhost:8000
-start "UC28-Backend" cmd /k "cd /d %BACKEND_DIR% && .venv\Scripts\python flask_app.py"
-
-:: Attendre que Flask soit prêt
-echo [>>] Attente du backend...
-timeout /t 4 /nobreak >nul
-
-:: ── Démarrer le frontend ─────────────────────────────────────────────────────
-echo [>>] Demarrage du frontend Vite sur http://localhost:3000
-start "UC28-Frontend" cmd /k "cd /d %FRONTEND_DIR% && npm run dev"
+:: -- Frontend -------------------------------------------------
+echo [2/2] Demarrage du frontend Vite sur http://localhost:5173 ...
+start "Frontend - Vite" cmd /k "cd /d "%ROOT%frontend" && npm run dev"
 
 echo.
-echo [OK] Services demarres !
+echo Tous les composants sont lances.
+echo   Backend  : http://localhost:8000
+echo   API docs : http://localhost:8000/docs
+echo   Frontend : http://localhost:5173
 echo.
-echo   Backend  : http://localhost:8000/health
-echo   Frontend : http://localhost:3000
-echo.
-echo Fermez les deux fenetres de terminal pour arreter les services.
-echo.
-pause
+echo Fermez les fenetres de terminal pour arreter les serveurs.
+endlocal

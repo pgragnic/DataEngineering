@@ -1,147 +1,103 @@
 # UC 28 — Inspection Augmentée
 
-Copilote IA pour les inspecteurs Bureau Veritas / APAVE.
-Pipeline : **Agent 1** (check-list) → **Agent 2** (classification NC) → **Agent 3** (pré-rapport DOCX).
-Hackathon Vibe Coding Capgemini × Anthropic · démo cible 3 min.
+> **Hackathon Capgemini × Anthropic 2026 — Équipe Code Resonance**
+
+## Équipe
+
+| Membre | Périmètre |
+|---|---|
+| Habib KOFFI | Agent IA (Claude API) |
+| Véronique POILANE ZHANG | Interface utilisateur (React/Vite) |
+| Philippe GRAGNIC | Data & démo |
+
+## Description
+
+Solution d'inspection augmentée assistée par IA pour les auditeurs qualité terrain (démo : client RATP).
+L'agent IA s'appuie sur Claude (Anthropic) pour analyser des observations ISO 9001, détecter des non-conformités, générer des synthèses professionnelles et proposer des suggestions contextuelles.
+
+## Fonctionnalités principales
+
+### Parcours auditeur (8 écrans)
+- **Connexion** (écran 0.1) — formulaire mock pré-rempli (Marc Lefèvre)
+- **Sélection client** (écran 0.2) — RATP / Apave / Bureau Veritas
+- **Dashboard** (écran 1) — planning journée avec trait temps réel, filtres, temps de trajet, carte interactive Leaflet
+- **Brief** (écran 2) — contexte site, checklist pré-audit éditable (ajout/suppression d'items), ingestion CR externe
+- **Capture** (écrans 3/4) — saisie vocale, photo, analyse ISO, récidive, suggestions IA, questions oui/non
+- **Rapport** (écran 5) — rapport structuré, suivi actions correctives, signature, anonymisation RGPD
+
+### Intelligence artificielle (Claude API)
+| Fonctionnalité | Endpoint | Modèle |
+|---|---|---|
+| Analyse ISO 9001 (criticité, clause, score) | `POST /analyser` | Claude Sonnet 4.6 + RAG |
+| Synthèse de l'observation brute | `POST /synthetiser` | Claude Sonnet 4.6 |
+| Suggestions d'observations terrain | `POST /suggestions` | Claude Sonnet 4.6 |
+| Questions de vérification oui/non | `POST /questions_oui_non` | Claude Sonnet 4.6 |
+
+### UX avancée
+- 3 thèmes visuels : Classique / Agile Diagrams / Aria (Navy)
+- Carte interactive (Leaflet + OpenStreetMap) avec tracé de parcours, `flyTo` animé, filtre missions
+- Checklist éditable : suppression d'items de base, ajout de points auditeur, propagation à l'écran Capture
+- Barre d'action en haut de chaque écran (retour + action principale)
+- Badge hors-ligne réactif (`navigator.onLine`)
+- Animation "moment fort" sur NC MAJEURE
 
 ## Stack technique
 
-| Couche | Technologie |
-|---|---|
-| Frontend | Next.js 14 (App Router) + TypeScript + Tailwind |
-| Backend | FastAPI (Python 3.11+) |
-| LLM | Claude Sonnet 4.6 via SDK `anthropic` |
-| Base de données | PostgreSQL 16 |
-| RAG | ChromaDB embedded + sentence-transformers |
-| Génération DOCX | python-docx |
-| Packages Python | **uv** |
+| Couche | Technologie | Version |
+|---|---|---|
+| Backend | Python 3.12, FastAPI | ≥ 0.110 |
+| Frontend | React + Vite | React 18 / Vite 5 |
+| IA | Claude Sonnet 4.6 (Anthropic) | `claude-sonnet-4-6` |
+| RAG | sentence-transformers + SQLite | — |
+| Carte | Leaflet + OpenStreetMap | react-leaflet |
+| Styles | Tailwind CSS + Google Fonts Inter | — |
 
-## Démarrage rapide (< 10 min)
+## Structure
 
-### Pré-requis
-- [uv](https://docs.astral.sh/uv/getting-started/installation/) — `pip install uv` ou `curl -LsSf https://astral.sh/uv/install.sh | sh`
-- Node.js 20+
-- PostgreSQL 16 (local ou Docker)
-- Clé API Anthropic (organisateurs Capgemini ou compte perso)
-
-### 1. Variables d'environnement
-
-```bash
-cd uc28-inspection
-cp .env.example backend/.env
-# Éditer backend/.env : renseigner ANTHROPIC_API_KEY
-# Sur PC Capgemini : décommenter ANTHROPIC_BASE_URL Capgemini
+```
+.
+├── backend/
+│   ├── main.py        # Routes FastAPI
+│   ├── agent.py       # Analyse ISO, synthèse, suggestions, questions oui/non
+│   ├── rag.py         # RAG ISO 9001 (sentence-transformers)
+│   └── database.py    # SQLite — sites & historique audits
+├── frontend/
+│   └── src/
+│       ├── App.jsx                  # Routeur d'état principal
+│       ├── mockData.js              # Données démo RATP
+│       └── components/
+│           ├── LoginScreen.jsx
+│           ├── ClientList.jsx
+│           ├── Dashboard.jsx
+│           ├── MapCard.jsx
+│           ├── Brief.jsx
+│           ├── InspectionCapture.jsx
+│           ├── ReportView.jsx
+│           └── Header.jsx
+├── data/              # Données de démo (exclues du dépôt)
+├── docs/              # Spécifications et supports de démo
+├── CLAUDE.md          # Mémoire projet pour Claude Code
+└── start.bat          # Lancement en un clic (Windows)
 ```
 
-### 2. Base de données PostgreSQL
+## Démarrage rapide
 
-```bash
-# Avec Docker (recommandé)
-docker-compose up -d postgres
-
-# Ou PostgreSQL local (déjà installé)
-createuser -s uc28
-createdb -O uc28 uc28
-psql -c "ALTER USER uc28 WITH PASSWORD 'uc28';" uc28
+```powershell
+# Lancement en un clic (Windows)
+.\start.bat
 ```
 
-### 3. Backend FastAPI
-
-```bash
+```powershell
+# Backend (manuel)
 cd backend
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
-# Installer les dépendances avec uv (crée .venv automatiquement)
-uv sync
-
-# Migrations PostgreSQL
-uv run alembic upgrade head
-
-# Ingérer le corpus normatif ISO 9001 (une seule fois, ~2 min)
-uv run python -m app.rag.ingest
-
-# Lancer le backend
-uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### 4. Frontend Next.js
-
-```bash
+# Frontend (manuel)
 cd frontend
-npm install
-npm run dev
-# → http://localhost:3000
+npm install   # première fois
+npm run dev   # → http://localhost:5173
 ```
 
-### 5. Charger le scénario de démo
+La clé `ANTHROPIC_API_KEY` doit être définie dans `backend/.env` (format `sk-ant-api03-…`).
 
-```bash
-curl -X POST http://localhost:8000/api/dev/reset-demo
-```
-
-Ouvrez Chrome → `http://localhost:3000`
-
-## Commandes quotidiennes
-
-```bash
-# Backend
-cd backend
-uv run uvicorn app.main:app --reload        # serveur dev
-uv run pytest -q                            # tests
-uv run ruff check .                         # lint
-
-# Migrations
-uv run alembic upgrade head
-uv run alembic revision --autogenerate -m "description"
-
-# Agents (smoke test CLI)
-uv run python -m app.agents.preparation
-uv run python -m app.agents.capture
-
-# Corpus RAG
-uv run python -m app.rag.ingest
-
-# Frontend
-cd frontend
-npm run dev
-npm run typecheck
-npm run lint
-```
-
-## Structure du projet
-
-```
-uc28-inspection/
-├── .claude/
-│   └── settings.json        # Claude Code — config Capgemini
-├── .env.example             # Template variables d'environnement
-├── CLAUDE.md                # Instructions pour Claude Code
-├── docker-compose.yml       # PostgreSQL local
-├── docs/                    # Blueprint, UI spec, wireframes
-├── demo/                    # Script de démo
-└── backend/
-    ├── pyproject.toml       # Dépendances Python (uv sync)
-    ├── alembic/             # Migrations PostgreSQL
-    ├── app/
-    │   ├── agents/          # 3 agents Claude (préparation, capture, restitution)
-    │   ├── api/             # Routes FastAPI
-    │   ├── models/          # SQLAlchemy models
-    │   ├── rag/             # ChromaDB + retrieval
-    │   └── docx_gen/        # Génération DOCX
-    ├── corpus/iso9001/      # Corpus normatif ISO 9001 §4–10
-    ├── data/fixtures/       # Fixture scénario ALPHA
-    └── tests/
-└── frontend/
-    ├── app/                 # Pages Next.js (App Router)
-    └── components/          # Composants React
-```
-
-## Configuration Claude Code (Capgemini)
-
-Voir `.claude/settings.json` — à renseigner avec la clé fournie par les organisateurs.
-
-## Documentation
-
-- **Blueprint complet** : `docs/blueprint.md`
-- **Spec UI** : `docs/ui-spec.md`
-- **Script de démo** : `demo/script-teams.md`
-- **Fixture ALPHA** : `backend/data/fixtures/alpha.json`
+API docs interactives : [http://localhost:8000/docs](http://localhost:8000/docs)
