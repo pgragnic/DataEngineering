@@ -424,25 +424,25 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                       isRecording ? "border-red-400 bg-red-50" : canvasMode ? "border-brand" : "border-divider"
                     }`}
                   />
-                  <button
-                    onClick={() => setCanvasMode(v => !v)}
-                    title="Saisie manuscrite"
-                    className={`absolute right-9 top-2 p-1.5 rounded-full transition-all ${
-                      canvasMode ? "bg-brand text-white" : "text-ink-muted hover:text-ink hover:bg-canvas"
-                    }`}
-                  >
-                    <PenLine size={16} />
-                  </button>
                   {speechSupported && (
                     <button
                       onClick={toggleRecording}
-                      className={`absolute right-2 top-2 p-1.5 rounded-full transition-all ${
+                      className={`absolute right-9 top-2 p-1.5 rounded-full transition-all ${
                         isRecording ? "bg-red-500 text-white animate-pulse shadow-md shadow-red-300" : "text-ink-muted hover:text-ink hover:bg-canvas"
                       }`}
                     >
                       {isRecording ? <MicOff size={16} /> : <Mic size={16} />}
                     </button>
                   )}
+                  <button
+                    onClick={() => setCanvasMode(v => !v)}
+                    title="Saisie manuscrite"
+                    className={`absolute right-2 top-2 p-1.5 rounded-full transition-all ${
+                      canvasMode ? "bg-brand text-white" : "text-ink-muted hover:text-ink hover:bg-canvas"
+                    }`}
+                  >
+                    <PenLine size={16} />
+                  </button>
                 </div>
 
                 {photo && (
