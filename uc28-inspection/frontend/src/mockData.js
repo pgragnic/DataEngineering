@@ -379,6 +379,7 @@ export const SUPPLIER_DOCUMENTS = [
     deposePar: "Eve Dupont",
     mock: true,
     statut: "analysé",
+    url: "/documents/CR_Audit_nov_2024.docx",
     insights: {
       resume: "1 NC majeure §7.1.5 non clôturée (étalonnage). Zone quarantaine §8.7 partiellement traitée.",
       sections_a_risque: ["§7.1.5 — Étalonnage", "§8.7 — Zone quarantaine"],
@@ -395,6 +396,7 @@ export const SUPPLIER_DOCUMENTS = [
     deposePar: "Eve Dupont",
     mock: true,
     statut: "analysé",
+    url: "/documents/Procedures_etalonnage_v3.pdf",
     insights: {
       resume: "3 clés dynamométriques périmées depuis 14 mois. Responsable métrologie vacant depuis sept. 2024.",
       sections_a_risque: ["§7.1.5 — Métrologie"],
@@ -411,6 +413,7 @@ export const SUPPLIER_DOCUMENTS = [
     deposePar: "Eve Dupont",
     mock: true,
     statut: "analysé",
+    url: "/documents/Plan_qualite_2025.pdf",
     insights: {
       resume: "Action étalonnage §7.1.5 non réalisée (budget non alloué). Marquage zone quarantaine partiel.",
       sections_a_risque: ["§7.1.5 — Étalonnage COFRAC", "§8.7 — Zone quarantaine"],
