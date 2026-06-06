@@ -547,7 +547,7 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                       <span className="text-[10px] font-mono text-ink-muted">{resultat.clause_iso?.clause || "—"}</span>
                     </div>
                   </div>
-                  <div className="text-xs text-ink mb-1"><span className="font-semibold">Constat :</span> {resultat.diagnostic || observation}</div>
+                  <div className="text-xs text-ink mb-1"><span className="font-semibold">Constat :</span> {resultat.llm_enrichi ? (resultat.diagnostic || observation) : observation.trim()}</div>
                   {resultat.action_corrective && (
                     <div className="text-xs text-ink"><span className="font-semibold">Action corrective :</span> {resultat.action_corrective}</div>
                   )}
