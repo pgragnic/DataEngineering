@@ -554,7 +554,7 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
 
             <div className="card">
             <h3 className="section-label">
-              <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><MessageSquare size={11} className="text-brand" /></span>Réponses suggérées
+              <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><MessageSquare size={11} className="text-brand" /></span>Questions suggérées
             </h3>
             {!selectedItem ? (
               <p className="text-xs text-ink-muted italic">Sélectionner un point pour voir les réponses suggérées.</p>
