@@ -40,7 +40,6 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
   const [signatureMode, setSignatureMode] = useState(false)
   const [signataire, setSignataire] = useState("Mei Lin Zhang")
   const [signed, setSigned] = useState(false)
-  const [signMode, setSignMode] = useState("texte")
   const [isSignDrawing, setIsSignDrawing] = useState(false)
   const [signDataUrl, setSignDataUrl] = useState(null)
   const signCanvasRef = useRef(null)
@@ -85,7 +84,7 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
   function onSignUp() { setIsSignDrawing(false); signLastPt.current = null }
   function clearSignCanvas() { const c = signCanvasRef.current; if (c) c.getContext("2d").clearRect(0, 0, c.width, c.height) }
   function confirmerSignature() {
-    if (signMode === "dessin" && signCanvasRef.current) setSignDataUrl(signCanvasRef.current.toDataURL("image/png"))
+    if (signCanvasRef.current) setSignDataUrl(signCanvasRef.current.toDataURL("image/png"))
     setSigned(true)
   }
 
@@ -389,41 +388,20 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
                 </div>
               ) : signatureMode ? (
                 <div className="space-y-3">
-                  <div className="flex rounded-lg overflow-hidden border border-divider text-xs">
-                    <button onClick={() => setSignMode("texte")}
-                      className={`flex-1 py-1.5 font-medium transition-colors ${signMode === "texte" ? "bg-brand text-white" : "bg-canvas text-ink-muted hover:bg-surface"}`}>
-                      Nom tapé
-                    </button>
-                    <button onClick={() => { setSignMode("dessin"); clearSignCanvas() }}
-                      className={`flex-1 py-1.5 font-medium transition-colors ${signMode === "dessin" ? "bg-brand text-white" : "bg-canvas text-ink-muted hover:bg-surface"}`}>
-                      ✍ Manuscrite
-                    </button>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[10px] font-semibold text-ink-muted uppercase">Signature (partie auditée)</label>
+                      <button onClick={clearSignCanvas} className="text-[10px] text-ink-muted hover:text-ink underline">Effacer</button>
+                    </div>
+                    <canvas
+                      ref={signCanvasRef}
+                      width={600} height={110}
+                      className="w-full rounded-lg border border-brand/30 bg-white cursor-crosshair touch-none"
+                      onPointerDown={onSignDown}
+                      onPointerMove={onSignMove}
+                      onPointerUp={onSignUp}
+                    />
                   </div>
-
-                  {signMode === "texte" ? (
-                    <div>
-                      <label className="text-[10px] font-semibold text-ink-muted uppercase block mb-1">Nom du signataire (partie auditée)</label>
-                      <input type="text" value={signataire} onChange={(e) => setSignataire(e.target.value)}
-                        className="w-full border border-divider rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand"
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-[10px] font-semibold text-ink-muted uppercase">Tracer votre signature</label>
-                        <button onClick={clearSignCanvas} className="text-[10px] text-ink-muted hover:text-ink underline">Effacer</button>
-                      </div>
-                      <canvas
-                        ref={signCanvasRef}
-                        width={600} height={100}
-                        className="w-full rounded-lg border border-brand/30 bg-white cursor-crosshair touch-none"
-                        onPointerDown={onSignDown}
-                        onPointerMove={onSignMove}
-                        onPointerUp={onSignUp}
-                      />
-                    </div>
-                  )}
-
                   <div className="text-[10px] text-ink-muted">Date : {today}</div>
                   <div className="flex gap-2">
                     <button onClick={confirmerSignature} className="flex-1 text-xs font-semibold py-1.5 rounded-lg bg-brand-emerald text-white hover:bg-brand transition-colors shadow-sm">Confirmer la signature</button>
