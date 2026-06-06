@@ -535,8 +535,13 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                       <span className={`text-xs font-bold px-2 py-0.5 rounded ${momentFort ? "bg-red-600 text-white animate-pulse" : CRITICITE_STYLE[criticiteResultat]?.badge}`}>
                         {CRITICITE_STYLE[criticiteResultat]?.label}
                       </span>
-                      {resultat.score_criticite !== undefined && (
-                        <span className="text-[10px] font-mono bg-canvas text-ink-muted px-1.5 py-0.5 rounded">score {resultat.score_criticite}/3</span>
+                      {criticiteResultat && (
+                        <span className={`w-2.5 h-2.5 rounded-full shrink-0 inline-block ${
+                          criticiteResultat === "majeure" ? "bg-red-500" :
+                          criticiteResultat === "mineure" ? "bg-orange-400" :
+                          criticiteResultat === "observation" ? "bg-yellow-400" :
+                          "bg-green-500"
+                        }`} title={CRITICITE_STYLE[criticiteResultat]?.label} />
                       )}
                     </div>
                     <div className="flex items-center gap-1.5">
