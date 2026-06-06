@@ -16,7 +16,7 @@ const BADGE_CONFIG = {
   report:     { label: "AUDIT TERMINÉ",  cls: "bg-brand/20 text-white border border-brand/50" },
 }
 
-export default function Header({ view, auditContext, timerDisplay, juryMode, onToggleJury, onNavigate, theme, user, lang, onLangChange, onLogout }) {
+export default function Header({ view, auditContext, timerDisplay, onNavigate, theme, user, lang, onLangChange, onLogout }) {
   const isAuditView = view === "brief" || view === "inspection" || view === "report"
   const [isOnline, setIsOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -80,17 +80,7 @@ export default function Header({ view, auditContext, timerDisplay, juryMode, onT
           {view === "inspection" && (
             <>
               <span className="text-xs px-2 py-1 rounded font-mono bg-brand">ISO 9001</span>
-              <button
-                onClick={onToggleJury}
-                className={`text-xs px-2 py-1 rounded font-semibold transition-colors ${
-                  juryMode
-                    ? "bg-brand-emerald text-white"
-                    : "bg-white/10 text-ink-muted hover:bg-brand hover:text-white"
-                }`}
-              >
-                Jury {juryMode ? "ON" : "OFF"}
-              </button>
-              {timerDisplay && (
+{timerDisplay && (
                 <span className="font-mono text-sm bg-brand px-2 py-1 rounded">{timerDisplay}</span>
               )}
             </>

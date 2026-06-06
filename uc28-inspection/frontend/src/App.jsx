@@ -18,7 +18,6 @@ export default function App() {
   const [customSections, setCustomSections] = useState([])
   const [extraItemsBySectionId, setExtraItemsBySectionId] = useState({})
   const [removedItemIds, setRemovedItemIds] = useState(new Set())
-  const [juryMode, setJuryMode] = useState(false)
   const [theme, setTheme] = useState("agile")
   const [user, setUser] = useState(null)
   const [lang, setLang] = useState("FR")
@@ -96,8 +95,6 @@ export default function App() {
           view={view}
           auditContext={view !== "dashboard" ? AUDIT_COURANT : null}
           timerDisplay={view === "inspection" ? getTimerDisplay() : null}
-          juryMode={juryMode}
-          onToggleJury={() => setJuryMode((v) => !v)}
           onNavigate={(v) => setView(v)}
           theme={theme}
           user={user}
@@ -157,7 +154,6 @@ export default function App() {
             onGenererRapport={handleGenererRapport}
             onBack={() => setView("brief")}
             startTime={startTime}
-            juryMode={juryMode}
             theme={theme}
             customSections={customSections}
             extraItemsBySectionId={extraItemsBySectionId}
