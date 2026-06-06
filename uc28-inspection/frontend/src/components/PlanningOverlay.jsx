@@ -124,7 +124,7 @@ export default function PlanningOverlay({ onClose, onConfirm, selectedClient, th
           {/* Liste des missions */}
           <div className="card flex-1">
             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
-              Missions du jour — {audits.length} disponibles
+              Missions affectées — {audits.length} disponibles
             </div>
             <div className="space-y-2">
               {audits.map(audit => {
