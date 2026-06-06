@@ -260,7 +260,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
           {/* ── Colonne centre — Check-list IA ────────────────────────────── */}
           <div className="card col-span-4">
             <h2 className="section-label">
-              <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><ClipboardList size={11} className="text-brand" /></span>Check-list générée par l'Agent IA
+              <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><ClipboardList size={11} className="text-brand" /></span>Check-list auto-générée
             </h2>
             {!genere && (
               <div className="flex items-center gap-2 mb-4 mt-3">
