@@ -40,11 +40,11 @@ function Waveform({ active }) {
   )
 }
 
-export default function InspectionCapture({ constats, onAddConstat, onUpdateConstat, onDeleteConstat, onGenererRapport, onBack, startTime, theme, customSections = [], extraItemsBySectionId = {}, removedItemIds = new Set(), onFeedback }) {
+export default function InspectionCapture({ constats, onAddConstat, onUpdateConstat, onDeleteConstat, onGenererRapport, onBack, startTime, theme, customSections = [], extraItemsBySectionId = {}, removedItemIds = new Set(), removedSectionIds = new Set(), onFeedback }) {
   const ag = theme === "agile"
   const ar = theme === "aria"
 
-  const baseChecklist = CHECKLIST.map((s) => ({
+  const baseChecklist = CHECKLIST.filter(s => !removedSectionIds.has(s.id)).map((s) => ({
     ...s,
     items: [
       ...s.items.filter((it) => !removedItemIds.has(it.id)).map((it) => ({ ...it })),

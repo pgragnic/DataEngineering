@@ -18,6 +18,7 @@ export default function App() {
   const [customSections, setCustomSections] = useState([])
   const [extraItemsBySectionId, setExtraItemsBySectionId] = useState({})
   const [removedItemIds, setRemovedItemIds] = useState(new Set())
+  const [removedSectionIds, setRemovedSectionIds] = useState(new Set())
   const [theme, setTheme] = useState("agile")
   const [user, setUser] = useState(null)
   const [lang, setLang] = useState("FR")
@@ -42,12 +43,13 @@ export default function App() {
     setView("brief")
   }
 
-  function handleDemarrerInspection(sections = [], extraItems = {}, removedIds = new Set()) {
+  function handleDemarrerInspection(sections = [], extraItems = {}, removedIds = new Set(), removedSecs = new Set()) {
     setStartTime(Date.now())
     setConstats([])
     setCustomSections(sections)
     setExtraItemsBySectionId(extraItems)
     setRemovedItemIds(removedIds)
+    setRemovedSectionIds(removedSecs)
     setView("inspection")
   }
 
@@ -151,6 +153,7 @@ export default function App() {
             customSections={customSections}
             extraItemsBySectionId={extraItemsBySectionId}
             removedItemIds={removedItemIds}
+            removedSectionIds={removedSectionIds}
             onFeedback={() => setFeedbackCount(c => c + 1)}
           />
         )}

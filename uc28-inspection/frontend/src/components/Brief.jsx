@@ -16,6 +16,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
   const [newSectionTitre, setNewSectionTitre] = useState("")
   const [newSectionClause, setNewSectionClause] = useState("")
   const [removedItemIds, setRemovedItemIds] = useState(new Set())
+  const [removedSectionIds, setRemovedSectionIds] = useState(new Set())
   const [selectedRef, setSelectedRef] = useState("ISO 9001:2015")
 
   // ── Brief client inline edit ───────────────────────────────────────────────
@@ -96,7 +97,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
           )}
         </div>
         <button
-          onClick={() => onDemarrer(customSections, extraItemsBySectionId, removedItemIds)}
+          onClick={() => onDemarrer(customSections, extraItemsBySectionId, removedItemIds, removedSectionIds)}
           disabled={!genere}
           className="disabled:bg-divider disabled:text-ink-muted disabled:cursor-not-allowed text-white font-semibold px-5 py-2 rounded-lg text-sm bg-brand hover:bg-brand-cyan transition-colors shadow-sm"
         >
@@ -272,12 +273,17 @@ export default function Brief({ onDemarrer, onBack, theme }) {
             )}
 
             <div className="space-y-3">
-              {CHECKLIST.slice(0, sectionsVisibles).map((section) => {
+              {CHECKLIST.slice(0, sectionsVisibles).filter(s => !removedSectionIds.has(s.id)).map((section) => {
                 const extraItems = extraItemsBySectionId[section.id] || []
                 return (
-                  <div key={section.id} className="bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in">
+                  <div key={section.id} className="bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in group">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-bold text-brand">{section.id}</span>
+                      <button
+                        onClick={() => setRemovedSectionIds(prev => new Set([...prev, section.id]))}
+                        className="text-divider hover:text-red-500 text-sm leading-none opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Supprimer cette section"
+                      >×</button>
                     </div>
                     <div className="text-sm font-medium text-ink">{section.titre}</div>
                     <div className="text-xs text-ink-muted mt-1 mb-2">
