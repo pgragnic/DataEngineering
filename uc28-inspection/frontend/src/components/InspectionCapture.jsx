@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Mic, MicOff, Camera, ScanLine, CheckCircle2, RotateCcw, ClipboardList, BookOpen, MessageSquare, Sparkles, Circle } from "lucide-react"
+import { Mic, MicOff, Camera, ScanLine, CheckCircle2, RotateCcw, ClipboardList, BookOpen, MessageSquare, Sparkles, Circle, Pencil, Check, X } from "lucide-react"
 import { CHECKLIST, RAG_ARTICLES, AUDIT_COURANT, QUESTIONS_SUGGEREES, RECURRENCES, SUPPLIER_DOCUMENTS } from "../mockData"
 import { analyser, synthetiser, getSuggestions, getQuestionsOuiNon } from "../api"
 
@@ -40,7 +40,7 @@ function Waveform({ active }) {
   )
 }
 
-export default function InspectionCapture({ constats, onAddConstat, onGenererRapport, onBack, startTime, juryMode, theme, customSections = [], extraItemsBySectionId = {}, removedItemIds = new Set(), onFeedback }) {
+export default function InspectionCapture({ constats, onAddConstat, onUpdateConstat, onDeleteConstat, onGenererRapport, onBack, startTime, juryMode, theme, customSections = [], extraItemsBySectionId = {}, removedItemIds = new Set(), onFeedback }) {
   const ag = theme === "agile"
   const ar = theme === "aria"
 
@@ -83,6 +83,8 @@ export default function InspectionCapture({ constats, onAddConstat, onGenererRap
   const [questionsLoading, setQuestionsLoading] = useState(false)
   const [feedbackDonne, setFeedbackDonne] = useState(null)
   const [correctionTexte, setCorrectionTexte] = useState("")
+  const [editingConstatId, setEditingConstatId] = useState(null)
+  const [editDraft, setEditDraft] = useState({ constat: "", action: "" })
 
   function toStatement(q, rep) {
     let t = q.replace(/\s*\?$/, "").trim()
@@ -633,18 +635,64 @@ export default function InspectionCapture({ constats, onAddConstat, onGenererRap
               <div className="space-y-2">
                 {constats.map((c) => (
                   <div key={c.id} className={`bg-surface-sunk shadow-inset rounded-lg border p-3 ${CRITICITE_STYLE[c.criticite]?.border || ""}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CRITICITE_STYLE[c.criticite]?.badge}`}>
-                        {CRITICITE_STYLE[c.criticite]?.label}
-                      </span>
-                      <span className="text-[10px] font-mono text-ink-muted">{c.clause}</span>
-                    </div>
-                    <div className="text-xs text-ink leading-tight">{c.constat}</div>
-                    {c.action && <div className="text-[10px] text-ink-muted mt-1 italic">{c.action}</div>}
-                    {c.photoUrl && (
-                      <a href={c.photoUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-[10px] text-brand hover:underline flex items-center gap-1">
-                        <Camera size={10} />Voir la photo
-                      </a>
+                    {editingConstatId === c.id ? (
+                      <>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CRITICITE_STYLE[c.criticite]?.badge}`}>
+                            {CRITICITE_STYLE[c.criticite]?.label}
+                          </span>
+                          <span className="text-[10px] font-mono text-ink-muted">{c.clause}</span>
+                        </div>
+                        <textarea
+                          className="w-full text-xs border border-brand/40 rounded p-1.5 resize-none bg-surface focus:outline-none focus:border-brand"
+                          rows={3}
+                          value={editDraft.constat}
+                          onChange={(e) => setEditDraft((d) => ({ ...d, constat: e.target.value }))}
+                        />
+                        <textarea
+                          className="w-full text-[10px] border border-divider rounded p-1.5 resize-none bg-surface mt-1 italic text-ink-muted focus:outline-none focus:border-brand"
+                          rows={2}
+                          value={editDraft.action}
+                          onChange={(e) => setEditDraft((d) => ({ ...d, action: e.target.value }))}
+                          placeholder="Action corrective…"
+                        />
+                        <div className="flex gap-1 mt-1.5 justify-end">
+                          <button
+                            onClick={() => { onUpdateConstat(c.id, editDraft); setEditingConstatId(null) }}
+                            className="p-1 rounded hover:bg-brand/10 text-brand-emerald" title="Enregistrer"
+                          ><Check size={11} /></button>
+                          <button
+                            onClick={() => setEditingConstatId(null)}
+                            className="p-1 rounded hover:bg-red-50 text-ink-muted" title="Annuler"
+                          ><X size={11} /></button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CRITICITE_STYLE[c.criticite]?.badge}`}>
+                            {CRITICITE_STYLE[c.criticite]?.label}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-[10px] font-mono text-ink-muted">{c.clause}</span>
+                            <button
+                              onClick={() => { setEditingConstatId(c.id); setEditDraft({ constat: c.constat, action: c.action || "" }) }}
+                              className="p-0.5 rounded hover:bg-brand/10 text-ink-muted hover:text-brand" title="Modifier"
+                            ><Pencil size={9} /></button>
+                            <button
+                              onClick={() => onDeleteConstat(c.id)}
+                              className="p-0.5 rounded hover:bg-red-50 text-ink-muted hover:text-red-500" title="Supprimer"
+                            ><X size={9} /></button>
+                          </div>
+                        </div>
+                        <div className="text-xs text-ink leading-tight">{c.constat}</div>
+                        {c.action && <div className="text-[10px] text-ink-muted mt-1 italic">{c.action}</div>}
+                        {c.photoUrl && (
+                          <a href={c.photoUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-[10px] text-brand hover:underline flex items-center gap-1">
+                            <Camera size={10} />Voir la photo
+                          </a>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}

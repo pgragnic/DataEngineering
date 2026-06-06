@@ -55,6 +55,14 @@ export default function App() {
     setConstats((prev) => [...prev, constat])
   }
 
+  function handleUpdateConstat(id, updates) {
+    setConstats((prev) => prev.map((c) => c.id === id ? { ...c, ...updates } : c))
+  }
+
+  function handleDeleteConstat(id) {
+    setConstats((prev) => prev.filter((c) => c.id !== id))
+  }
+
   function handleGenererRapport() {
     setView("report")
   }
@@ -144,6 +152,8 @@ export default function App() {
           <InspectionCapture
             constats={constats}
             onAddConstat={handleAddConstat}
+            onUpdateConstat={handleUpdateConstat}
+            onDeleteConstat={handleDeleteConstat}
             onGenererRapport={handleGenererRapport}
             onBack={() => setView("brief")}
             startTime={startTime}
