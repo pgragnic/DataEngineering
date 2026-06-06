@@ -69,17 +69,17 @@ function genererPlanning(audits, transport, config) {
 
     cursor += travelMins
 
-    // Insérer pause déjeuner si cet audit chevauche la pause
-    if (!pauseInserted && cursor < pauseEnd && cursor + audit.dureeMin > pauseMin) {
+    // Insérer pause déjeuner si la prochaine mission DÉMARRE pendant la plage déjeuner
+    if (!pauseInserted && cursor >= pauseMin && cursor < pauseEnd) {
       result.push({
         id: "__pause__",
         isPause: true,
-        heureMin: pauseMin,
+        heureMin: cursor,
         dureeMin: pauseDuree,
-        heure: minToHeure(pauseMin),
+        heure: minToHeure(cursor),
         titre: "Déjeuner",
       })
-      cursor = pauseEnd
+      cursor += pauseDuree
       pauseInserted = true
     } else if (!pauseInserted && cursor >= pauseEnd) {
       pauseInserted = true
@@ -94,6 +94,20 @@ function genererPlanning(audits, transport, config) {
     })
 
     cursor += audit.dureeMin
+
+    // Insérer pause déjeuner après une mission qui s'est terminée passé midi
+    if (!pauseInserted && cursor > pauseMin) {
+      result.push({
+        id: "__pause__",
+        isPause: true,
+        heureMin: cursor,
+        dureeMin: pauseDuree,
+        heure: minToHeure(cursor),
+        titre: "Déjeuner",
+      })
+      cursor += pauseDuree
+      pauseInserted = true
+    }
   }
 
   return result
