@@ -195,9 +195,12 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
       const reponsesLignes = questionsOuiNon
         .map((q, i) => reponses[i] ? `- ${q} → ${reponses[i] === "oui" ? "Oui ✓" : "Non ✗"}` : null)
         .filter(Boolean)
-      const observationAvecReponses = reponsesLignes.length > 0
+      const contextPrefix = selectedItem
+        ? `Point de contrôle : ${selectedItem.texte}\nClause ISO : ${selectedItem.clause} — ${selectedItem.sectionTitre}\n\nObservation terrain : `
+        : ""
+      const observationAvecReponses = contextPrefix + (reponsesLignes.length > 0
         ? `${observation.trim()}\n\nPoints de vérification :\n${reponsesLignes.join("\n")}`
-        : observation.trim()
+        : observation.trim())
       const data = await analyser(observationAvecReponses, AUDIT_COURANT.site_id)
       setResultat(data)
       const clauseStr = data.clause_iso?.clause || ""
