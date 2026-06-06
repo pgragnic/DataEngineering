@@ -1,95 +1,118 @@
 ════════════════════════════════════════════════════════════════════
-  SCRIPT DE DÉMO — UC 28 INSPECTION AUGMENTÉE
-  Hackathon Capgemini × Anthropic 2026 — Code Resonance
-  Durée cible : 8 minutes
+  SCRIPT DE DEMO — UC 28 INSPECTION AUGMENTEE
+  Hackathon Capgemini x Anthropic 2026 — Code Resonance
+  Duree cible : 8 minutes
 ════════════════════════════════════════════════════════════════════
 
 CONVENTIONS
-  [CLIC]     = action souris à faire
-  [DIRE]     = texte à prononcer
+  [CLIC]     = action souris a faire
+  [DIRE]     = texte a prononcer
   [PAUSE]    = marquer un silence, laisser le jury regarder
-  ⏱          = temps cumulé indicatif
+  [POINTER]  = montrer a l'ecran sans cliquer
+  [COULISSES]= note technique pour le presentateur, ne pas lire
+  [BONUS]    = sequence optionnelle si le temps le permet
+  T          = temps cumule indicatif
+
+CONTEXTE OFFICIEL UC 28 (rappel jury)
+  BU           : SPS — Services Marchands
+  Clients cible: Apave / Bureau Veritas / Site de maintenance RATP
+  Referents    : Philippe Larroye (AI Office + GTM)
+                 JC Formosa (Apave), Jerome Fouquet (BV),
+                 Marvin Dufresne (RATP)
+  Equipe       : Code Resonance
+                 Habib KOFFI · Veronique POILANE ZHANG · Philippe GRAGNIC
 
 ════════════════════════════════════════════════════════════════════
-SLIDE 1 — TITRE                                              ⏱ 0:00
+SLIDE 1 — TITRE                                              T 0:00
 ════════════════════════════════════════════════════════════════════
 
 [DIRE]
-  "Chaque année, des milliers d'auditeurs qualité passent
-   90 % de leur temps sur de la paperasse — et 10 % sur le terrain.
-   On a inversé ce ratio.
-   Je vous présente l'Inspection Augmentée."
+  "Cinq problemes. Un seul produit.
+
+   Les audits sont complexes, normes, et necessitent une forte expertise.
+   La preparation est longue — et heterogene selon les inspecteurs.
+   L'historique des non-conformites est difficile a exploiter sur le terrain.
+   Les constats sont trop souvent subjectifs ou incomplets.
+   Les rapports d'audit consomment des heures de redaction administrative.
+
+   L'inspection Augmentee resout les cinq.
+   Avant l'audit. Pendant. Et apres."
 
 [PAUSE 3 secondes]
 
 [DIRE]
-  "Je suis Philippe, avec Habib et Véronique — équipe Code Resonance.
-   On va vous montrer la journée de Marc Lefèvre, auditeur RATP.
-   8 minutes. Un seul parcours. Ça commence maintenant."
+  "Je suis Philippe, avec Habib et Veronique — equipe Code Resonance.
+   Bureau Veritas achete la solution pour ses auditeurs.
+   RATP et Apave sont les clients finaux.
+   Vous allez voir la journee de Marc Lefevre, auditeur Bureau Veritas.
+   8 minutes. Un seul parcours. Ca commence maintenant."
 
 [CLIC → slide suivante]
 
 ════════════════════════════════════════════════════════════════════
-SLIDE 2 — LE PERSONNAGE                                      ⏱ 0:45
+SLIDE 2 — LE PERSONNAGE                                      T 0:50
 ════════════════════════════════════════════════════════════════════
 
 [DIRE]
-  "Marc. 23 ans de métier. Expert terrain.
-   Mais aujourd'hui, il passe ses soirées à rédiger des rapports.
-   À chercher la bonne clause ISO dans ses notes.
-   À recroiser les constatations du dernier audit.
+  "Marc. 23 ans de metier chez Bureau Veritas.
+   Expert terrain ISO 9001 — il audite des sites Apave et RATP.
 
-   Ce 90/10 — c'est son quotidien. C'est celui de tous ses collègues.
+   Son probleme : 90 % de son temps sur la paperasse.
+   10 % sur le terrain.
+   Et chaque auditeur prepare son audit differemment —
+   le niveau d'expertise ne se capitalise pas, ne se transmet pas.
+
    Notre application ne remplace pas Marc.
-   Elle lui rend son terrain."
+   Elle lui rend son terrain.
+   Et elle capture son expertise pour la diffuser a toute l'equipe BV."
 
 [PAUSE 2 secondes]
 
-[CLIC → basculer sur le navigateur, onglet localhost:5173]
+[CLIC → basculer sur le navigateur, onglet localhost:3000]
 
 ════════════════════════════════════════════════════════════════════
-ÉCRAN 0.1 — CONNEXION                                        ⏱ 1:15
+ECRAN 0.1 — CONNEXION                                        T 1:20
 ════════════════════════════════════════════════════════════════════
 
-[CLIC → localhost:5173]
+[CLIC → localhost:3000]
 
 [DIRE]
-  "Deux personas dans notre application.
-   Marc Lefèvre, l'auditeur Bureau Veritas sur le terrain.
-   Et Mei Lin Zhang, la responsable qualité côté RATP —
-   elle accède au portail fournisseur.
-   Pour cette démo : on est Marc."
+  "Deux personas dans l'application.
+   Marc Lefevre, l'auditeur Bureau Veritas sur le terrain.
+   Et Mei Lin Zhang, la responsable qualite cote RATP —
+   elle accede au portail fournisseur.
+   Pour cette demo : on est Marc."
 
-[CLIC → carte "Marc Lefèvre — Auditeur BV"]
+[CLIC → carte "Marc Lefevre — Auditeur BV"]
 
 [DIRE]
-  "Son identité est déjà là — aucune saisie."
+  "Son identite est deja la — aucune saisie."
 
 [CLIC → bouton "Se connecter"]
 
 ════════════════════════════════════════════════════════════════════
-ÉCRAN 0.2 — SÉLECTION CLIENT                                 ⏱ 1:30
+ECRAN 0.2 — SELECTION CLIENT                                 T 1:35
 ════════════════════════════════════════════════════════════════════
 
 [DIRE]
-  "Il intervient pour RATP aujourd'hui — 12 missions ce mois."
+  "Aujourd'hui il intervient pour RATP — 12 missions ce mois."
 
 [CLIC → carte RATP]
 
 ════════════════════════════════════════════════════════════════════
-ÉCRAN 1 — DASHBOARD                                          ⏱ 1:40
+ECRAN 1 — DASHBOARD                                          T 1:45
 ════════════════════════════════════════════════════════════════════
 
 [DIRE]
-  "Sa journée d'un coup d'œil.
+  "Sa journee d'un coup d'oeil.
    4 audits. Le trait rouge — c'est maintenant.
-   Il sait où il en est sans ouvrir Outlook."
+   Il sait ou il en est sans ouvrir Outlook."
 
-[CLIC → sur une carte de mission → montrer le flyTo animé sur la carte]
+[CLIC → sur une carte de mission → montrer le flyTo anime sur la carte]
 
 [DIRE]
-  "La carte se recentre sur le site. Itinéraire routier réel —
-   calculé via OSRM. Pas de clé API, fonctionne hors ligne."
+  "La carte se recentre sur le site. Itineraire routier reel —
+   calcule via OSRM. Pas de cle API, fonctionne hors ligne."
 
 [CLIC → toggle "Planning"]
 
@@ -100,335 +123,352 @@ SLIDE 2 — LE PERSONNAGE                                      ⏱ 0:45
 [CLIC → toggle "Liste" → filtre "PROCHAIN"]
 
 [DIRE]
-  "Son prochain audit : Atelier Sucy-en-Brie, 14h30.
-   Il clique Démarrer."
+  "Son prochain audit : Atelier Sucy-en-Brie, maintenance rames MI09, RER A.
+   Il clique Demarrer."
 
-[CLIC → bouton "Démarrer" sur la carte Sucy-en-Brie]
+[CLIC → bouton "Demarrer" sur la carte Sucy-en-Brie]
 
 ════════════════════════════════════════════════════════════════════
-ÉCRAN 2 — BRIEF                                              ⏱ 2:20
+ECRAN 2 — BRIEF  (AVANT l'audit)                             T 2:25
 ════════════════════════════════════════════════════════════════════
 
 [DIRE]
-  "Avant même d'arriver sur site, Marc a son brief complet.
-   218 personnes. Responsable qualité : Karim Belkacem.
-   Périmètre : maintenance des rames MI09, RER A."
+  "Phase 1 : AVANT. Marc n'a pas encore quitte son bureau.
+   Mais son brief est deja complet.
+   218 personnes. Responsable qualite : Karim Belkacem.
+   Perimetre : maintenance des rames MI09, RER A."
 
 [PAUSE — pointer l'alerte rouge dans l'historique]
 
 [DIRE]
-  "Et là — l'alerte.
-   Une non-conformité mineure ouverte depuis novembre 2024.
-   Non clôturée.
-   Marc n'a pas à se souvenir de ça. L'IA s'en souvient pour lui."
+  "Et la — l'alerte.
+   Une non-conformite mineure ouverte depuis novembre 2024.
+   Non cloturee.
+   Marc n'a pas a s'en souvenir. L'IA s'en souvient pour lui.
+   C'est exactement ca, exploiter l'historique des audits."
+
+[POINTER la checklist IA]
 
 [DIRE]
-  "La checklist est structurée par clause ISO.
-   Il peut supprimer les points non pertinents pour ce site
-   — un clic sur le × au survol de chaque item."
+  "La checklist est pre-generee par l'Agent IA.
+   Elle est structuree par clause ISO —
+   §7.1.5 Etalonnage, §8.7 Non-conformites, directement dans le scope.
+   Pas un template generique : cette checklist est propre a Sucy-en-Brie."
 
-  ┌─ COULISSES — Comment la checklist est générée ──────────────────────┐
-  │ L'Agent IA combine 5 sources pour construire cette checklist :       │
-  │                                                                      │
-  │  1. REFERENTIEL CHOISI     ISO 9001:2015 (sélectionnable)           │
-  │  2. SCOPE DE L'AUDIT       §7.1.5 Métrologie · §8.7 NC             │
-  │                            → S2 et S3 sont les sections directement │
-  │                              issues du scope de cette mission        │
-  │  3. CONTEXTE DU SITE       Atelier maintenance, 218 personnes,      │
-  │                            durée 2h30 → sections calibrées          │
-  │  4. HISTORIQUE NC          NC mineure §7.1.5 non clôturée (2024)   │
-  │                            → S2 marqué priorité haute               │
-  │  5. DOCUMENTS FOURNISSEUR  3 docs Mei Lin Zhang pré-analysés       │
-  │                            → alertes ⚠ RATP sur §7.1.5 et §8.7    │
-  │                                                                      │
-  │  S1 (§7.5) = documentaire générique                                 │
-  │  S2 (§7.1.5) = étalonnage, directement dans le scope               │
-  │  S3 (§8.7) = gestion NC, directement dans le scope + récidive      │
-  │  S4 (§7.2) = compétences, lié à l'effectif de 218 personnes        │
-  └──────────────────────────────────────────────────────────────────────┘
+  ┌─ COULISSES — Comment la checklist est generee ──────────────────┐
+  │ L'Agent IA combine 5 sources pour construire cette checklist :  │
+  │                                                                  │
+  │  1. REFERENTIEL CHOISI    ISO 9001:2015 (selectionnable)        │
+  │  2. SCOPE DE L'AUDIT      §7.1.5 Metrologie · §8.7 NC          │
+  │                           -> S2 et S3 issues du scope mission   │
+  │  3. CONTEXTE DU SITE      Atelier maintenance, 218 personnes,   │
+  │                           duree 2h30 -> sections calibrees      │
+  │  4. HISTORIQUE NC         NC mineure §7.1.5 non cloturee (2024) │
+  │                           -> S2 marque priorite haute           │
+  │  5. DOCUMENTS FOURNISSEUR 3 docs Mei Lin Zhang pre-analyses     │
+  │                           -> alertes RATP sur §7.1.5 et §8.7   │
+  │                                                                  │
+  │ S1 (§7.5) = documentaire generique                              │
+  │ S2 (§7.1.5) = etalonnage, directement dans le scope            │
+  │ S3 (§8.7) = gestion NC, directement dans le scope + recidive   │
+  │ S4 (§7.2) = competences, lie a l'effectif de 218 personnes     │
+  └──────────────────────────────────────────────────────────────────┘
 
-[CLIC → survoler un item de la checklist → montrer le × → supprimer un item]
+[DIRE]
+  "Marc peut ajuster. Il supprime les points non pertinents pour ce site —
+   un clic sur le x au survol de chaque item."
+
+[CLIC → survoler un item → montrer le x → supprimer un item]
 
 [DIRE]
   "Il peut aussi ajouter ses propres points d'audit."
 
-[CLIC → bouton "+ Ajouter un point" → taper un point custom → Entrée]
+[CLIC → bouton "+ Ajouter un point" → taper un point custom → Entree]
 
 [DIRE]
-  "Son point apparaît avec le badge 'Auditeur'.
-   Il sera dans la checklist de l'inspection."
+  "Son point apparait avec le badge 'Auditeur'.
+   Il sera dans la checklist de l'inspection.
+   Chaque auditeur amene son expertise — elle est capturee."
 
-[PAUSE — pointer les badges ⚠ RATP sur §7.1.5 et §8.7]
+[PAUSE — pointer les badges alerte RATP sur §7.1.5 et §8.7]
 
 [DIRE]
-  "Les alertes RATP. Les documents déposés côté fournisseur
-   ont été pré-analysés par Claude — les clauses à risque
-   sont signalées directement dans sa checklist."
+  "Les alertes RATP. Les documents deposes par Mei Lin Zhang
+   ont ete pre-analyses par Claude — les clauses a risque
+   sont signalees directement dans sa checklist.
+   C'est la plateforme biface : BV d'un cote, le fournisseur de l'autre.
+   Le meme algorithme croise les deux."
 
-[CLIC → bouton "Démarrer l'inspection"]
+[CLIC → bouton "Demarrer l'inspection"]
 
 ════════════════════════════════════════════════════════════════════
-ÉCRANS 3/4 — INSPECTION                                      ⏱ 3:30
+ECRANS 3/4 — INSPECTION  (PENDANT l'audit)                   T 3:35
 ════════════════════════════════════════════════════════════════════
 
 [DIRE]
-  "Marc est sur le terrain. Gants aux mains. Devant les équipements.
-   Il sélectionne le point qu'il va contrôler."
+  "Phase 2 : PENDANT. Marc est sur le terrain.
+   Gants aux mains. Devant les equipements.
+   Il selectionne le point qu'il va controler."
 
-[CLIC → item §7.1.5 "Vérification des certificats d'étalonnage" dans la checklist]
+[CLIC → item §7.1.5 "Verification des certificats d'etalonnage"]
 
-[PAUSE — attendre la génération des suggestions et questions]
-
-[DIRE]
-  "Trois choses se passent simultanément :
-   Claude génère 3 exemples d'observations terrain pour ce point,
-   3 questions de vérification oui/non apparaissent à droite,
-   et les articles ISO de référence se mettent à jour."
-
-[POINTER la colonne du milieu — suggestions]
+[PAUSE — attendre la generation des suggestions et questions]
 
 [DIRE]
-  "Ces suggestions sont contextualisées par clause.
-   Pas un template générique : §7.1.5, étalonnage, atelier Sucy."
+  "Trois choses se passent simultanement :
+   Claude genere 3 exemples d'observations terrain pour ce point,
+   3 questions de verification oui/non apparaissent a droite,
+   et les articles ISO de reference se mettent a jour.
 
-[POINTER la colonne réponses]
+   Ce n'est pas un template generique.
+   C'est §7.1.5, etalonnage, atelier Sucy, historique NC inclus."
 
-  ┌─ COULISSES — Comment les questions suggérées sont générées ─────────┐
-  │ Déclencheur : clic sur un item de la checklist                      │
-  │ Appel réel  : POST /questions_oui_non (Claude via GEP)              │
-  │                                                                      │
-  │ Contexte envoyé à Claude :                                           │
-  │   • Texte de l'item   "Vérification des certificats d'étalonnage"  │
-  │   • Clause ISO        §7.1.5                                         │
-  │   • Titre de section  "Étalonnage & équipements de mesure"          │
-  │                                                                      │
-  │ Claude génère 3 questions de vérification terrain contextualisées,  │
-  │ pas des templates génériques :                                       │
-  │   "Les certificats sont-ils datés de moins de 12 mois ?"           │
-  │   "L'équipement est-il couvert par un laboratoire accrédité COFRAC?"│
-  │   "Le registre des équipements est-il à jour ?"                     │
-  │                                                                      │
-  │ Les réponses Oui/Non sélectionnées par Marc sont injectées          │
-  │ dans le prompt d'analyse → enrichissent le diagnostic Claude.       │
-  │                                                                      │
-  │ Fallback : 3 questions statiques si GEP indisponible.               │
-  └──────────────────────────────────────────────────────────────────────┘
+  ┌─ COULISSES — Comment les questions suggerees sont generees ──────┐
+  │ Declencheur : clic sur un item de la checklist                   │
+  │ Appel reel  : POST /questions_oui_non (Claude via GEP)           │
+  │                                                                   │
+  │ Contexte envoye a Claude :                                        │
+  │   - Texte de l'item   "Verification des certificats d'etalonnage"│
+  │   - Clause ISO        §7.1.5                                      │
+  │   - Titre de section  "Etalonnage & equipements de mesure"       │
+  │                                                                   │
+  │ Claude genere 3 questions de verification terrain contextualisees,│
+  │ pas des templates :                                               │
+  │   "Les certificats sont-ils dates de moins de 12 mois ?"        │
+  │   "L'equipement est-il couvert par un labo accredite COFRAC ?"  │
+  │   "Le registre des equipements est-il a jour ?"                  │
+  │                                                                   │
+  │ Les reponses Oui/Non sont injectees dans le prompt d'analyse     │
+  │ -> enrichissent le diagnostic Claude.                             │
+  │                                                                   │
+  │ Fallback : 3 questions statiques si GEP indisponible.            │
+  └───────────────────────────────────────────────────────────────────┘
+
+[CLIC → repondre Oui/Non sur 2 questions]
 
 [DIRE]
-  "Il peut qualifier rapidement : conforme, non conforme, non applicable.
-   Ces réponses sont transmises à Claude comme contexte d'analyse."
+  "Il qualifie rapidement. Ces reponses partent comme contexte
+   dans le prompt d'analyse — Claude sait ce que Marc a observe."
 
-[CLIC → répondre Oui/Non sur 2 questions]
+[CLIC → bouton micro]
 
-[DIRE]
-  "Maintenant il dicte son constat."
+[DIRE a voix haute, clairement — le micro est actif :]
+  "Les cles dynamometriques du poste 12 ne sont pas etalonnees,
+   certificats perimes depuis 8 mois."
 
-[CLIC → bouton micro 🎤]
-
-[DIRE à voix haute, clairement — le micro est actif :]
-  "Les clés dynamométriques du poste 12 ne sont pas étalonnées,
-   certificats périmés depuis 8 mois."
-
-[CLIC → bouton micro pour arrêter]
+[CLIC → bouton micro pour arreter]
 
 [DIRE]
   "Le texte est transcrit. Il prend une photo."
 
-[CLIC → "Prendre une photo" → sélectionner une image quelconque]
+[CLIC → "Prendre une photo" → selectionner une image quelconque]
 
 [DIRE]
   "Et maintenant — il clique Analyser."
 
 [CLIC → bouton "Analyser"]
 
-[PAUSE — laisser la réponse arriver — NE PAS PARLER]
-[PAUSE encore 2 secondes après l'affichage — LAISSER RESPIRER]
+[PAUSE — laisser la reponse arriver — NE PAS PARLER]
+[PAUSE encore 2 secondes apres l'affichage — LAISSER RESPIRER]
 
 [DIRE]
-  "NC MAJEURE. Le petit rond rouge — criticité maximale.
-   Clause §7.1.5 — Étalonnage et surveillance.
-   Et regardez le badge : Claude Opus."
+  "NC MAJEURE. §7.1.5 — Etalonnage et surveillance.
+   Action corrective : etalonnage COFRAC immediat.
+   Action preventive : planning automatise."
 
-[POINTER le badge violet "Claude Opus" et le rond rouge]
-
-[DIRE]
-  "C'est Claude Opus, via la plateforme GEP Capgemini,
-   qui a analysé ce constat en temps réel.
-   Pas un template. Pas une règle fixe.
-   Un diagnostic contextualisé : les rames MI09, l'atelier Sucy-en-Brie,
-   Karim Belkacem comme responsable — tout ça est dans la réponse."
-
-[POINTER l'alerte récidive 🔁 si visible]
+[POINTER le badge violet "Claude Opus"]
 
 [DIRE]
-  "Et là — récidive.
-   Ce point a déjà été en non-conformité en novembre 2024.
-   Marc le voit immédiatement. Il peut appuyer dessus dans son rapport."
+  "C'est Claude Opus, via la plateforme GEP Capgemini.
+   Pas un template. Pas une regle fixe.
+   Un diagnostic contextualisé : les rames MI09, l'atelier Sucy,
+   Karim Belkacem, l'historique NC — tout ca est dans la reponse.
+   L'IA est explicable : chaque diagnostic est source et tracable."
 
-[POINTER l'animation moment fort si visible]
+[POINTER l'alerte recidive si visible]
 
 [DIRE]
-  "L'action corrective : étalonnage COFRAC immédiat.
-   L'action préventive : planning automatisé, responsable métrologie dédié.
-   Marc n'a rien eu à chercher."
+  "Recidive. Ce point etait deja en NC en novembre 2024.
+   Marc le voit immediatement."
+
+[POINTER les boutons 'Confirmer' / 'Corriger' sous le resultat]
+
+[DIRE]
+  "Marc confirme ou corrige le diagnostic.
+   Chaque correction est enregistree.
+   C'est comme ca qu'on capitalise l'expertise BV :
+   l'experience de Marc, de ses 23 ans de terrain,
+   devient une donnee d'entrainement pour l'equipe."
 
 [POINTER les articles RAG en bas de la colonne centrale]
 
-  ┌─ COULISSES — Comment les articles normatifs sont sélectionnés ──────┐
-  │ Déclencheur : clic sur un item de la checklist (même déclencheur    │
-  │              que les questions et les suggestions)                   │
-  │                                                                      │
-  │ Logique de sélection basée sur la clause de l'item :                │
-  │   clause contient "7.1.5" → articles §7.1.5 Métrologie             │
-  │   clause contient "8.7"   → articles §8.7 Non-conformités          │
-  │   autre clause            → articles par défaut (§9.2, §10.3, §6.1)│
-  │                                                                      │
-  │ Base documentaire : corpus ISO 9001:2015 indexé par                 │
-  │ sentence-transformers (modèle BERT multilingue, préchargé au        │
-  │ démarrage du backend pour éviter la latence).                       │
-  │                                                                      │
-  │ Chaque article affiche en tooltip au survol :                       │
-  │   • Numéro de clause complet                                        │
-  │   • Titre normatif officiel                                         │
-  │   • Extrait verbatim de la norme                                    │
-  │                                                                      │
-  │ Marc peut vérifier la source exacte sans sortir de l'application.   │
-  └──────────────────────────────────────────────────────────────────────┘
+  ┌─ COULISSES — Comment les articles normatifs sont selectionnes ───┐
+  │ Declencheur : clic sur un item de la checklist                   │
+  │                                                                   │
+  │ Logique de selection basee sur la clause :                        │
+  │   clause "7.1.5" -> articles §7.1.5 Metrologie                  │
+  │   clause "8.7"   -> articles §8.7 Non-conformites               │
+  │   autre clause   -> articles par defaut (§9.2, §10.3, §6.1)     │
+  │                                                                   │
+  │ Base : corpus ISO 9001:2015 indexe par sentence-transformers      │
+  │ (BERT multilingue, precharge au demarrage du backend).            │
+  │                                                                   │
+  │ Chaque article affiche en tooltip au survol :                     │
+  │   - Numero de clause complet                                      │
+  │   - Titre normatif officiel                                       │
+  │   - Extrait verbatim de la norme                                  │
+  │                                                                   │
+  │ Marc peut citer la source exacte sans quitter l'application.      │
+  └───────────────────────────────────────────────────────────────────┘
 
 [DIRE]
-  "En bas : les articles de la norme ISO 9001 référencés.
-   Un survol affiche l'extrait complet — Marc peut vérifier
-   la source sans quitter l'écran."
+  "En bas : les articles de la norme ISO 9001 references.
+   Un survol affiche l'extrait complet.
+   Marc peut citer la source exacte sans quitter l'ecran.
+   C'est l'IA explicable et conforme aux exigences reglementaires."
 
 [CLIC → "Ajouter au rapport"]
 
 [DIRE]
-  "Deuxième constat — rapide."]
+  "Deuxieme constat — rapide."
 
-[CLIC → item §8.7 "Traçabilité des non-conformités produits" dans la checklist]
+[CLIC → item §8.7 "Tracabilite des non-conformites produits"]
 
 [CLIC → zone de texte → taper ou dicter :]
-  "Zone quarantaine non délimitée, pièces non conformes
-   mélangées avec pièces valides."
+  "Zone quarantaine non delimitee, pieces non conformes
+   melangees avec pieces valides."
 
 [CLIC → Analyser → attendre → Ajouter au rapport]
 
 ════════════════════════════════════════════════════════════════════
-  [OPTIONNEL — si le temps le permet, 30 secondes]
+  [BONUS — saisie manuscrite, 30 secondes si le temps le permet]
 ════════════════════════════════════════════════════════════════════
 
-[CLIC → bouton ✍️ (PenLine, à droite du micro)]
+[CLIC → bouton stylet (PenLine, a droite du micro)]
 
 [DIRE]
   "Marc a un stylet sur sa tablette.
-   Il peut écrire son observation à la main —
-   Claude vision transcrit le manuscrit en texte structuré."
+   Il peut ecrire son observation a la main —
+   Claude vision transcrit le manuscrit en texte structure."
 
 [DESSINER quelques mots sur le canvas]
 
-[CLIC → "✨ Transcrire"]
+[CLIC → "Transcrire"]
 
 [DIRE]
   "Le texte manuscrit rejoint la zone d'observation.
-   Aucune dépendance logicielle supplémentaire — canvas HTML5 natif."
+   Canvas HTML5 natif — aucune dependance supplementaire."
 
 ════════════════════════════════════════════════════════════════════
-ÉCRAN 5 — RAPPORT                                            ⏱ 6:00
+ECRAN 5 — RAPPORT  (APRES l'audit)                           T 6:00
 ════════════════════════════════════════════════════════════════════
 
-[CLIC → bouton "Rapport" ou navigation vers l'écran 5]
+[CLIC → bouton "Rapport"]
 
 [DIRE]
-  "Le rapport est généré. Immédiatement. Sur place."
+  "Phase 3 : APRES. Le rapport est genere. Immediatement. Sur place."
 
-[POINTER le résumé gauche]
-
-[DIRE]
-  "2 NC majeures. Plan d'actions avec délais. Responsables identifiés."
-
-[POINTER la grille de conformité]
+[POINTER le resume gauche]
 
 [DIRE]
-  "La grille de conformité par section ISO.
-   Un score global calculé sur tous les constats.
-   Les barres virent au rouge sous 50 % — ici §7.1.5 est en alerte."
+  "2 NC majeures. Plan d'actions avec delais. Responsables identifies.
+   Ce que Marc aurait passe sa soiree a rediger — c'est deja la."
 
-[CLIC → bouton "✎ Modifier"]
-
-[DIRE]
-  "Marc relit. Il veut ajuster une formulation.
-   Les champs sont éditables directement."
-
-[MODIFIER une phrase dans un textarea — ex: ajouter "urgent" quelque part]
-
-[CLIC → "✓ Valider"]
+[POINTER la grille de conformite]
 
 [DIRE]
-  "Il valide. Le rapport intègre sa correction."
+  "La grille de conformite par section ISO.
+   Un score global calcule sur tous les constats.
+   Les barres virent au rouge sous 50 % — ici §7.1.5 est en alerte.
+   C'est la tracabilite et l'explicabilite en action."
 
-[CLIC → toggle "🔒 Anonymiser"]
+[CLIC → bouton "Modifier"]
+
+[DIRE]
+  "Marc relit. Il ajuste une formulation.
+   L'auditeur reste en controle — l'IA assiste, elle ne decide pas."
+
+[MODIFIER une phrase dans un textarea]
+
+[CLIC → "Valider"]
+
+[CLIC → toggle "Anonymiser"]
 
 [DIRE]
   "Pour la transmission : anonymisation RGPD en un clic.
-   Les noms disparaissent de l'aperçu."
+   Les noms disparaissent de l'apercu."
 
-[CLIC → retoggle pour désanonymiser]
+[CLIC → retoggle pour desanonymiser]
 
-[CLIC → "↓ Télécharger"]
-
-[DIRE]
-  "Export Word. Le fichier .docx est généré par le backend FastAPI
-   et téléchargé directement."
-
-[CLIC → section Signature → saisir "Karim Belkacem" → Signer]
+[CLIC → "Telecharger"]
 
 [DIRE]
-  "Validation contradictoire. Karim signe sur la tablette.
-   Le rapport est tracé, sourcé, validé.
-   Marc sort du site avec le travail terminé."
+  "Export Word. Le fichier .docx est genere par le backend FastAPI."
+
+[CLIC → section Signature → canvas → tracer une signature → Confirmer]
+
+[DIRE]
+  "Validation contradictoire. Karim signe a la main sur la tablette —
+   signature manuscrite directement dans l'interface.
+   Le rapport est trace, source, valide.
+   Marc sort du site avec le travail termine."
 
 ════════════════════════════════════════════════════════════════════
-  [OPTIONNEL — parcours Mei Lin Zhang, 60 secondes si jury intéressé]
+  [BONUS — parcours Mei Lin Zhang, 60 secondes si jury interesse]
 ════════════════════════════════════════════════════════════════════
 
-[CLIC → avatar en haut à droite → "Se connecter avec un autre compte"]
+[CLIC → avatar en haut a droite → "Se connecter avec un autre compte"]
 
 [DIRE]
-  "On bascule côté RATP.
-   Mei Lin Zhang, responsable qualité fournisseur."
+  "On bascule cote RATP.
+   Mei Lin Zhang, responsable qualite fournisseur.
+   C'est l'autre face de la plateforme :
+   BV achete la solution, RATP et Apave en sont les beneficiaires."
 
-[CLIC → carte "Mei Lin Zhang — Responsable Qualité RATP"]
+[CLIC → carte "Mei Lin Zhang — Responsable Qualite RATP"]
 [CLIC → Se connecter → portail fournisseur s'affiche]
 
 [DIRE]
-  "Son portail. Les documents déposés avant l'audit.
-   Procédures, comptes-rendus, plans qualité —
-   classés par catégorie, triés par date."
+  "Son portail. Les documents deposes avant l'audit.
+   Procedures, comptes-rendus, plans qualite —
+   classes par categorie, tries par date."
 
-[CLIC → un document → montrer l'analyse Claude : résumé, sections à risque]
+[CLIC → un document → montrer l'analyse Claude : resume, sections a risque]
 
 [DIRE]
   "Claude a lu ces documents pour elle.
    Elle sait ce que l'auditeur va trouver
-   avant même qu'il arrive sur site."
+   avant meme qu'il arrive sur site.
+   Et c'est le meme algorithme qui a signale les alertes
+   dans la checklist de Marc."
 
 ════════════════════════════════════════════════════════════════════
-CLÔTURE                                                      ⏱ 7:30
+CLOTURE                                                      T 7:30
 ════════════════════════════════════════════════════════════════════
 
 [DIRE]
-  "Ce que vous venez de voir :
+  "Ce que vous venez de voir couvre les cinq valeurs attendues du CDC :
 
-   Un auditeur qui prépare son audit en 30 secondes.
-   Qui dicte — ou écrit à la main — ses constats les mains prises.
-   Dont les non-conformités sont détectées, sourcées, et justifiées
-   par Claude Opus — en contexte, en temps réel.
-   Qui repart avec un rapport validé — pas avec une soirée de rédaction.
+   1. STANDARDISATION
+      Chaque auditeur BV part avec la meme checklist generee par l'IA.
+      Fini l'heterogeneite entre inspecteurs.
 
-   Et côté client RATP : un portail fournisseur où les documents
-   sont pré-analysés par Claude avant chaque visite.
+   2. GAIN DE TEMPS
+      Brief en 30 secondes. Rapport sur place.
+      Le ratio 90/10 est inverse.
 
-   Le ratio 90/10 est inversé."
+   3. RESPECT DES NORMES
+      ISO 9001:2015 indexe par RAG — les articles verbatim au survol.
+      L'auditeur cite la source exacte depuis l'ecran.
+
+   4. CAPITALISATION EXPERTISE BV
+      Les confirmations et corrections de Marc sont la donnee.
+      23 ans de terrain — captures, transmis, reutilises.
+
+   5. QUALITE, TRACABILITE, EXPLICABILITE
+      Chaque diagnostic est source par clause ISO, horodate,
+      signe contradictoirement sur la tablette.
+      L'IA assiste. L'humain decide et valide."
 
 [PAUSE 2 secondes]
 
@@ -436,94 +476,113 @@ CLÔTURE                                                      ⏱ 7:30
   "Merci."
 
 ════════════════════════════════════════════════════════════════════
-QUESTIONS PROBABLES — RÉPONSES PRÉPARÉES
+QUESTIONS PROBABLES — REPONSES PREPAREES
 ════════════════════════════════════════════════════════════════════
+
+Q : "Quels sont vos trois clients et comment le modele fonctionne ?"
+R : "Bureau Veritas achete la solution pour ses auditeurs.
+     RATP et Apave sont les clients finaux audites.
+     Le portail fournisseur cote RATP/Apave permet de deposer
+     des documents avant l'audit — Claude les pre-analyse.
+     Le meme algorithme alimente la checklist de l'auditeur BV
+     et le tableau de bord du responsable qualite cote client."
+
+Q : "Comment vous capitalisez l'expertise BV ?"
+R : "Apres chaque diagnostic Claude, l'auditeur a deux boutons :
+     Confirmer (expertise validee) ou Corriger (avec sa correction).
+     Chaque correction est une donnee d'apprentissage —
+     l'expertise de Marc, 23 ans de terrain, devient reutilisable
+     par toute l'equipe BV. C'est l'un des 5 objectifs officiels du CDC."
 
 Q : "Et si l'API Claude est indisponible ?"
 R : "Fallback automatique sur un moteur local —
-     RAG ISO 9001 + règles métier.
+     RAG ISO 9001 + regles metier.
      Le badge dans l'interface indique 'IA locale' vs 'Claude Opus'.
-     La démo fonctionne sans réseau GEP."
+     La demo fonctionne sans reseau GEP."
 
 Q : "Quelle norme couvrez-vous ?"
-R : "ISO 9001:2015. La base RAG couvre les clauses 4 à 10.
-     L'architecture est extensible à ISO 14001, 45001, EN 9100 —
-     le sélecteur de référentiel est déjà dans le Brief."
+R : "ISO 9001:2015. La base RAG couvre les clauses 4 a 10.
+     L'architecture est extensible a ISO 14001, 45001, EN 9100 —
+     le selecteur de referentiel est deja dans le Brief."
 
-Q : "C'est quoi la vraie valeur ajoutée de Claude vs une règle fixe ?"
-R : "La règle fixe donne 'clause 7.1.5 → action générique'.
+Q : "C'est quoi la vraie valeur ajoutee de Claude vs une regle fixe ?"
+R : "La regle fixe donne 'clause 7.1.5 -> action generique'.
      Claude donne 'clause 7.1.5, atelier Sucy-en-Brie,
      historique NC nov. 2024, responsable Karim Belkacem
-     → étalonnage COFRAC dans les 72h, alertes automatisées'.
-     C'est le contexte qui fait la différence."
+     -> etalonnage COFRAC dans les 72h, alertes automatisees'.
+     C'est le contexte qui fait la difference."
 
-Q : "Pourquoi GEP Capgemini plutôt que l'API Anthropic directe ?"
-R : "GEP est la plateforme IA interne Capgemini — déjà en place,
-     gestion des clés centralisée, conformité entreprise.
-     Le modèle utilisé est anthropic.claude-opus-4-7."
+Q : "L'IA est-elle explicable ?"
+R : "Completement. Chaque diagnostic est source par clause ISO,
+     les articles verbatim sont accessibles au survol dans l'interface.
+     Le RAG affiche exactement quel extrait de norme a guide l'analyse.
+     L'auditeur peut citer la source sans quitter l'ecran —
+     c'est une exigence explicite du CDC, on y repond."
 
-Q : "La saisie manuscrite, ça marche vraiment ?"
-R : "Claude vision reçoit l'image PNG du canvas et transcrit le texte.
-     Sur tablette avec stylet, la précision est excellente.
-     En fallback (GEP indisponible) : observation prédéfinie par item
-     — le scénario de démo reste fluide dans les deux cas."
+Q : "Pourquoi GEP Capgemini plutot que l'API Anthropic directe ?"
+R : "GEP est la plateforme IA interne Capgemini — deja en place,
+     gestion des cles centralisee, conformite entreprise.
+     Le modele utilise est anthropic.claude-opus-4-7."
 
-Q : "Sur quels critères la checklist est-elle générée ?"
-R : "5 sources : le référentiel ISO sélectionné, le scope des clauses
+Q : "La saisie manuscrite, ca marche vraiment ?"
+R : "Claude vision recoit l'image PNG du canvas et transcrit le texte.
+     Sur tablette avec stylet, la precision est excellente.
+     En fallback (GEP indisponible) : observation predecfinie par item
+     — le scenario de demo reste fluide dans les deux cas."
+
+Q : "Sur quels criteres la checklist est-elle generee ?"
+R : "5 sources : le referentiel ISO selectionne, le scope des clauses
      de la mission (§7.1.5 et §8.7 pour Sucy-en-Brie), le contexte
      du site (type d'atelier, effectif 218 personnes), l'historique
-     des NC précédentes, et les documents déposés par le fournisseur
-     pré-analysés par Claude. Les sections S2 et S3 sont directement
-     issues du scope — S1 et S4 sont génériques."
+     des NC precedentes, et les documents deposes par le fournisseur
+     pre-analyses par Claude. Les sections S2 et S3 sont directement
+     issues du scope — S1 et S4 sont generiques."
 
-Q : "Comment les questions oui/non sont-elles générées ?"
-R : "Appel POST /questions_oui_non à chaque sélection d'item.
-     Claude génère 3 questions de vérification contextualisées
+Q : "Comment les questions oui/non sont-elles generees ?"
+R : "Appel POST /questions_oui_non a chaque selection d'item.
+     Claude genere 3 questions de verification contextualisees
      par le texte de l'item, la clause ISO et le titre de section.
-     Ces réponses sont ensuite injectées dans le prompt d'analyse
+     Ces reponses sont ensuite injectees dans le prompt d'analyse
      pour enrichir le diagnostic."
 
-Q : "D'où viennent les articles ISO affichés ?"
-R : "Base documentaire ISO 9001:2015 indexée par sentence-transformers
-     (BERT multilingue), préchargée au démarrage du backend.
-     La sélection est déterministe : clause §7.1.5 → articles métrologie,
-     §8.7 → articles non-conformités. Le tooltip au survol affiche
+Q : "D'ou viennent les articles ISO affiches ?"
+R : "Base documentaire ISO 9001:2015 indexee par sentence-transformers
+     (BERT multilingue), prechargee au demarrage du backend.
+     La selection est deterministe : clause §7.1.5 -> articles metrologie,
+     §8.7 -> articles non-conformites. Le tooltip au survol affiche
      le texte verbatim de la norme — Marc peut citer la source exacte."
 
 ════════════════════════════════════════════════════════════════════
-CHECKLIST AVANT DE MONTER SUR SCÈNE
+CHECKLIST AVANT DE MONTER SUR SCENE
 ════════════════════════════════════════════════════════════════════
 
-  [ ] start.bat lancé 3 min avant → backend démarré
+  [ ] start.bat lance 3 min avant -> backend demarre
   [ ] localhost:8000/docs accessible (test API)
-  [ ] localhost:5173 accessible (frontend)
-  [ ] Log "Application startup complete" visible (RAG chargé)
-  [ ] .env vérifié : GEP_API_KEY + GEP_MODEL=anthropic.claude-opus-4-7
+  [ ] localhost:3000 accessible (frontend)
+  [ ] Log "Application startup complete" visible (RAG charge)
+  [ ] .env verifie : GEP_API_KEY + GEP_MODEL=anthropic.claude-opus-4-7
   [ ] Chrome ouvert (Web Speech API pour le micro)
-  [ ] Son activé sur la machine (micro système)
-  [ ] Image de test prête pour la photo (n'importe quel JPG)
-  [ ] Écran en 16:9, zoom navigateur à 100 %
-  [ ] Vérifier que le "PROCHAIN" audit est bien affiché
-      (les statuts sont dynamiques — basés sur l'heure courante)
+  [ ] Son active sur la machine (micro systeme)
+  [ ] Image de test prete pour la photo (n'importe quel JPG)
+  [ ] Ecran en 16:9, zoom navigateur a 100 %
+  [ ] Verifier que le "PROCHAIN" audit est bien affiche
+      (les statuts sont dynamiques — bases sur l'heure courante)
+  [ ] La mission Sucy-en-Brie a le flag alwaysDemarrer
+      -> bouton Demarrer toujours visible independamment de l'heure
 
 ════════════════════════════════════════════════════════════════════
-CHANGEMENTS DEPUIS LA VERSION PRÉCÉDENTE DU SCRIPT
+CHANGEMENTS DEPUIS LA VERSION PRECEDENTE DU SCRIPT
 ════════════════════════════════════════════════════════════════════
 
-  • Connexion : sélecteur de rôle (Marc vs Mei Lin Zhang)
-    → plus de toggle thème "Agile Diagrams" (thème verrouillé)
-  • Dashboard : carte interactive avec routing OSRM réel + flyTo
-  • Brief : checklist éditable (× par item) + points auditeur personnalisés
-  • Inspection — 3 colonnes :
-      Col 1 : checklist dynamique
-      Col 2 : capture + synthèse + articles RAG (avec tooltips)
-      Col 3 : constats
-  • Sélection d'un item → génération automatique suggestions + questions
-  • Questions Oui/Non IA (colonne dédiée, contexte transmis à Claude)
-  • Saisie manuscrite (canvas HTML5 + Claude vision, bouton ✍️)
-  • Score X/3 → indicateur rond coloré (rouge/orange/jaune/vert)
-  • Constats : badge + séparateur + constat + → action corrective
-  • Rapport : grille de conformité par section ISO + anneau SVG score
-  • Portail fournisseur : Mei Lin Zhang, catégories + filtres + tooltips
-
-════════════════════════════════════════════════════════════════════
+  • Narrative "avant / pendant / apres" issue du CDC officiel
+  • 3 clients explicites : Apave + Bureau Veritas + RATP (Apave ajoute)
+  • 5 problemes metier officiels en ouverture (Slide 1)
+  • 5 valeurs attendues officielles en cloture (alignees CDC)
+  • Capitalisation expertise BV : boutons Confirmer/Corriger mis en valeur
+  • IA explicable et tracable : angle valorise (articles verbatim + sources)
+  • Plateforme biface BV <-> fournisseur : narratif clarifie
+  • Signature : uniquement manuscrite (canvas), champ texte supprime
+  • Port frontend : localhost:5173 -> localhost:3000
+  • 2 nouvelles Q&R : modele 3 clients, capitalisation expertise BV
+  • Popovers i sur Check-list auto-generee, Questions suggerees, RAG
+  • Boutons x suppression sections et items dans la checklist Brief
