@@ -720,9 +720,17 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                     {editingConstatId === c.id ? (
                       <>
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CRITICITE_STYLE[c.criticite]?.badge}`}>
-                            {CRITICITE_STYLE[c.criticite]?.label}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CRITICITE_STYLE[c.criticite]?.badge}`}>
+                              {CRITICITE_STYLE[c.criticite]?.label}
+                            </span>
+                            <span className={`w-2 h-2 rounded-full shrink-0 inline-block ${
+                              c.criticite === "majeure" ? "bg-red-500" :
+                              c.criticite === "mineure" ? "bg-orange-400" :
+                              c.criticite === "observation" ? "bg-yellow-400" :
+                              "bg-green-500"
+                            }`} title={CRITICITE_STYLE[c.criticite]?.label} />
+                          </div>
                           <span className="text-[10px] font-mono text-ink-muted">{c.clause}</span>
                         </div>
                         <textarea
@@ -752,9 +760,17 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                     ) : (
                       <>
                         <div className="flex items-center justify-between mb-2">
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CRITICITE_STYLE[c.criticite]?.badge}`}>
-                            {CRITICITE_STYLE[c.criticite]?.label}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CRITICITE_STYLE[c.criticite]?.badge}`}>
+                              {CRITICITE_STYLE[c.criticite]?.label}
+                            </span>
+                            <span className={`w-2 h-2 rounded-full shrink-0 inline-block ${
+                              c.criticite === "majeure" ? "bg-red-500" :
+                              c.criticite === "mineure" ? "bg-orange-400" :
+                              c.criticite === "observation" ? "bg-yellow-400" :
+                              "bg-green-500"
+                            }`} title={CRITICITE_STYLE[c.criticite]?.label} />
+                          </div>
                           <div className="flex items-center gap-1">
                             <span className="text-[10px] font-mono text-ink-muted">{c.clause}</span>
                             <button
