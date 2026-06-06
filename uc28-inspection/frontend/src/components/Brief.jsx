@@ -89,7 +89,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
         <div className="text-xs text-ink-muted">
           {genere ? (
             <span className="font-medium text-brand-emerald">
-              Check-list générée · {genSec} sec · {CHECKLIST.length} sections · {totalPoints} points · {recurrents} point récurrent
+              Check-list générée · {genSec} sec · {CHECKLIST.length} sections · {totalPoints} points de contrôle · {recurrents} point de contrôle récurrent
             </span>
           ) : (
             <span>Génération de la check-list…</span>
@@ -289,7 +289,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     </div>
                     <div className="text-sm font-medium text-ink">{section.titre}</div>
                     <div className="text-xs text-ink-muted mt-1 mb-2">
-                      {section.items.filter(i => !removedItemIds.has(i.id)).length + extraItems.length} point{(section.items.filter(i => !removedItemIds.has(i.id)).length + extraItems.length) > 1 ? "s" : ""}
+                      {section.items.filter(i => !removedItemIds.has(i.id)).length + extraItems.length} point{(section.items.filter(i => !removedItemIds.has(i.id)).length + extraItems.length) > 1 ? "s" : ""} de contrôle
                       {section.id === "S1" && (
                         <span className="ml-2 font-medium text-brand-amber">· 1 récurrent</span>
                       )}
@@ -329,7 +329,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                               }
                               if (e.key === "Escape") { setAddingItemTo(null); setNewItemTexte("") }
                             }}
-                            placeholder="Point à vérifier…"
+                            placeholder="Point de contrôle à vérifier…"
                             className="w-full text-xs border border-divider rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand mb-1 bg-surface"
                           />
                           <div className="flex gap-1.5">
@@ -339,7 +339,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                         </div>
                       ) : (
                         <button onClick={() => { setAddingItemTo(section.id); setAddingSection(false) }} className="mt-2 text-[10px] flex items-center gap-1 text-brand hover:text-brand-cyan transition-colors">
-                          + point
+                          + point de contrôle
                         </button>
                       )
                     )}
@@ -389,7 +389,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                           }
                           if (e.key === "Escape") { setAddingItemTo(null); setNewItemTexte("") }
                         }}
-                        placeholder="Point à vérifier…"
+                        placeholder="Point de contrôle à vérifier…"
                         className="w-full text-xs border border-divider rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand mb-1 bg-surface"
                       />
                       <div className="flex gap-1.5">
@@ -399,7 +399,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     </div>
                   ) : (
                     <button onClick={() => { setAddingItemTo(sec.id); setAddingSection(false) }} className="text-[10px] flex items-center gap-1 text-brand hover:text-brand-cyan transition-colors">
-                      + point
+                      + point de contrôle
                     </button>
                   )}
                 </div>
