@@ -281,7 +281,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                       <span className="text-xs font-bold text-brand">{section.id}</span>
                       <button
                         onClick={() => setRemovedSectionIds(prev => new Set([...prev, section.id]))}
-                        className="text-gray-300 hover:text-red-500 text-sm leading-none transition-colors"
+                        className="text-gray-400 hover:text-red-500 hover:bg-red-50 w-5 h-5 flex items-center justify-center rounded text-sm leading-none transition-colors"
                         title="Supprimer cette section"
                       >×</button>
                     </div>
@@ -301,7 +301,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                           </span>
                           <button
                             onClick={() => setRemovedItemIds(prev => new Set([...prev, item.id]))}
-                            className="text-gray-300 hover:text-red-500 shrink-0 transition-colors"
+                            className="text-gray-400 hover:text-red-500 hover:bg-red-50 w-4 h-4 flex items-center justify-center rounded text-xs leading-none shrink-0 transition-colors"
                           >×</button>
                         </div>
                       ))}
