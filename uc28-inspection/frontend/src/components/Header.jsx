@@ -16,7 +16,7 @@ const BADGE_CONFIG = {
   report:     { label: "AUDIT TERMINÉ",  cls: "bg-brand/20 text-white border border-brand/50" },
 }
 
-export default function Header({ view, auditContext, timerDisplay, onNavigate, theme, user, lang, onLangChange, onLogout }) {
+export default function Header({ view, auditContext, onNavigate, theme, user, lang, onLangChange, onLogout }) {
   const isAuditView = view === "brief" || view === "inspection" || view === "report"
   const [isOnline, setIsOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -80,9 +80,6 @@ export default function Header({ view, auditContext, timerDisplay, onNavigate, t
           {view === "inspection" && (
             <>
               <span className="text-xs px-2 py-1 rounded font-mono bg-brand">ISO 9001</span>
-{timerDisplay && (
-                <span className="font-mono text-sm bg-brand px-2 py-1 rounded">{timerDisplay}</span>
-              )}
             </>
           )}
           <div ref={menuRef} className="relative">

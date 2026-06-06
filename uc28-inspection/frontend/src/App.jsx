@@ -77,14 +77,6 @@ export default function App() {
     return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
   }
 
-  // Timer display pour le header écran inspection
-  function getTimerDisplay() {
-    if (!startTime) return "00:00"
-    const elapsed = Math.floor((Date.now() - startTime) / 1000)
-    const m = String(Math.floor(elapsed / 60)).padStart(2, "0")
-    const s = String(elapsed % 60).padStart(2, "0")
-    return `${m}:${s}`
-  }
 
   const showHeader = view !== "login"
 
@@ -94,7 +86,6 @@ export default function App() {
         <Header
           view={view}
           auditContext={view !== "dashboard" ? AUDIT_COURANT : null}
-          timerDisplay={view === "inspection" ? getTimerDisplay() : null}
           onNavigate={(v) => setView(v)}
           theme={theme}
           user={user}
