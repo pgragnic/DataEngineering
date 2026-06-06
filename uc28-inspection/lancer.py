@@ -88,7 +88,7 @@ class App(tk.Tk):
         row.columnconfigure(0, weight=1)
         row.columnconfigure(1, weight=1)
 
-        self._backend_indicator = self._make_indicator(row, "Backend Flask", "localhost:8000", 0)
+        self._backend_indicator = self._make_indicator(row, "Backend FastAPI", "localhost:8000", 0)
         self._frontend_indicator = self._make_indicator(row, "Frontend Vite", "localhost:3000", 1)
 
     def _make_indicator(self, parent, title, url, col):
@@ -277,11 +277,11 @@ class App(tk.Tk):
 
         NO_WINDOW = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
 
-        # Backend Flask
-        self._log("→  Démarrage du backend Flask…", "info")
+        # Backend FastAPI
+        self._log("→  Démarrage du backend FastAPI…", "info")
         try:
             p_backend = subprocess.Popen(
-                [str(VENV_PYTHON), "flask_app.py"],
+                [str(VENV_PYTHON), "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"],
                 cwd=str(BACKEND),
                 env=env,
                 stdout=subprocess.PIPE,
@@ -297,7 +297,7 @@ class App(tk.Tk):
             self._set_dot(self._backend_indicator, C_DANGER)
             return
 
-        # Attendre Flask
+        # Attendre FastAPI
         import time
         import urllib.request
         for _ in range(20):
