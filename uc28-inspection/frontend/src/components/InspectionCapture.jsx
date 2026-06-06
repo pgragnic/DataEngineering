@@ -349,7 +349,7 @@ export default function InspectionCapture({ constats, onAddConstat, onGenererRap
                   Capture en cours — <span className="font-normal normal-case">sélectionner un point à gauche</span>
                 </h3>
               )}
-              <Waveform active={loading || waveActive || isRecording} />
+              <Waveform active={isRecording} />
 
               <div className="mt-3">
                 <div className="relative">
