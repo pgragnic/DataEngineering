@@ -89,7 +89,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
         <div className="text-xs text-ink-muted">
           {genere ? (
             <span className="font-medium text-brand-emerald">
-              Check-list générée · {genSec} sec · {CHECKLIST.length} sections · {totalPoints} points de contrôle · {recurrents} point de contrôle récurrent
+              Check-list : {CHECKLIST.length} sections · {totalPoints} points de contrôle · {recurrents} point de contrôle récurrent
             </span>
           ) : (
             <span>Génération de la check-list…</span>
@@ -100,7 +100,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
           disabled={!genere}
           className="disabled:bg-divider disabled:text-ink-muted disabled:cursor-not-allowed text-white font-semibold px-5 py-2 rounded-lg text-sm bg-brand hover:bg-brand-cyan transition-colors shadow-sm"
         >
-          Démarrer l'inspection →
+          Démarrer mon inspection →
         </button>
       </div>
 
