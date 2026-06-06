@@ -1,9 +1,11 @@
 import { Building2, ChevronRight, Briefcase } from "lucide-react"
 
 const CLIENTS = [
-  { id: "ratp",        nom: "RATP",                     secteur: "Transport ferroviaire",           missions: 4, prochaine: "Aujourd'hui 14h30", couleur: "bg-brand",     initiales: "RATP" },
-  { id: "apave",       nom: "Apave",                    secteur: "Contrôle technique & inspection", missions: 2, prochaine: "Demain 09h00",      couleur: "bg-brand-cyan", initiales: "AP" },
-  { id: "bv-internal", nom: "Bureau Veritas (interne)", secteur: "Audit qualité interne",           missions: 1, prochaine: "Cette semaine",      couleur: "bg-dark-teal",  initiales: "BV" },
+  { id: "ratp",        nom: "RATP",                     secteur: "Transport ferroviaire",           missions: 4, prochaine: "Aujourd'hui 14h30", couleur: "bg-brand",         initiales: "RATP" },
+  { id: "edf",         nom: "EDF",                      secteur: "Énergie & production électrique", missions: 3, prochaine: "Demain 08h00",       couleur: "bg-brand-cyan",    initiales: "EDF"  },
+  { id: "total",       nom: "TotalEnergies",             secteur: "Énergie & pétrochimie",           missions: 2, prochaine: "Jeudi 10h00",        couleur: "bg-brand-emerald", initiales: "TE"   },
+  { id: "apave",       nom: "Apave",                    secteur: "Contrôle technique & inspection", missions: 2, prochaine: "Demain 09h00",       couleur: "bg-dark-teal",     initiales: "AP"   },
+  { id: "bv-internal", nom: "Bureau Veritas (interne)", secteur: "Audit qualité interne",           missions: 1, prochaine: "Cette semaine",       couleur: "bg-ink-muted",     initiales: "BV"   },
 ]
 
 export default function ClientList({ onSelectClient }) {
