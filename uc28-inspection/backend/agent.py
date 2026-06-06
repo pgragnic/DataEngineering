@@ -16,6 +16,21 @@ from rag import trouver_clause
 load_dotenv()
 
 _gep_client = None
+_anthropic_client = None
+
+def _get_anthropic_client():
+    global _anthropic_client
+    if _anthropic_client is not None:
+        return _anthropic_client
+    key = os.getenv("ANTHROPIC_API_KEY", "")
+    if not key:
+        return None
+    try:
+        import anthropic
+        _anthropic_client = anthropic.Anthropic(api_key=key)
+        return _anthropic_client
+    except Exception:
+        return None
 
 def _get_gep_client():
     global _gep_client
@@ -68,12 +83,47 @@ Retourne ce JSON (sans markdown, sans explication, 1 phrase max par champ) :
     except Exception:
         return None
 
+def _llm_json_list(prompt: str, max_tokens: int = 300) -> list[str]:
+    """Appelle GEP ou Anthropic et retourne une liste JSON de 3 chaînes."""
+    gep = _get_gep_client()
+    if gep:
+        try:
+            model = os.getenv("GEP_MODEL", "anthropic.claude-sonnet-4-6")
+            resp = gep.chat.completions.create(
+                model=model, max_completion_tokens=max_tokens,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = resp.choices[0].message.content.strip()
+        except Exception:
+            raw = ""
+    else:
+        ant = _get_anthropic_client()
+        if ant is None:
+            return []
+        try:
+            resp = ant.messages.create(
+                model="claude-sonnet-4-6", max_tokens=max_tokens,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = resp.content[0].text.strip()
+        except Exception:
+            return []
+    if raw.startswith("```"):
+        raw = raw.split("```", 2)[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+        raw = raw.strip()
+    try:
+        result = json.loads(raw)
+        if isinstance(result, list) and len(result) == 3:
+            return [str(s) for s in result]
+    except Exception:
+        pass
+    return []
+
+
 def generer_suggestions(item_texte: str, clause: str, section_titre: str) -> list[str]:
     """Génère 3 exemples d'observations terrain contextualisées à un point de checklist."""
-    client = _get_gep_client()
-    if client is None:
-        return []
-    model = os.getenv("GEP_MODEL", "anthropic.claude-opus-4-7")
     prompt = (
         f"Tu es un auditeur ISO 9001 sur le terrain. Le point de check-list à vérifier est :\n"
         f"Point : {item_texte}\n"
@@ -86,32 +136,11 @@ def generer_suggestions(item_texte: str, clause: str, section_titre: str) -> lis
         f"Retourne UNIQUEMENT un tableau JSON de 3 chaînes, sans markdown :\n"
         f'["observation 1", "observation 2", "observation 3"]'
     )
-    try:
-        resp = client.chat.completions.create(
-            model=model,
-            max_completion_tokens=300,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = resp.choices[0].message.content.strip()
-        if raw.startswith("```"):
-            raw = raw.split("```", 2)[1]
-            if raw.startswith("json"):
-                raw = raw[4:]
-            raw = raw.strip()
-        result = json.loads(raw)
-        if isinstance(result, list) and len(result) == 3:
-            return [str(s) for s in result]
-        return []
-    except Exception:
-        return []
+    return _llm_json_list(prompt, max_tokens=300)
 
 
 def generer_questions_oui_non(item_texte: str, clause: str, section_titre: str) -> list[str]:
     """Génère 3 questions de vérification oui/non contextualisées à un point de checklist."""
-    client = _get_gep_client()
-    if client is None:
-        return []
-    model = os.getenv("GEP_MODEL", "anthropic.claude-sonnet-4-6")
     prompt = (
         f"Tu es un auditeur ISO 9001 expert.\n"
         f"Pour le point de contrôle suivant :\n"
@@ -122,24 +151,7 @@ def generer_questions_oui_non(item_texte: str, clause: str, section_titre: str) 
         f"Retourne UNIQUEMENT un tableau JSON de 3 chaînes, sans markdown :\n"
         f'["question 1", "question 2", "question 3"]'
     )
-    try:
-        resp = client.chat.completions.create(
-            model=model,
-            max_completion_tokens=200,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = resp.choices[0].message.content.strip()
-        if raw.startswith("```"):
-            raw = raw.split("```", 2)[1]
-            if raw.startswith("json"):
-                raw = raw[4:]
-            raw = raw.strip()
-        result = json.loads(raw)
-        if isinstance(result, list) and len(result) == 3:
-            return [str(s) for s in result]
-        return []
-    except Exception:
-        return []
+    return _llm_json_list(prompt, max_tokens=200)
 
 
 def synthetiser_observation(observation: str) -> str:
