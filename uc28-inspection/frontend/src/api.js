@@ -69,6 +69,20 @@ export const analyserDocumentFournisseur = (nom, contenu) =>
       nc_historique: [],
     }))
 
+const _TRANSCRIPTION_FALLBACK = "Observation terrain — à compléter."
+
+export const transcrireManuscrit = (imageBase64, itemTexte = "") =>
+  fetch(`${BASE}/transcrire_manuscrit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image_base64: imageBase64, item_texte: itemTexte }),
+  })
+    .then((r) => {
+      if (!r.ok) return { texte: _TRANSCRIPTION_FALLBACK }
+      return r.json()
+    })
+    .catch(() => ({ texte: _TRANSCRIPTION_FALLBACK }))
+
 export const analyser = (observation, site_id) => {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 60000)

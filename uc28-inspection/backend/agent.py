@@ -204,6 +204,34 @@ _DEFAULT_SUGGESTIONS = [
     "Nouvel opérateur intervient seul sur opérations de freinage sans habilitation validée",
 ]
 
+_TRANSCRIPTION_MOCK = {
+    "Procédures d'étalonnage à jour":
+        "Certificats étalonnage capteurs pression absents du classeur site. Dernière vérification datée > 12 mois.",
+    "Registres de calibration accessibles":
+        "Registre de calibration introuvable au poste 12 — opérateur oriente vers le bureau du responsable.",
+    "Instructions de travail signées":
+        "Fiche de travail FT-032 sans signature responsable — utilisée depuis 8 mois sans mise à jour.",
+    "Plan qualité révisé < 12 mois":
+        "Plan qualité daté de janvier 2024 — aucune révision depuis 17 mois, revue annuelle non réalisée.",
+    "Clés dynamométriques étalonnées":
+        "Clé dynamométrique poste 7 — étiquette périmée depuis 14 mois, encore en service sur la ligne.",
+    "Étiquettes d'étalonnage visibles":
+        "4 équipements de contrôle sans étiquette visible — arrachées, non remplacées sur atelier B.",
+    "Registre des équipements complet":
+        "6 appareils présents en atelier absents du registre. Colonne dernier étalonnage vide pour 8 équipements.",
+    "Zone quarantaine délimitée":
+        "Zone quarantaine délimitée par ruban adhésif partiellement décollé — confusion possible avec zone conforme.",
+    "Étiquetage pièces NC conforme":
+        "10 pièces en zone quarantaine sans étiquette NC — statut inconnu des opérateurs de ligne.",
+    "Traçabilité des actions correctives":
+        "3 fiches 8D dont le délai est dépassé — aucune relance documentée. NC nov. 2024 sans action associée.",
+    "Habilitations opérateurs à jour":
+        "2 habilitations BR échues depuis sept. 2024 — agents Dupont et Moreau toujours en poste sur zone HTA.",
+    "Plan de formation documenté":
+        "Plan de formation 2025 non établi. Formations mars 2025 sans émargement ni feuille de présence.",
+}
+_DEFAULT_TRANSCRIPTION = "Observation terrain enregistrée par saisie manuscrite — à compléter."
+
 _gep_client = None
 
 def _get_gep_client():
@@ -352,6 +380,34 @@ def synthetiser_observation(observation: str) -> str:
         return resp.choices[0].message.content.strip()
     except Exception:
         return observation
+
+
+def transcrire_manuscrit(image_base64: str, item_texte: str = "") -> str:
+    """Transcrit une image manuscrite en texte d'observation. Fallback par item si GEP indisponible."""
+    client = _get_gep_client()
+    if client:
+        model = os.getenv("GEP_MODEL", "anthropic.claude-sonnet-4-6")
+        try:
+            resp = client.chat.completions.create(
+                model=model,
+                max_completion_tokens=300,
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {"type": "image_url",
+                         "image_url": {"url": f"data:image/png;base64,{image_base64}"}},
+                        {"type": "text",
+                         "text": "Transcris exactement le texte manuscrit visible dans cette image. Retourne uniquement le texte, sans commentaire ni ponctuation ajoutée."},
+                    ],
+                }],
+            )
+            texte = resp.choices[0].message.content.strip()
+            if texte:
+                return texte
+        except Exception:
+            pass
+    # Fallback statique par item, puis défaut
+    return _TRANSCRIPTION_MOCK.get(item_texte, _DEFAULT_TRANSCRIPTION)
 
 
 def _extraire_texte(nom: str, contenu: str) -> str:

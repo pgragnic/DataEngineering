@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from database import get_connection, init_db
-from agent import analyser_observation, synthetiser_observation, generer_suggestions, generer_questions_oui_non, analyser_document_fournisseur
+from agent import analyser_observation, synthetiser_observation, generer_suggestions, generer_questions_oui_non, analyser_document_fournisseur, transcrire_manuscrit
 from rag import trouver_clause
 from rapport import generer_rapport
 
@@ -168,6 +168,19 @@ def export_rapport_docx(req: RapportRequest):
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
+
+
+class TranscrireManuscritRequest(BaseModel):
+    image_base64: str
+    item_texte: str = ""
+
+
+@app.post("/transcrire_manuscrit", summary="Transcrit une image manuscrite en texte d'observation")
+def transcrire_manuscrit_route(req: TranscrireManuscritRequest):
+    if not req.image_base64.strip():
+        raise HTTPException(status_code=422, detail="L'image ne peut pas être vide")
+    texte = transcrire_manuscrit(req.image_base64, req.item_texte)
+    return {"texte": texte}
 
 
 class DocumentFournisseurRequest(BaseModel):

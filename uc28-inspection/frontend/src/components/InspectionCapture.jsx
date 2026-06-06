@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
-import { Mic, MicOff, Camera, ScanLine, CheckCircle2, RotateCcw, ClipboardList, BookOpen, MessageSquare, Sparkles, Circle, Pencil, Check, X } from "lucide-react"
+import { Mic, MicOff, Camera, ScanLine, CheckCircle2, RotateCcw, ClipboardList, BookOpen, MessageSquare, Sparkles, Circle, Pencil, Check, X, PenLine } from "lucide-react"
 import { CHECKLIST, RAG_ARTICLES, AUDIT_COURANT, QUESTIONS_SUGGEREES, RECURRENCES, SUPPLIER_DOCUMENTS } from "../mockData"
-import { analyser, synthetiser, getSuggestions, getQuestionsOuiNon } from "../api"
+import { analyser, synthetiser, getSuggestions, getQuestionsOuiNon, transcrireManuscrit } from "../api"
 
 const CRITICITE_STYLE = {
   majeure:     { badge: "bg-nc-majeure text-white",  card: "border-red-200 bg-red-50",         label: "NC MAJEURE",  border: "border-l-4 border-nc-majeure"  },
@@ -85,6 +85,11 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
   const [correctionTexte, setCorrectionTexte] = useState("")
   const [editingConstatId, setEditingConstatId] = useState(null)
   const [editDraft, setEditDraft] = useState({ constat: "", action: "" })
+  const [canvasMode, setCanvasMode] = useState(false)
+  const [isDrawing, setIsDrawing] = useState(false)
+  const [transcribeLoading, setTranscribeLoading] = useState(false)
+  const canvasRef = useRef(null)
+  const lastPoint = useRef(null)
 
   function toStatement(q, rep) {
     let t = q.replace(/\s*\?$/, "").trim()
@@ -248,13 +253,66 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
     })
     setSelectedItem(null); setResultat(null); setObservation(""); setPhoto(null)
     setMomentFort(false); setSynthese(null); setFeedbackDonne(null); setCorrectionTexte("")
+    setCanvasMode(false)
     clearTimeout(momentFortTimer.current)
   }
 
   function handleRefaire() {
     setResultat(null); setObservation(""); setError(null); setMomentFort(false)
     setSynthese(null); setFeedbackDonne(null); setCorrectionTexte("")
+    setCanvasMode(false)
     clearTimeout(momentFortTimer.current)
+  }
+
+  function getCanvasPoint(e) {
+    const rect = canvasRef.current.getBoundingClientRect()
+    const scaleX = canvasRef.current.width / rect.width
+    const scaleY = canvasRef.current.height / rect.height
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }
+  }
+
+  function handlePointerDown(e) {
+    e.currentTarget.setPointerCapture(e.pointerId)
+    setIsDrawing(true)
+    lastPoint.current = getCanvasPoint(e)
+  }
+
+  function handlePointerMove(e) {
+    if (!isDrawing) return
+    const ctx = canvasRef.current.getContext("2d")
+    const pt = getCanvasPoint(e)
+    ctx.beginPath()
+    ctx.moveTo(lastPoint.current.x, lastPoint.current.y)
+    ctx.lineTo(pt.x, pt.y)
+    ctx.strokeStyle = "#1a1a1a"
+    ctx.lineWidth = e.pressure > 0 && e.pointerType === "pen" ? Math.max(1, e.pressure * 4) : 2
+    ctx.lineCap = "round"
+    ctx.lineJoin = "round"
+    ctx.stroke()
+    lastPoint.current = pt
+  }
+
+  function handlePointerUp() { setIsDrawing(false); lastPoint.current = null }
+
+  function clearCanvas() {
+    const c = canvasRef.current
+    if (c) c.getContext("2d").clearRect(0, 0, c.width, c.height)
+  }
+
+  async function handleTranscrire() {
+    if (!canvasRef.current) return
+    const dataUrl = canvasRef.current.toDataURL("image/png")
+    const base64 = dataUrl.split(",")[1]
+    setTranscribeLoading(true)
+    const { texte } = await transcrireManuscrit(base64, selectedItem?.texte || "")
+    setTranscribeLoading(false)
+    if (texte) {
+      setObservation(prev => prev ? prev + " " + texte : texte)
+      setCanvasMode(false)
+      clearCanvas()
+    }
   }
 
   const counts = {
@@ -362,10 +420,19 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                     onChange={(e) => setObservation(e.target.value)}
                     placeholder={isRecording ? "Dictée en cours — parlez maintenant…" : "Décrivez l'observation terrain…"}
                     rows={3}
-                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand resize-none pr-10 ${
-                      isRecording ? "border-red-400 bg-red-50" : "border-divider"
+                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand resize-none pr-16 ${
+                      isRecording ? "border-red-400 bg-red-50" : canvasMode ? "border-brand" : "border-divider"
                     }`}
                   />
+                  <button
+                    onClick={() => setCanvasMode(v => !v)}
+                    title="Saisie manuscrite"
+                    className={`absolute right-9 top-2 p-1.5 rounded-full transition-all ${
+                      canvasMode ? "bg-brand text-white" : "text-ink-muted hover:text-ink hover:bg-canvas"
+                    }`}
+                  >
+                    <PenLine size={16} />
+                  </button>
                   {speechSupported && (
                     <button
                       onClick={toggleRecording}
@@ -412,6 +479,37 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                   </div>
                 )}
               </div>
+
+              {canvasMode && (
+                <div className="mt-2 border border-brand rounded-xl overflow-hidden bg-white">
+                  <div className="flex items-center justify-between px-3 py-1.5 border-b border-divider bg-canvas">
+                    <span className="text-[10px] text-ink-muted font-medium flex items-center gap-1"><PenLine size={10} className="text-brand" />Écrivez votre observation</span>
+                    <button onClick={clearCanvas} className="text-[10px] text-ink-muted hover:text-ink transition-colors">Effacer</button>
+                  </div>
+                  <canvas
+                    ref={canvasRef}
+                    width={480}
+                    height={160}
+                    className="w-full touch-none cursor-crosshair block bg-white"
+                    onPointerDown={handlePointerDown}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    onPointerLeave={handlePointerUp}
+                  />
+                  <div className="flex items-center justify-between px-3 py-2 border-t border-divider bg-canvas">
+                    <span className="text-[10px] text-ink-muted">Souris · Doigt · Stylet</span>
+                    <button
+                      onClick={handleTranscrire}
+                      disabled={transcribeLoading}
+                      className="text-xs font-semibold px-4 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-cyan transition-colors disabled:opacity-60 flex items-center gap-1.5"
+                    >
+                      {transcribeLoading ? (
+                        <><svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>Transcription…</>
+                      ) : "✨ Transcrire"}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {error && (
                 <div className="mt-3 text-sm font-medium text-red-700 bg-red-50 border-2 border-red-400 rounded-lg px-4 py-3 flex items-start gap-2">
