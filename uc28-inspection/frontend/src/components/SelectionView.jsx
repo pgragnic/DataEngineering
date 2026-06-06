@@ -278,11 +278,13 @@ export default function SelectionView({ selectedIds, transport: initTransport, c
 
                   // Statut dynamique basé sur l'heure courante
                   const nowMin = new Date().getHours() * 60 + new Date().getMinutes()
-                  const displayStatut = (item.heureMin + item.dureeMin) < nowMin
-                    ? "TERMINÉ"
-                    : item.heureMin <= nowMin + 45
-                      ? "PROCHAIN"
-                      : "PLANIFIÉ"
+                  const displayStatut = item.alwaysDemarrer
+                    ? "PROCHAIN"
+                    : (item.heureMin + item.dureeMin) < nowMin
+                      ? "TERMINÉ"
+                      : item.heureMin <= nowMin + 45
+                        ? "PROCHAIN"
+                        : "PLANIFIÉ"
 
                   return (
                     <div key={item.id}>

@@ -53,7 +53,7 @@ export const AUDITS_TIMELINE = [
     scope: "§7.1.5 Métrologie · §8.7 Non-conformités — Étalonnage & zone quarantaine",
     referentiel: "ISO 9001:2015", effectif: 218,
     responsable: "Mei Lin Zhang", nc_ouvertes: 3,
-    statut: "PROCHAIN", action: "Démarrer",
+    statut: "PROCHAIN", action: "Démarrer", alwaysDemarrer: true,
     trajet: { voiture: "35 min", velo: "1h20", pied: "3h45" }, trajetTC: "55 min",
     coords: { lat: 48.7707, lng: 2.5126 },
   },
