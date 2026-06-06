@@ -276,12 +276,12 @@ export default function Brief({ onDemarrer, onBack, theme }) {
               {CHECKLIST.slice(0, sectionsVisibles).filter(s => !removedSectionIds.has(s.id)).map((section) => {
                 const extraItems = extraItemsBySectionId[section.id] || []
                 return (
-                  <div key={section.id} className="bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in group">
+                  <div key={section.id} className="bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-bold text-brand">{section.id}</span>
                       <button
                         onClick={() => setRemovedSectionIds(prev => new Set([...prev, section.id]))}
-                        className="text-divider hover:text-red-500 text-sm leading-none opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-gray-300 hover:text-red-500 text-sm leading-none transition-colors"
                         title="Supprimer cette section"
                       >×</button>
                     </div>
@@ -294,14 +294,14 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     </div>
                     <div className="space-y-0.5 mb-1">
                       {section.items.filter(i => !removedItemIds.has(i.id)).map(item => (
-                        <div key={item.id} className="flex items-center justify-between gap-2 text-xs text-ink group py-0.5">
+                        <div key={item.id} className="flex items-center justify-between gap-2 text-xs text-ink py-0.5">
                           <span className="flex items-center gap-1.5 min-w-0">
                             <span className="text-ink-muted shrink-0">○</span>
                             <span className="truncate">{item.texte}</span>
                           </span>
                           <button
                             onClick={() => setRemovedItemIds(prev => new Set([...prev, item.id]))}
-                            className="text-divider hover:text-red-500 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="text-gray-300 hover:text-red-500 shrink-0 transition-colors"
                           >×</button>
                         </div>
                       ))}
