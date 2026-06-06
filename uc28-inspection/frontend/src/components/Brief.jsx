@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { AUDIT_COURANT, CHECKLIST, AUDITS_PRECEDENTS, SUPPLIER_DOCUMENTS, SUPPLIER_ALERTS } from "../mockData"
-import { FileText, History, ClipboardList, Upload, CheckCircle2, AlertTriangle, Calendar, Pencil, Check, X } from "lucide-react"
+import { FileText, History, ClipboardList, Upload, CheckCircle2, AlertTriangle, Calendar, Pencil, Check, X, Info } from "lucide-react"
 
 const inputCls = "w-full text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface"
 
@@ -17,6 +17,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
   const [newSectionClause, setNewSectionClause] = useState("")
   const [removedItemIds, setRemovedItemIds] = useState(new Set())
   const [removedSectionIds, setRemovedSectionIds] = useState(new Set())
+  const [showChecklistInfo, setShowChecklistInfo] = useState(false)
   const [selectedRef, setSelectedRef] = useState("ISO 9001:2015")
 
   // ── Brief client inline edit ───────────────────────────────────────────────
@@ -259,9 +260,31 @@ export default function Brief({ onDemarrer, onBack, theme }) {
 
           {/* ── Colonne centre — Check-list IA ────────────────────────────── */}
           <div className="card col-span-4">
-            <h2 className="section-label">
-              <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><ClipboardList size={11} className="text-brand" /></span>Check-list auto-générée
-            </h2>
+            <div className="relative">
+              <h2 className="section-label">
+                <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><ClipboardList size={11} className="text-brand" /></span>
+                Check-list auto-générée
+                <button onClick={() => setShowChecklistInfo(v => !v)} className="ml-1 text-brand/50 hover:text-brand transition-colors" title="Comment est générée cette liste ?">
+                  <Info size={12} />
+                </button>
+              </h2>
+              {showChecklistInfo && (
+                <div className="absolute top-7 left-0 right-0 z-30 bg-white border border-brand/20 rounded-xl shadow-lg p-3 text-xs text-ink-muted space-y-1.5">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-brand text-[10px] uppercase tracking-wide">Comment est générée cette liste ?</span>
+                    <button onClick={() => setShowChecklistInfo(false)} className="text-ink-muted hover:text-ink"><X size={12} /></button>
+                  </div>
+                  <p>L'Agent IA combine <strong>5 sources</strong> pour construire la checklist :</p>
+                  <ul className="space-y-1 pl-2">
+                    <li><span className="font-medium text-ink">1. Référentiel</span> — ISO 9001:2015 (sélectionnable ci-dessous)</li>
+                    <li><span className="font-medium text-ink">2. Scope de la mission</span> — §7.1.5 Métrologie · §8.7 NC → S2 et S3 ciblées</li>
+                    <li><span className="font-medium text-ink">3. Contexte du site</span> — atelier maintenance, 218 personnes, 2h30</li>
+                    <li><span className="font-medium text-ink">4. Historique NC</span> — non-conformité §7.1.5 ouverte depuis nov. 2024</li>
+                    <li><span className="font-medium text-ink">5. Documents fournisseur</span> — 3 docs Mei Lin Zhang pré-analysés → alertes ⚠</li>
+                  </ul>
+                </div>
+              )}
+            </div>
             {!genere && (
               <div className="flex items-center gap-2 mb-4 mt-3">
                 <svg className="animate-spin h-3 w-3 text-brand" viewBox="0 0 24 24" fill="none">
