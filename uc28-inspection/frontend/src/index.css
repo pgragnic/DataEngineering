@@ -111,4 +111,5 @@
 @tailwind components;
 @tailwind utilities;
 
-body { font-family: 'Inter', 'Calibri Light', system-ui, sans-serif; overflow-x: hidden; }
+html, body { overflow-x: hidden; max-width: 100%; }
+body { font-family: 'Inter', 'Calibri Light', system-ui, sans-serif; }
