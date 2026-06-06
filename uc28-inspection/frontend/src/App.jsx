@@ -25,6 +25,7 @@ export default function App() {
   const [selectedAuditIds, setSelectedAuditIds] = useState(new Set())
   const [selectedTransport, setSelectedTransport] = useState("voiture")
   const [selectedConfig, setSelectedConfig] = useState({ debutMin: 540, finMin: 1080, pauseMin: 720, pauseDuree: 90 })
+  const [selectedClient, setSelectedClient] = useState(null)
 
   function handleOpenPlanning() {
     setView("planning")
@@ -110,12 +111,13 @@ export default function App() {
           <SupplierPortal theme={theme} onBack={() => setView("login")} />
         )}
         {view === "clients" && (
-          <ClientList onSelectClient={() => setView("dashboard")} theme={theme} />
+          <ClientList onSelectClient={(client) => { setSelectedClient(client); setView("dashboard") }} theme={theme} />
         )}
         {(view === "dashboard" || view === "planning") && (
           <PlanningOverlay
             onClose={() => setView("clients")}
             onConfirm={handleOpenSelection}
+            selectedClient={selectedClient}
             theme={theme}
           />
         )}

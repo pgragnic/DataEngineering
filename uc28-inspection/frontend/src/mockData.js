@@ -150,6 +150,77 @@ export const AUDITS_TIMELINE = [
   },
 ]
 
+export const AUDITS_EDF = [
+  {
+    id: "edf-def",
+    heure: _mth(_T - 90), heureMin: _T - 90,
+    dureeMin: 60, type: "Bureau",
+    titre: "Brief & revue documentaire — audit du jour",
+    site: "Siège EDF — Direction Qualité (La Défense)", site_id: "EDF-DEF",
+    scope: "§7.5 Informations documentées — Revue procédures & référentiels sûreté",
+    referentiel: "ISO 9001:2015", effectif: null,
+    responsable: "Claire Fontaine", nc_ouvertes: 0,
+    statut: "TERMINÉ", action: "Voir le rapport",
+    trajet: { voiture: "—", velo: "—", pied: "—" }, trajetTC: "—",
+    coords: { lat: 48.8929, lng: 2.2362 },
+  },
+  {
+    id: "edf-iss",
+    heure: _mth(_T + 60), heureMin: _T + 60,
+    dureeMin: 120, type: "Visite",
+    titre: "Audit étalonnage — capteurs de mesure process",
+    site: "Centre de maintenance EDF — Issy-les-Moulineaux", site_id: "EDF-ISS",
+    scope: "§7.1.5 Métrologie · §8.7 Non-conformités — Capteurs, bancs d'essai, zone NC",
+    referentiel: "ISO 9001:2015", effectif: 156,
+    responsable: "Bruno Mercier", nc_ouvertes: 2,
+    statut: "PROCHAIN", action: "Démarrer",
+    trajet: { voiture: "22 min", velo: "40 min", pied: "1h45" }, trajetTC: "32 min",
+    coords: { lat: 48.8230, lng: 2.2710 },
+  },
+  {
+    id: "edf-sac",
+    heure: _mth(_T + 200), heureMin: _T + 200,
+    dureeMin: 90, type: "Visite",
+    titre: "Audit habilitations & compétences opérateurs",
+    site: "Site R&D EDF Lab — Saclay", site_id: "EDF-SAC",
+    scope: "§7.2 Compétences — Habilitations électriques, plans de formation, registres",
+    referentiel: "ISO 9001:2015", effectif: 243,
+    responsable: "Nathalie Perrin", nc_ouvertes: 1,
+    statut: "PLANIFIÉ", action: `À ${_mth(_T + 200)}`,
+    trajet: { voiture: "42 min", velo: "1h30", pied: "4h00" }, trajetTC: "1h05",
+    coords: { lat: 48.7294, lng: 2.1732 },
+  },
+]
+
+export const AUDITS_TOTAL = [
+  {
+    id: "total-def",
+    heure: _mth(_T - 30), heureMin: _T - 30,
+    dureeMin: 45, type: "Bureau",
+    titre: "Brief & revue documentaire — audit du jour",
+    site: "Siège TotalEnergies — La Défense", site_id: "TOTAL-DEF",
+    scope: "§7.5 Informations documentées — Revue procédures & plans qualité refinery",
+    referentiel: "ISO 9001:2015", effectif: null,
+    responsable: "Arnaud Lestrade", nc_ouvertes: 0,
+    statut: "TERMINÉ", action: "Voir le rapport",
+    trajet: { voiture: "—", velo: "—", pied: "—" }, trajetTC: "—",
+    coords: { lat: 48.8929, lng: 2.2362 },
+  },
+  {
+    id: "total-gen",
+    heure: _mth(_T + 100), heureMin: _T + 100,
+    dureeMin: 120, type: "Visite",
+    titre: "Audit gestion NC — réception matières premières",
+    site: "Dépôt pétrolier TotalEnergies — Gennevilliers", site_id: "TOTAL-GEN",
+    scope: "§8.7 Éléments de sortie NC · §8.4 Maîtrise externe — Réception & qualification",
+    referentiel: "ISO 9001:2015", effectif: 88,
+    responsable: "Sylvie Blanchard", nc_ouvertes: 3,
+    statut: "PLANIFIÉ", action: `À ${_mth(_T + 100)}`,
+    trajet: { voiture: "28 min", velo: "55 min", pied: "2h30" }, trajetTC: "42 min",
+    coords: { lat: 48.9263, lng: 2.2962 },
+  },
+]
+
 // Audit sélectionné pour la démo (écrans 2-3-4)
 export const AUDIT_COURANT = {
   site_id: "RATP-SUC",

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { AUDITS_TIMELINE } from "../mockData"
+import { AUDITS_TIMELINE, AUDITS_EDF, AUDITS_TOTAL } from "../mockData"
 import MapCard from "./MapCard"
 import { Car, Train, Bike } from "lucide-react"
 
@@ -28,7 +28,7 @@ function parseTimeInput(val) {
   return h * 60 + (m || 0)
 }
 
-export default function PlanningOverlay({ onClose, onConfirm, theme }) {
+export default function PlanningOverlay({ onClose, onConfirm, selectedClient, theme }) {
   const ag = theme === "agile"
   const ar = theme === "aria"
   const brandColor = ag ? "#5D93C1" : ar ? "#4B87F8" : "#2563EB"
@@ -39,8 +39,12 @@ export default function PlanningOverlay({ onClose, onConfirm, theme }) {
   const [finInput, setFinInput] = useState("18:00")
   const [pauseDuree, setPauseDuree] = useState(90)
 
+  const audits = selectedClient?.id === "edf" ? AUDITS_EDF
+    : selectedClient?.id === "total" ? AUDITS_TOTAL
+    : AUDITS_TIMELINE
+
   const n = selectedIds.size
-  const selectedAudits = AUDITS_TIMELINE.filter(a => selectedIds.has(a.id))
+  const selectedAudits = audits.filter(a => selectedIds.has(a.id))
 
   function toggleAudit(id) {
     setSelectedIds(prev => {
@@ -120,10 +124,10 @@ export default function PlanningOverlay({ onClose, onConfirm, theme }) {
           {/* Liste des missions */}
           <div className="card flex-1">
             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
-              Missions du jour — {AUDITS_TIMELINE.length} disponibles
+              Missions du jour — {audits.length} disponibles
             </div>
             <div className="space-y-2">
-              {AUDITS_TIMELINE.map(audit => {
+              {audits.map(audit => {
                 const isSelected = selectedIds.has(audit.id)
                 const trajet = getTrajetLabel(audit, transport)
                 return (
@@ -159,7 +163,7 @@ export default function PlanningOverlay({ onClose, onConfirm, theme }) {
         {/* Panneau droit — carte */}
         <div className="col-span-4">
           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Parcours sélectionné</h2>
-          <MapCard audits={selectedAudits.length > 0 ? selectedAudits : AUDITS_TIMELINE} theme={theme} compact focusCoords={null} transport={transport} />
+          <MapCard audits={selectedAudits.length > 0 ? selectedAudits : audits} theme={theme} compact focusCoords={null} transport={transport} />
           {selectedAudits.length === 0 && (
             <p className="text-[10px] text-gray-400 text-center mt-2">Sélectionnez des missions pour voir votre parcours</p>
           )}
