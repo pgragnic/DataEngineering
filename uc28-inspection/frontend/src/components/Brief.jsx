@@ -278,13 +278,6 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                   <div key={section.id} className="bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-bold text-brand">{section.id}</span>
-                      <div className="flex items-center gap-1.5">
-                        {SUPPLIER_ALERTS[section.clause] && (
-                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${SUPPLIER_ALERTS[section.clause].criticite === "majeure" ? "bg-red-100 text-red-600" : "bg-orange-100 text-orange-600"}`}>
-                            ⚠ RATP
-                          </span>
-                        )}
-                      </div>
                     </div>
                     <div className="text-sm font-medium text-ink">{section.titre}</div>
                     <div className="text-xs text-ink-muted mt-1 mb-2">
