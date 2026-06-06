@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { AUDIT_COURANT, CHECKLIST, AUDITS_PRECEDENTS, SUPPLIER_DOCUMENTS, SUPPLIER_ALERTS } from "../mockData"
-import { FileText, History, ClipboardList, Upload, CheckCircle2, AlertTriangle, Calendar } from "lucide-react"
+import { FileText, History, ClipboardList, Upload, CheckCircle2, AlertTriangle, Calendar, Pencil, Check, X } from "lucide-react"
+
+const inputCls = "w-full text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface"
+const inputSmCls = "text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface w-16 text-center"
 
 export default function Brief({ onDemarrer, onBack, theme }) {
   const [sectionsVisibles, setSectionsVisibles] = useState(0)
@@ -15,6 +18,26 @@ export default function Brief({ onDemarrer, onBack, theme }) {
   const [newSectionClause, setNewSectionClause] = useState("")
   const [removedItemIds, setRemovedItemIds] = useState(new Set())
   const [selectedRef, setSelectedRef] = useState("ISO 9001:2015")
+
+  // ── Edit modes ────────────────────────────────────────────────────────────
+  const [editingBrief, setEditingBrief] = useState(false)
+  const [editingChecklist, setEditingChecklist] = useState(false)
+  const [editingAudits, setEditingAudits] = useState(false)
+
+  // ── Editable data ─────────────────────────────────────────────────────────
+  const [editedBriefData, setEditedBriefData] = useState({
+    nom: AUDIT_COURANT.nom,
+    localisation: AUDIT_COURANT.localisation,
+    effectif: AUDIT_COURANT.effectif,
+    scope: [...AUDIT_COURANT.scope],
+    responsable_qualite: AUDIT_COURANT.responsable_qualite,
+    contact: AUDIT_COURANT.contact,
+    duree_prevue: AUDIT_COURANT.duree_prevue,
+  })
+
+  const [editedAudits, setEditedAudits] = useState(
+    AUDITS_PRECEDENTS.map(a => ({ ...a, themes: [...a.themes] }))
+  )
 
   useEffect(() => {
     const start = Date.now()
@@ -33,6 +56,25 @@ export default function Brief({ onDemarrer, onBack, theme }) {
 
   const totalPoints = CHECKLIST.reduce((s, c) => s + c.points, 0)
   const recurrents = 1
+
+  // ── Edit helpers ──────────────────────────────────────────────────────────
+  const cancelBrief = () => {
+    setEditedBriefData({
+      nom: AUDIT_COURANT.nom,
+      localisation: AUDIT_COURANT.localisation,
+      effectif: AUDIT_COURANT.effectif,
+      scope: [...AUDIT_COURANT.scope],
+      responsable_qualite: AUDIT_COURANT.responsable_qualite,
+      contact: AUDIT_COURANT.contact,
+      duree_prevue: AUDIT_COURANT.duree_prevue,
+    })
+    setEditingBrief(false)
+  }
+
+  const cancelAudits = () => {
+    setEditedAudits(AUDITS_PRECEDENTS.map(a => ({ ...a, themes: [...a.themes] })))
+    setEditingAudits(false)
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -62,23 +104,58 @@ export default function Brief({ onDemarrer, onBack, theme }) {
       <div className="page-content">
         <div className="grid-12">
 
-          {/* Colonne gauche — Brief client */}
+          {/* ── Colonne gauche — Brief client ─────────────────────────────── */}
           <div className="card col-span-4">
             <h2 className="section-label">
-              <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><FileText size={11} className="text-brand" /></span>Brief client
+              <span className="flex items-center gap-1.5 flex-1 min-w-0">
+                <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0">
+                  <FileText size={11} className="text-brand" />
+                </span>
+                Brief client
+              </span>
+              {editingBrief ? (
+                <span className="flex gap-1 ml-2 shrink-0">
+                  <button onClick={() => setEditingBrief(false)} className="p-1 rounded hover:bg-brand/10 text-brand-emerald" title="Enregistrer"><Check size={12} /></button>
+                  <button onClick={cancelBrief} className="p-1 rounded hover:bg-red-50 text-ink-muted" title="Annuler"><X size={12} /></button>
+                </span>
+              ) : (
+                <button onClick={() => setEditingBrief(true)} className="ml-2 shrink-0 p-1 rounded hover:bg-brand/10 text-ink-muted hover:text-brand" title="Modifier">
+                  <Pencil size={12} />
+                </button>
+              )}
             </h2>
             <dl className="space-y-3 text-sm">
               <div>
                 <dt className="text-[10px] font-semibold text-ink-muted uppercase">Client</dt>
-                <dd className="font-semibold text-ink">{AUDIT_COURANT.nom}</dd>
+                <dd>
+                  {editingBrief
+                    ? <input value={editedBriefData.nom} onChange={e => setEditedBriefData(p => ({ ...p, nom: e.target.value }))} className={inputCls} />
+                    : <span className="font-semibold text-ink">{editedBriefData.nom}</span>
+                  }
+                </dd>
               </div>
               <div>
                 <dt className="text-[10px] font-semibold text-ink-muted uppercase">Localisation</dt>
-                <dd className="text-ink">{AUDIT_COURANT.localisation}</dd>
+                <dd>
+                  {editingBrief
+                    ? <input value={editedBriefData.localisation} onChange={e => setEditedBriefData(p => ({ ...p, localisation: e.target.value }))} className={inputCls} />
+                    : <span className="text-ink">{editedBriefData.localisation}</span>
+                  }
+                </dd>
               </div>
               <div>
                 <dt className="text-[10px] font-semibold text-ink-muted uppercase">Effectif</dt>
-                <dd className="text-ink">{AUDIT_COURANT.effectif} personnes</dd>
+                <dd>
+                  {editingBrief
+                    ? (
+                      <span className="flex items-center gap-1">
+                        <input type="number" value={editedBriefData.effectif} onChange={e => setEditedBriefData(p => ({ ...p, effectif: Number(e.target.value) }))} className={inputSmCls} />
+                        <span className="text-xs text-ink-muted">personnes</span>
+                      </span>
+                    )
+                    : <span className="text-ink">{editedBriefData.effectif} personnes</span>
+                  }
+                </dd>
               </div>
               <div>
                 <dt className="text-[10px] font-semibold text-ink-muted uppercase mb-1.5">Référentiel</dt>
@@ -103,22 +180,64 @@ export default function Brief({ onDemarrer, onBack, theme }) {
               </div>
               <div>
                 <dt className="text-[10px] font-semibold text-ink-muted uppercase">Scope</dt>
-                <dd className="text-ink">
-                  {AUDIT_COURANT.scope.map((s, i) => (
-                    <div key={i} className="flex items-start gap-1">
-                      <span className="text-brand-cyan mt-0.5">›</span> {s}
-                    </div>
+                <dd className="text-ink space-y-1">
+                  {editedBriefData.scope.map((s, i) => (
+                    editingBrief ? (
+                      <div key={i} className="flex items-center gap-1">
+                        <input
+                          value={s}
+                          onChange={e => {
+                            const ns = [...editedBriefData.scope]
+                            ns[i] = e.target.value
+                            setEditedBriefData(p => ({ ...p, scope: ns }))
+                          }}
+                          className="flex-1 text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface"
+                        />
+                        <button
+                          onClick={() => setEditedBriefData(p => ({ ...p, scope: p.scope.filter((_, j) => j !== i) }))}
+                          className="text-ink-muted hover:text-red-500 shrink-0 text-sm leading-none"
+                        >×</button>
+                      </div>
+                    ) : (
+                      <div key={i} className="text-xs text-ink py-0.5">{s}</div>
+                    )
                   ))}
+                  {editingBrief && (
+                    <button
+                      onClick={() => setEditedBriefData(p => ({ ...p, scope: [...p.scope, ""] }))}
+                      className="text-[10px] text-brand hover:text-brand-cyan mt-0.5"
+                    >+ Ajouter</button>
+                  )}
                 </dd>
               </div>
               <div>
                 <dt className="text-[10px] font-semibold text-ink-muted uppercase">Contact qualité</dt>
-                <dd className="text-ink">{AUDIT_COURANT.responsable_qualite}</dd>
-                <dd className="text-xs text-brand">{AUDIT_COURANT.contact}</dd>
+                <dd>
+                  {editingBrief
+                    ? <input value={editedBriefData.responsable_qualite} onChange={e => setEditedBriefData(p => ({ ...p, responsable_qualite: e.target.value }))} className={inputCls} />
+                    : <span className="text-ink">{editedBriefData.responsable_qualite}</span>
+                  }
+                </dd>
+                <dd className="mt-0.5">
+                  {editingBrief
+                    ? <input value={editedBriefData.contact} onChange={e => setEditedBriefData(p => ({ ...p, contact: e.target.value }))} className={inputCls} />
+                    : <span className="text-xs text-brand">{editedBriefData.contact}</span>
+                  }
+                </dd>
               </div>
               <div>
                 <dt className="text-[10px] font-semibold text-ink-muted uppercase">Durée prévue</dt>
-                <dd className="text-ink">{AUDIT_COURANT.duree_prevue} sur site</dd>
+                <dd>
+                  {editingBrief
+                    ? (
+                      <span className="flex items-center gap-1">
+                        <input value={editedBriefData.duree_prevue} onChange={e => setEditedBriefData(p => ({ ...p, duree_prevue: e.target.value }))} className="text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface w-20" />
+                        <span className="text-xs text-ink-muted">sur site</span>
+                      </span>
+                    )
+                    : <span className="text-ink">{editedBriefData.duree_prevue} sur site</span>
+                  }
+                </dd>
               </div>
             </dl>
 
@@ -147,10 +266,26 @@ export default function Brief({ onDemarrer, onBack, theme }) {
             </div>
           </div>
 
-          {/* Colonne centre — Check-list IA */}
+          {/* ── Colonne centre — Check-list IA ────────────────────────────── */}
           <div className="card col-span-4">
             <h2 className="section-label">
-              <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><ClipboardList size={11} className="text-brand" /></span>Check-list générée par l'Agent IA
+              <span className="flex items-center gap-1.5 flex-1 min-w-0">
+                <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0">
+                  <ClipboardList size={11} className="text-brand" />
+                </span>
+                Check-list générée par l'Agent IA
+              </span>
+              {genere && (
+                editingChecklist ? (
+                  <button onClick={() => setEditingChecklist(false)} className="ml-2 shrink-0 p-1 rounded hover:bg-brand/10 text-brand-emerald" title="Terminé">
+                    <Check size={12} />
+                  </button>
+                ) : (
+                  <button onClick={() => setEditingChecklist(true)} className="ml-2 shrink-0 p-1 rounded hover:bg-brand/10 text-ink-muted hover:text-brand" title="Modifier">
+                    <Pencil size={12} />
+                  </button>
+                )
+              )}
             </h2>
             {genere ? (
               <div className="flex items-center gap-2 mb-4 mt-3">
@@ -196,15 +331,17 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     {/* Items de base */}
                     <div className="space-y-0.5 mb-1">
                       {section.items.filter(i => !removedItemIds.has(i.id)).map(item => (
-                        <div key={item.id} className="flex items-center justify-between gap-2 text-xs text-ink group py-0.5">
+                        <div key={item.id} className="flex items-center justify-between gap-2 text-xs text-ink py-0.5">
                           <span className="flex items-center gap-1.5 min-w-0">
                             <span className="text-ink-muted shrink-0">○</span>
                             <span className="truncate">{item.texte}</span>
                           </span>
-                          <button
-                            onClick={() => setRemovedItemIds(prev => new Set([...prev, item.id]))}
-                            className="text-divider hover:text-red-500 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                          >×</button>
+                          {editingChecklist && (
+                            <button
+                              onClick={() => setRemovedItemIds(prev => new Set([...prev, item.id]))}
+                              className="text-divider hover:text-red-500 shrink-0"
+                            >×</button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -214,12 +351,14 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                         {extraItems.map(item => (
                           <div key={item.id} className="flex items-center justify-between gap-2 text-xs px-2 py-1 rounded bg-brand/10 text-brand">
                             <span className="truncate">+ {item.texte}</span>
-                            <button onClick={() => setExtraItemsBySectionId(prev => ({ ...prev, [section.id]: prev[section.id].filter(i => i.id !== item.id) }))} className="text-ink-muted hover:text-red-500 shrink-0">×</button>
+                            {editingChecklist && (
+                              <button onClick={() => setExtraItemsBySectionId(prev => ({ ...prev, [section.id]: prev[section.id].filter(i => i.id !== item.id) }))} className="text-ink-muted hover:text-red-500 shrink-0">×</button>
+                            )}
                           </div>
                         ))}
                       </div>
                     )}
-                    {genere && (
+                    {editingChecklist && (
                       addingItemTo === section.id ? (
                         <div className="mt-2">
                           <input autoFocus type="text" value={newItemTexte} onChange={e => setNewItemTexte(e.target.value)}
@@ -270,45 +409,51 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                       <span className="text-xs font-bold text-brand">{sec.titre}</span>
                       {sec.clause && <span className="text-[10px] text-ink-muted font-mono">{sec.clause}</span>}
                     </div>
-                    <button onClick={() => setCustomSections(prev => prev.filter(s => s.id !== sec.id))} className="text-ink-muted hover:text-red-500 text-sm leading-none shrink-0">×</button>
+                    {editingChecklist && (
+                      <button onClick={() => setCustomSections(prev => prev.filter(s => s.id !== sec.id))} className="text-ink-muted hover:text-red-500 text-sm leading-none shrink-0">×</button>
+                    )}
                   </div>
                   {sec.items.length > 0 && (
                     <div className="space-y-1 mb-2">
                       {sec.items.map(item => (
                         <div key={item.id} className="flex items-center justify-between gap-2 text-xs text-ink">
                           <span className="flex items-center gap-1"><span className="text-ink-muted">○</span> {item.texte}</span>
-                          <button onClick={() => setCustomSections(prev => prev.map(s => s.id === sec.id ? { ...s, items: s.items.filter(i => i.id !== item.id) } : s))} className="text-ink-muted hover:text-red-500 shrink-0">×</button>
+                          {editingChecklist && (
+                            <button onClick={() => setCustomSections(prev => prev.map(s => s.id === sec.id ? { ...s, items: s.items.filter(i => i.id !== item.id) } : s))} className="text-ink-muted hover:text-red-500 shrink-0">×</button>
+                          )}
                         </div>
                       ))}
                     </div>
                   )}
-                  {addingItemTo === sec.id ? (
-                    <div>
-                      <input autoFocus type="text" value={newItemTexte} onChange={e => setNewItemTexte(e.target.value)}
-                        onKeyDown={e => {
-                          if (e.key === "Enter" && newItemTexte.trim()) {
-                            setCustomSections(prev => prev.map(s => s.id === sec.id ? { ...s, items: [...s.items, { id: `item-${Date.now()}`, texte: newItemTexte.trim() }] } : s))
-                            setNewItemTexte(""); setAddingItemTo(null)
-                          }
-                          if (e.key === "Escape") { setAddingItemTo(null); setNewItemTexte("") }
-                        }}
-                        placeholder="Point à vérifier…"
-                        className="w-full text-xs border border-divider rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand mb-1 bg-surface"
-                      />
-                      <div className="flex gap-1.5">
-                        <button onClick={() => { if (newItemTexte.trim()) { setCustomSections(prev => prev.map(s => s.id === sec.id ? { ...s, items: [...s.items, { id: `item-${Date.now()}`, texte: newItemTexte.trim() }] } : s)); setNewItemTexte(""); setAddingItemTo(null) } }} disabled={!newItemTexte.trim()} className="text-[10px] font-medium px-2 py-0.5 rounded disabled:opacity-40 text-white bg-brand">Ajouter</button>
-                        <button onClick={() => { setAddingItemTo(null); setNewItemTexte("") }} className="text-[10px] text-ink-muted hover:text-ink px-1">Annuler</button>
+                  {editingChecklist && (
+                    addingItemTo === sec.id ? (
+                      <div>
+                        <input autoFocus type="text" value={newItemTexte} onChange={e => setNewItemTexte(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === "Enter" && newItemTexte.trim()) {
+                              setCustomSections(prev => prev.map(s => s.id === sec.id ? { ...s, items: [...s.items, { id: `item-${Date.now()}`, texte: newItemTexte.trim() }] } : s))
+                              setNewItemTexte(""); setAddingItemTo(null)
+                            }
+                            if (e.key === "Escape") { setAddingItemTo(null); setNewItemTexte("") }
+                          }}
+                          placeholder="Point à vérifier…"
+                          className="w-full text-xs border border-divider rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand mb-1 bg-surface"
+                        />
+                        <div className="flex gap-1.5">
+                          <button onClick={() => { if (newItemTexte.trim()) { setCustomSections(prev => prev.map(s => s.id === sec.id ? { ...s, items: [...s.items, { id: `item-${Date.now()}`, texte: newItemTexte.trim() }] } : s)); setNewItemTexte(""); setAddingItemTo(null) } }} disabled={!newItemTexte.trim()} className="text-[10px] font-medium px-2 py-0.5 rounded disabled:opacity-40 text-white bg-brand">Ajouter</button>
+                          <button onClick={() => { setAddingItemTo(null); setNewItemTexte("") }} className="text-[10px] text-ink-muted hover:text-ink px-1">Annuler</button>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <button onClick={() => { setAddingItemTo(sec.id); setAddingSection(false) }} className="text-[10px] flex items-center gap-1 text-brand hover:text-brand-cyan transition-colors">
-                      + point
-                    </button>
+                    ) : (
+                      <button onClick={() => { setAddingItemTo(sec.id); setAddingSection(false) }} className="text-[10px] flex items-center gap-1 text-brand hover:text-brand-cyan transition-colors">
+                        + point
+                      </button>
+                    )
                   )}
                 </div>
               ))}
 
-              {genere && (
+              {editingChecklist && (
                 addingSection ? (
                   <div className="bg-surface-sunk shadow-inset border border-dashed border-brand/30 rounded-lg p-3">
                     <div className="text-[10px] font-semibold text-ink-muted mb-2">Nouvelle section</div>
@@ -347,44 +492,106 @@ export default function Brief({ onDemarrer, onBack, theme }) {
             </div>
           </div>
 
-          {/* Colonne droite — Audits précédents */}
+          {/* ── Colonne droite — Audits précédents ───────────────────────── */}
           <div className="card col-span-4">
             <h2 className="section-label">
-              <History size={11} />Audits précédents
+              <span className="flex items-center gap-1.5 flex-1 min-w-0">
+                <History size={11} />Audits précédents
+              </span>
+              {editingAudits ? (
+                <span className="flex gap-1 ml-2 shrink-0">
+                  <button onClick={() => setEditingAudits(false)} className="p-1 rounded hover:bg-brand/10 text-brand-emerald" title="Enregistrer"><Check size={12} /></button>
+                  <button onClick={cancelAudits} className="p-1 rounded hover:bg-red-50 text-ink-muted" title="Annuler"><X size={12} /></button>
+                </span>
+              ) : (
+                <button onClick={() => setEditingAudits(true)} className="ml-2 shrink-0 p-1 rounded hover:bg-brand/10 text-ink-muted hover:text-brand" title="Modifier">
+                  <Pencil size={12} />
+                </button>
+              )}
             </h2>
             <div className="space-y-3">
-              {AUDITS_PRECEDENTS.map((audit, i) => (
+              {editedAudits.map((prevAudit, i) => (
                 <div
                   key={i}
-                  className={`bg-surface-sunk shadow-inset rounded-lg p-3 ${audit.alerte ? "border-l-4 border-brand-amber" : ""}`}
+                  className={`bg-surface-sunk shadow-inset rounded-lg p-3 ${prevAudit.alerte ? "border-l-4 border-brand-amber" : ""}`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-mono text-xs font-bold text-ink flex items-center gap-1">
-                      <Calendar size={11} className="text-ink-muted" />{audit.date}
+                      <Calendar size={11} className="text-ink-muted" />
+                      {editingAudits
+                        ? <input value={prevAudit.date} onChange={e => setEditedAudits(prev => prev.map((a, j) => j === i ? { ...a, date: e.target.value } : a))} className="text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface w-28 font-mono" />
+                        : prevAudit.date
+                      }
                     </span>
-                    {audit.alerte && (
+                    {prevAudit.alerte && (
                       <span className="text-[10px] bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-semibold flex items-center gap-0.5">
                         <AlertTriangle size={10} />Non clôturée
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-ink-muted">Auditeur : {audit.auditeur}</div>
-                  <div className="flex gap-2 mt-1">
-                    {audit.nc_majeures > 0 && (
-                      <span className="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded">
-                        {audit.nc_majeures} NC maj.
-                      </span>
-                    )}
-                    <span className="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
-                      {audit.nc_mineures} NC min.
-                    </span>
+                  <div className="text-xs text-ink-muted">
+                    Auditeur : {editingAudits
+                      ? <input value={prevAudit.auditeur} onChange={e => setEditedAudits(prev => prev.map((a, j) => j === i ? { ...a, auditeur: e.target.value } : a))} className="text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface w-36 ml-1" />
+                      : prevAudit.auditeur
+                    }
                   </div>
-                  {audit.themes.map((t, j) => (
-                    <div key={j} className="text-[10px] text-ink-muted mt-0.5 flex items-center gap-1">
-                      <span className="text-divider">›</span>{t}
-                    </div>
-                  ))}
-                  {audit.alerte && (
+                  <div className="flex gap-2 mt-1">
+                    {editingAudits ? (
+                      <>
+                        <label className="flex items-center gap-1 text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded">
+                          <input type="number" min="0" value={prevAudit.nc_majeures} onChange={e => setEditedAudits(prev => prev.map((a, j) => j === i ? { ...a, nc_majeures: Number(e.target.value) } : a))} className="w-8 bg-transparent border-none focus:outline-none text-center" />
+                          NC maj.
+                        </label>
+                        <label className="flex items-center gap-1 text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
+                          <input type="number" min="0" value={prevAudit.nc_mineures} onChange={e => setEditedAudits(prev => prev.map((a, j) => j === i ? { ...a, nc_mineures: Number(e.target.value) } : a))} className="w-8 bg-transparent border-none focus:outline-none text-center" />
+                          NC min.
+                        </label>
+                      </>
+                    ) : (
+                      <>
+                        {prevAudit.nc_majeures > 0 && (
+                          <span className="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded">
+                            {prevAudit.nc_majeures} NC maj.
+                          </span>
+                        )}
+                        <span className="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded">
+                          {prevAudit.nc_mineures} NC min.
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <div className="mt-1 space-y-0.5">
+                    {prevAudit.themes.map((t, j) => (
+                      editingAudits ? (
+                        <div key={j} className="flex items-center gap-1">
+                          <input
+                            value={t}
+                            onChange={e => {
+                              const nt = [...prevAudit.themes]
+                              nt[j] = e.target.value
+                              setEditedAudits(prev => prev.map((a, k) => k === i ? { ...a, themes: nt } : a))
+                            }}
+                            className="flex-1 text-[10px] border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface"
+                          />
+                          <button
+                            onClick={() => setEditedAudits(prev => prev.map((a, k) => k === i ? { ...a, themes: a.themes.filter((_, l) => l !== j) } : a))}
+                            className="text-ink-muted hover:text-red-500 shrink-0 text-sm leading-none"
+                          >×</button>
+                        </div>
+                      ) : (
+                        <div key={j} className="text-[10px] text-ink-muted flex items-center gap-1">
+                          <span className="text-divider">›</span>{t}
+                        </div>
+                      )
+                    ))}
+                    {editingAudits && (
+                      <button
+                        onClick={() => setEditedAudits(prev => prev.map((a, k) => k === i ? { ...a, themes: [...a.themes, ""] } : a))}
+                        className="text-[10px] text-brand hover:text-brand-cyan mt-0.5"
+                      >+ Thème</button>
+                    )}
+                  </div>
+                  {prevAudit.alerte && (
                     <div className="mt-2 text-[10px] text-orange-700 font-medium border-t border-orange-200 pt-2 flex items-start gap-1">
                       <AlertTriangle size={10} className="shrink-0 mt-0.5" />
                       NC mineure de 2024 non clôturée — à vérifier en priorité
