@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { AUDIT_COURANT, AUDITEUR, CHECKLIST } from "../mockData"
 import { exportDocx } from "../api"
 import { Download, Send, PenLine, Lock, Unlock, BarChart2, ListChecks, FileCheck, LayoutList, Wrench } from "lucide-react"
@@ -40,6 +40,11 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
   const [signatureMode, setSignatureMode] = useState(false)
   const [signataire, setSignataire] = useState("Mei Lin Zhang")
   const [signed, setSigned] = useState(false)
+  const [signMode, setSignMode] = useState("texte")
+  const [isSignDrawing, setIsSignDrawing] = useState(false)
+  const [signDataUrl, setSignDataUrl] = useState(null)
+  const signCanvasRef = useRef(null)
+  const signLastPt = useRef(null)
   const [anonymise, setAnonymise] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const STATUTS_CYCLE = ["En attente", "En cours", "Clôturé"]
@@ -56,6 +61,32 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
 
   function updateConstat(i, field, val) {
     setEditConstats(prev => prev.map((c, idx) => idx === i ? { ...c, [field]: val } : c))
+  }
+
+  function getSignPt(e) {
+    const rect = signCanvasRef.current.getBoundingClientRect()
+    const scaleX = signCanvasRef.current.width / rect.width
+    const scaleY = signCanvasRef.current.height / rect.height
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY }
+  }
+  function onSignDown(e) { e.currentTarget.setPointerCapture(e.pointerId); setIsSignDrawing(true); signLastPt.current = getSignPt(e) }
+  function onSignMove(e) {
+    if (!isSignDrawing) return
+    const ctx = signCanvasRef.current.getContext("2d")
+    const pt = getSignPt(e)
+    ctx.beginPath(); ctx.moveTo(signLastPt.current.x, signLastPt.current.y); ctx.lineTo(pt.x, pt.y)
+    ctx.strokeStyle = "#0070AD"
+    ctx.lineWidth = e.pressure > 0 && e.pointerType === "pen" ? Math.max(1, e.pressure * 3) : 1.5
+    ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke()
+    signLastPt.current = pt
+  }
+  function onSignUp() { setIsSignDrawing(false); signLastPt.current = null }
+  function clearSignCanvas() { const c = signCanvasRef.current; if (c) c.getContext("2d").clearRect(0, 0, c.width, c.height) }
+  function confirmerSignature() {
+    if (signMode === "dessin" && signCanvasRef.current) setSignDataUrl(signCanvasRef.current.toDataURL("image/png"))
+    setSigned(true)
   }
 
   async function handleTelecharger() {
@@ -349,20 +380,53 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
               {signed ? (
                 <div className="flex flex-col items-center gap-2 py-3">
                   <span className="text-2xl">✅</span>
+                  {signDataUrl
+                    ? <img src={signDataUrl} alt="Signature" className="h-10 object-contain border-b border-brand/30 pb-1" />
+                    : <div className="text-sm font-semibold text-ink italic">{signataire}</div>
+                  }
                   <div className="text-xs font-semibold text-brand-emerald">Rapport validé par {signataire}</div>
                   <div className="text-[10px] text-ink-muted">{today}</div>
                 </div>
               ) : signatureMode ? (
                 <div className="space-y-3">
-                  <div>
-                    <label className="text-[10px] font-semibold text-ink-muted uppercase block mb-1">Nom du signataire (partie auditée)</label>
-                    <input type="text" value={signataire} onChange={(e) => setSignataire(e.target.value)}
-                      className="w-full border border-divider rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand"
-                    />
+                  <div className="flex rounded-lg overflow-hidden border border-divider text-xs">
+                    <button onClick={() => setSignMode("texte")}
+                      className={`flex-1 py-1.5 font-medium transition-colors ${signMode === "texte" ? "bg-brand text-white" : "bg-canvas text-ink-muted hover:bg-surface"}`}>
+                      Nom tapé
+                    </button>
+                    <button onClick={() => { setSignMode("dessin"); clearSignCanvas() }}
+                      className={`flex-1 py-1.5 font-medium transition-colors ${signMode === "dessin" ? "bg-brand text-white" : "bg-canvas text-ink-muted hover:bg-surface"}`}>
+                      ✍ Manuscrite
+                    </button>
                   </div>
+
+                  {signMode === "texte" ? (
+                    <div>
+                      <label className="text-[10px] font-semibold text-ink-muted uppercase block mb-1">Nom du signataire (partie auditée)</label>
+                      <input type="text" value={signataire} onChange={(e) => setSignataire(e.target.value)}
+                        className="w-full border border-divider rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-brand"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[10px] font-semibold text-ink-muted uppercase">Tracer votre signature</label>
+                        <button onClick={clearSignCanvas} className="text-[10px] text-ink-muted hover:text-ink underline">Effacer</button>
+                      </div>
+                      <canvas
+                        ref={signCanvasRef}
+                        width={600} height={100}
+                        className="w-full rounded-lg border border-brand/30 bg-white cursor-crosshair touch-none"
+                        onPointerDown={onSignDown}
+                        onPointerMove={onSignMove}
+                        onPointerUp={onSignUp}
+                      />
+                    </div>
+                  )}
+
                   <div className="text-[10px] text-ink-muted">Date : {today}</div>
                   <div className="flex gap-2">
-                    <button onClick={() => setSigned(true)} className="flex-1 text-xs font-semibold py-1.5 rounded-lg bg-brand-emerald text-white hover:bg-brand transition-colors shadow-sm">Confirmer la signature</button>
+                    <button onClick={confirmerSignature} className="flex-1 text-xs font-semibold py-1.5 rounded-lg bg-brand-emerald text-white hover:bg-brand transition-colors shadow-sm">Confirmer la signature</button>
                     <button onClick={() => setSignatureMode(false)} className="text-xs border border-divider rounded-lg px-3 py-1.5 text-ink-muted hover:bg-canvas">Annuler</button>
                   </div>
                 </div>
