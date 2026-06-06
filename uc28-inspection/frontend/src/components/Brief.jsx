@@ -261,14 +261,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
             <h2 className="section-label">
               <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><ClipboardList size={11} className="text-brand" /></span>Check-list générée par l'Agent IA
             </h2>
-            {genere ? (
-              <div className="flex items-center gap-2 mb-4 mt-3">
-                <span className="w-2 h-2 rounded-full inline-block bg-brand-emerald"></span>
-                <span className="text-xs font-medium flex items-center gap-1 text-brand-emerald">
-                  <CheckCircle2 size={13} />Préparation terminée — {genSec} sec
-                </span>
-              </div>
-            ) : (
+            {!genere && (
               <div className="flex items-center gap-2 mb-4 mt-3">
                 <svg className="animate-spin h-3 w-3 text-brand" viewBox="0 0 24 24" fill="none">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
