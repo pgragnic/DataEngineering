@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Mic, MicOff, Camera, ScanLine, CheckCircle2, RotateCcw, ClipboardList, BookOpen, MessageSquare, Sparkles, Circle, Pencil, Check, X, PenLine } from "lucide-react"
+import { Mic, MicOff, Camera, ScanLine, CheckCircle2, RotateCcw, ClipboardList, BookOpen, MessageSquare, Sparkles, Circle, Pencil, Check, X, PenLine, Info } from "lucide-react"
 import { CHECKLIST, RAG_ARTICLES, AUDIT_COURANT, QUESTIONS_SUGGEREES, RECURRENCES, SUPPLIER_DOCUMENTS } from "../mockData"
 import { analyser, synthetiser, getSuggestions, getQuestionsOuiNon, transcrireManuscrit } from "../api"
 
@@ -88,6 +88,8 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
   const [canvasMode, setCanvasMode] = useState(false)
   const [isDrawing, setIsDrawing] = useState(false)
   const [transcribeLoading, setTranscribeLoading] = useState(false)
+  const [showQuestionsInfo, setShowQuestionsInfo] = useState(false)
+  const [showRagInfo, setShowRagInfo] = useState(false)
   const canvasRef = useRef(null)
   const lastPoint = useRef(null)
 
@@ -635,9 +637,30 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
             </div>
 
             <div className="card">
-            <h3 className="section-label">
-              <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><MessageSquare size={11} className="text-brand" /></span>Questions suggérées
-            </h3>
+            <div className="relative">
+              <h3 className="section-label">
+                <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><MessageSquare size={11} className="text-brand" /></span>
+                Questions suggérées
+                <button onClick={() => setShowQuestionsInfo(v => !v)} className="ml-1 text-brand/50 hover:text-brand transition-colors" title="Comment sont générées ces questions ?">
+                  <Info size={12} />
+                </button>
+              </h3>
+              {showQuestionsInfo && (
+                <div className="absolute top-7 left-0 right-0 z-30 bg-white border border-brand/20 rounded-xl shadow-lg p-3 text-xs text-ink-muted space-y-1.5">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-brand text-[10px] uppercase tracking-wide">Comment sont générées ces questions ?</span>
+                    <button onClick={() => setShowQuestionsInfo(false)} className="text-ink-muted hover:text-ink"><X size={12} /></button>
+                  </div>
+                  <p>À chaque sélection d'un point de checklist, l'Agent IA envoie à Claude :</p>
+                  <ul className="space-y-1 pl-2">
+                    <li><span className="font-medium text-ink">Texte de l'item</span> — ex. "Vérification des certificats d'étalonnage"</li>
+                    <li><span className="font-medium text-ink">Clause ISO</span> — ex. §7.1.5</li>
+                    <li><span className="font-medium text-ink">Titre de section</span> — ex. "Étalonnage & équipements de mesure"</li>
+                  </ul>
+                  <p className="pt-1">Claude génère <strong>3 questions de vérification terrain</strong> contextualisées — pas des templates. Les réponses Oui/Non sont ensuite injectées dans le prompt d'analyse pour enrichir le diagnostic.</p>
+                </div>
+              )}
+            </div>
             {!selectedItem ? (
               <p className="text-xs text-ink-muted italic">Sélectionner un point pour voir les réponses suggérées.</p>
             ) : questionsLoading ? (
@@ -686,9 +709,30 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
 
             {/* RAG avec tooltip au survol */}
             <div className="card shrink-0">
-              <h3 className="section-label">
-                <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><BookOpen size={11} className="text-brand" /></span>Articles normatifs — RAG
-              </h3>
+              <div className="relative">
+                <h3 className="section-label">
+                  <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><BookOpen size={11} className="text-brand" /></span>
+                  Articles normatifs — RAG
+                  <button onClick={() => setShowRagInfo(v => !v)} className="ml-1 text-brand/50 hover:text-brand transition-colors" title="Comment sont sélectionnés ces articles ?">
+                    <Info size={12} />
+                  </button>
+                </h3>
+                {showRagInfo && (
+                  <div className="absolute top-7 left-0 right-0 z-30 bg-white border border-brand/20 rounded-xl shadow-lg p-3 text-xs text-ink-muted space-y-1.5">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-semibold text-brand text-[10px] uppercase tracking-wide">Comment sont sélectionnés ces articles ?</span>
+                      <button onClick={() => setShowRagInfo(false)} className="text-ink-muted hover:text-ink"><X size={12} /></button>
+                    </div>
+                    <p>À chaque sélection d'un point de checklist, l'Agent IA sélectionne les articles ISO les plus pertinents via RAG :</p>
+                    <ul className="space-y-1 pl-2">
+                      <li><span className="font-medium text-ink">Clause §7.1.5</span> — articles métrologie & étalonnage ciblés</li>
+                      <li><span className="font-medium text-ink">Clause §8.7</span> — articles maîtrise des NC sélectionnés</li>
+                      <li><span className="font-medium text-ink">Autre clause</span> — sélection par similarité sémantique</li>
+                    </ul>
+                    <p className="pt-1">Le corpus ISO 9001:2015 est indexé par <strong>sentence-transformers</strong> (BERT multilingue). Survolez un article pour lire l'extrait normatif complet.</p>
+                  </div>
+                )}
+              </div>
               <div className="grid grid-cols-3 gap-2">
                 {ragArticles.map((art, i) => (
                   <div key={i} className="relative group/art bg-surface-sunk shadow-inset rounded-lg p-2 cursor-default">
