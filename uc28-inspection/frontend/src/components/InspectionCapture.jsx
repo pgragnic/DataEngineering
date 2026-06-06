@@ -230,7 +230,9 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
       criticite,
       clause: resultat.clause_iso?.clause || "—",
       titre_clause: resultat.clause_iso?.titre || "—",
-      constat: resultat.diagnostic || resultat.observation || observation.trim(),
+      constat: resultat.llm_enrichi
+        ? (resultat.diagnostic || observation.trim())
+        : observation.trim(),
       action: resultat.action_corrective || "",
       photoUrl: photo?.url || null,
     })
@@ -744,7 +746,7 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                       </>
                     ) : (
                       <>
-                        <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center justify-between mb-2">
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${CRITICITE_STYLE[c.criticite]?.badge}`}>
                             {CRITICITE_STYLE[c.criticite]?.label}
                           </span>
@@ -760,10 +762,16 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                             ><X size={9} /></button>
                           </div>
                         </div>
-                        <div className="text-xs text-ink leading-tight">{c.constat}</div>
-                        {c.action && <div className="text-[10px] text-ink-muted mt-1 italic">{c.action}</div>}
+                        <div className="border-t border-divider mb-2" />
+                        <div className="text-xs text-ink leading-snug">{c.constat}</div>
+                        {c.action && (
+                          <div className="flex items-start gap-1 mt-2">
+                            <span className="text-[10px] text-brand-emerald font-bold shrink-0 mt-px">→</span>
+                            <span className="text-[10px] text-ink-muted leading-snug">{c.action}</span>
+                          </div>
+                        )}
                         {c.photoUrl && (
-                          <a href={c.photoUrl} target="_blank" rel="noopener noreferrer" className="mt-1 text-[10px] text-brand hover:underline flex items-center gap-1">
+                          <a href={c.photoUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 text-[10px] text-brand hover:underline flex items-center gap-1">
                             <Camera size={10} />Voir la photo
                           </a>
                         )}
