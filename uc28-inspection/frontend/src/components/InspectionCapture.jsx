@@ -347,32 +347,6 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                 <div className="mb-3">
                   <div className="text-[10px] font-bold text-ink-muted uppercase tracking-widest">Point en cours</div>
                   <div className="text-sm font-semibold mt-0.5 text-brand">{selectedItem.texte}</div>
-                  {(() => {
-                    const sourceDocs = SUPPLIER_DOCUMENTS.filter(doc =>
-                      doc.insights?.sections_a_risque?.some(s => s.startsWith(selectedItem.clause))
-                    )
-                    return (
-                      <div className="relative group/clause inline-block mt-0.5">
-                        <span className="text-[10px] text-ink-muted cursor-help underline decoration-dotted">
-                          {selectedItem.sectionId} — {selectedItem.clause}
-                        </span>
-                        {sourceDocs.length > 0 && (
-                          <div className="absolute bottom-full left-0 mb-1 w-64 bg-gray-900 text-white rounded-lg p-2.5 shadow-xl z-50
-                                          opacity-0 group-hover/clause:opacity-100 pointer-events-none group-hover/clause:pointer-events-auto
-                                          transition-opacity text-[10px]">
-                            <div className="font-bold text-gray-300 mb-1.5 uppercase tracking-wider">Documents sources</div>
-                            {sourceDocs.map(doc => (
-                              <a key={doc.id} href={doc.url} download={doc.nom}
-                                 className="flex items-center gap-1.5 py-1 hover:text-brand-cyan transition-colors truncate">
-                                <span className="shrink-0">📄</span>
-                                <span className="truncate">{doc.nom}</span>
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })()}
                 </div>
               ) : (
                 <h3 className="text-[10px] font-bold text-ink-muted uppercase tracking-widest mb-3">
