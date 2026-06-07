@@ -21,30 +21,20 @@ LIST_SNAPS    = "--snapshots" in sys.argv
 # ── Ordres à passer ─────────────────────────────────────────────────────────
 # Source : portfolio ThomasPJ au 07/06/2026
 ORDERS = [
-    # GS x20 — 05/06/2026
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
-    {"symbol": "GS", "pct": 0.25},
+    # JPM x10 — 05/06/2026, 09/04/2026, 13/04/2026
+    {"symbol": "JPM", "pct": 0.50},
+    {"symbol": "JPM", "pct": 0.50},
+    {"symbol": "JPM", "pct": 0.63},
+    {"symbol": "JPM", "pct": 0.50},
+    {"symbol": "JPM", "pct": 0.50},
+    {"symbol": "JPM", "pct": 0.25},
+    {"symbol": "JPM", "pct": 0.62},
+    {"symbol": "JPM", "pct": 0.50},
+    {"symbol": "JPM", "pct": 0.50},
+    {"symbol": "JPM", "pct": 0.50},
 ]
 
-LABEL         = "Copie ThomasPJ — GS x20"
+LABEL         = "Copie ThomasPJ — JPM x10"
 DELAY_SECONDS = 0
 # ────────────────────────────────────────────────────────────────────────────
 
