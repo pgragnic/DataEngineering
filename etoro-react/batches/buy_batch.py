@@ -45,7 +45,7 @@ ORDERS = [
 ]
 
 LABEL         = "Copie ThomasPJ — GS x20"
-DELAY_SECONDS = 2
+DELAY_SECONDS = 0
 # ────────────────────────────────────────────────────────────────────────────
 
 def api_get(path):
