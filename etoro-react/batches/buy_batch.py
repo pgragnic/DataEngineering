@@ -18,6 +18,12 @@ DRY_RUN       = "--dry-run"   in sys.argv
 DO_COMPARE    = "--compare"   in sys.argv
 LIST_SNAPS    = "--snapshots" in sys.argv
 
+# --from N  : commence à l'ordre N (1-indexé), utile pour reprendre après une erreur
+FROM_IDX = 1
+for _a in sys.argv:
+    if _a.startswith("--from="):
+        FROM_IDX = int(_a.split("=")[1])
+
 # ── Ordres à passer ─────────────────────────────────────────────────────────
 # Source : portfolio ThomasPJ au 07/06/2026
 ORDERS = [
@@ -59,7 +65,7 @@ ORDERS = [
 ]
 
 LABEL         = "Copie ThomasPJ — C x34"
-DELAY_SECONDS = 0
+DELAY_SECONDS = 1
 # ────────────────────────────────────────────────────────────────────────────
 
 def api_get(path):
@@ -205,9 +211,15 @@ ok_count  = 0
 err_count = 0
 results   = []
 
-print(f"{'[DRY-RUN] ' if DRY_RUN else ''}{total} ordres — {LABEL}\n")
+start = FROM_IDX - 1  # 0-indexed
+if start > 0:
+    print(f"Reprise à partir de l'ordre {FROM_IDX}/{total}\n")
+else:
+    print(f"{'[DRY-RUN] ' if DRY_RUN else ''}{total} ordres — {LABEL}\n")
 
 for i, order in enumerate(ORDERS, 1):
+    if i < FROM_IDX:
+        continue
     sym = order["symbol"]
     pct = order["pct"]
     print(f"[{i}/{total}] BUY {sym}  {pct}%", end="  →  ", flush=True)
