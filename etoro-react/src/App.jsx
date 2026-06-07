@@ -57,7 +57,7 @@ function Logo({ symbol }) {
 }
 
 function FuturesBanner({ futures, marketOpen }) {
-  if (marketOpen || !futures.length) return null
+  if (!futures.length) return null
   return (
     <div className="futures-banner">
       <div className="futures-scroll">
