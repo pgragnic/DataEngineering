@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 
 API           = "http://127.0.0.1:5000"
-SNAPSHOT_FILE = Path.home() / "etoro_batch_snapshots.json"
+SNAPSHOT_FILE = Path.home() / "DataEngineering/etoro-react/data/etoro_batch_snapshots.json"
 DRY_RUN       = "--dry-run"   in sys.argv
 DO_COMPARE    = "--compare"   in sys.argv
 LIST_SNAPS    = "--snapshots" in sys.argv
