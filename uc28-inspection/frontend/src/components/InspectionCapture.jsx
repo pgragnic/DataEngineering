@@ -48,7 +48,7 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
     ...s,
     items: [
       ...s.items.filter((it) => !removedItemIds.has(it.id)).map((it) => ({ ...it })),
-      ...(extraItemsBySectionId[s.id] || []).map((p) => ({ id: p.id, texte: p.texte, statut: "a-venir" })),
+      ...(extraItemsBySectionId[s.id] || []).map((p) => ({ id: p.id, texte: p.texte, statut: "a-venir", auteur: "auditeur" })),
     ],
   }))
   customSections.forEach((sec) => {
@@ -57,7 +57,8 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
       titre: sec.titre,
       clause: sec.clause || "—",
       points: sec.items.length,
-      items: sec.items.map((p) => ({ id: p.id, texte: p.texte, statut: "a-venir" })),
+      auteur: "auditeur",
+      items: sec.items.map((p) => ({ id: p.id, texte: p.texte, statut: "a-venir", auteur: "auditeur" })),
     })
   })
 
@@ -365,12 +366,12 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
             </h3>
             {checklist.map((section) => (
               <div key={section.id} className="mb-4">
-                <div className="flex items-center justify-between mb-1">
-                  <span className={`text-xs font-bold ${section.id.startsWith("Sx") ? "text-brand-emerald" : "text-brand"}`}>
-                    {section.id} — {section.titre}
-                    {section.id.startsWith("Sx") && <span className="ml-1 text-[9px] font-normal opacity-70">(ajouté)</span>}
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className={`text-xs font-bold flex items-center gap-1.5 min-w-0 ${section.auteur === "auditeur" ? "text-brand-emerald" : "text-brand"}`}>
+                    <span className="truncate">{section.id} — {section.titre}</span>
+                    {section.auteur === "auditeur" && <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand text-white shrink-0">Auditeur</span>}
                   </span>
-                  <span className="text-[10px] text-ink-muted font-mono">{section.clause}</span>
+                  <span className="text-[10px] text-ink-muted font-mono shrink-0">{section.clause}</span>
                 </div>
                 {section.items.map((item) => {
                   const isSelected = selectedItem?.id === item.id
@@ -388,13 +389,16 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                         ? <Circle size={13} className="text-brand shrink-0" />
                         : <Circle size={13} className="text-divider shrink-0" />
                       }
-                      <span className={`text-xs ${
+                      <span className={`text-xs min-w-0 truncate ${
                         item.statut === "valide" ? "text-ink-muted line-through" :
                         isSelected ? "text-brand font-semibold" :
                         item.statut === "actif" ? "text-ink font-medium" : "text-ink-muted"
                       }`}>
                         {item.texte}
                       </span>
+                      {item.auteur === "auditeur" && (
+                        <span className="ml-auto text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand text-white shrink-0">Auditeur</span>
+                      )}
                     </div>
                   )
                 })}
