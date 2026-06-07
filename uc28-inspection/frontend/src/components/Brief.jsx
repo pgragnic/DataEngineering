@@ -334,8 +334,8 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                         {extraItems.map(item => (
                           <div key={item.id} className="flex items-center justify-between gap-2 text-xs px-2 py-1 rounded bg-brand/10">
                             <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand text-white shrink-0">Auditeur</span>
                               <span className="truncate text-brand">{item.texte}</span>
+                              <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand text-white shrink-0">Auditeur</span>
                             </div>
                             <button onClick={() => setExtraItemsBySectionId(prev => ({ ...prev, [section.id]: prev[section.id].filter(i => i.id !== item.id) }))} className="text-ink-muted hover:text-red-500 shrink-0">×</button>
                           </div>
