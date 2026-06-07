@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { AUDIT_COURANT, CHECKLIST, AUDITS_PRECEDENTS, SUPPLIER_DOCUMENTS, SUPPLIER_ALERTS } from "../mockData"
+import { AUDIT_COURANT, CHECKLIST, AUDITS_PRECEDENTS, SUPPLIER_DOCUMENTS, SUPPLIER_ALERTS, SCOPE_OPTIONS } from "../mockData"
 import { FileText, History, ClipboardList, Upload, CheckCircle2, AlertTriangle, Calendar, Pencil, Check, X, Info } from "lucide-react"
 
 const inputCls = "w-full text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface"
@@ -17,6 +17,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
   const [newSectionClause, setNewSectionClause] = useState("")
   const [removedItemIds, setRemovedItemIds] = useState(new Set())
   const [removedSectionIds, setRemovedSectionIds] = useState(new Set())
+  const [addingScopeItem, setAddingScopeItem] = useState(false)
   const [showChecklistInfo, setShowChecklistInfo] = useState(false)
   const [selectedRef, setSelectedRef] = useState("ISO 9001:2015")
 
@@ -195,7 +196,28 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     )
                   ))}
                   {editingSection === "scope" && (
-                    <button onClick={() => setEditedBriefData(p => ({ ...p, scope: [...p.scope, ""] }))} className="text-[10px] text-brand hover:text-brand-cyan mt-0.5">+ Ajouter</button>
+                    <button onClick={() => setEditedBriefData(p => ({ ...p, scope: [...p.scope, ""] }))} className="text-[10px] text-brand hover:text-brand-cyan mt-0.5">+ Ajouter texte libre</button>
+                  )}
+                  {!addingScopeItem ? (
+                    <button onClick={() => setAddingScopeItem(true)} className="mt-1 text-[10px] flex items-center gap-1 text-brand hover:text-brand-cyan transition-colors">
+                      + Ajouter un domaine
+                    </button>
+                  ) : (
+                    <div className="mt-2 bg-surface border border-divider rounded-lg p-2 space-y-0.5">
+                      {SCOPE_OPTIONS.filter(o => !editedBriefData.scope.includes(o.label)).map(o => (
+                        <button
+                          key={o.id}
+                          onClick={() => { setEditedBriefData(p => ({ ...p, scope: [...p.scope, o.label] })); setAddingScopeItem(false) }}
+                          className="w-full text-left text-xs px-2 py-1 rounded hover:bg-brand/5 hover:text-brand transition-colors"
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                      {SCOPE_OPTIONS.every(o => editedBriefData.scope.includes(o.label)) && (
+                        <div className="text-[10px] text-ink-muted px-2 py-1">Tous les domaines sont déjà sélectionnés</div>
+                      )}
+                      <button onClick={() => setAddingScopeItem(false)} className="text-[10px] text-ink-muted hover:text-ink px-2 pt-1">Annuler</button>
+                    </div>
                   )}
                 </dd>
               </div>
@@ -296,14 +318,25 @@ export default function Brief({ onDemarrer, onBack, theme }) {
             )}
 
             <div className="space-y-3">
-              {CHECKLIST.slice(0, sectionsVisibles).filter(s => !removedSectionIds.has(s.id)).map((section) => {
+              {(() => {
+                const scopeActiveSections = new Set(
+                  editedBriefData.scope.flatMap(label => {
+                    const opt = SCOPE_OPTIONS.find(o => o.label === label)
+                    return opt ? opt.sections : []
+                  })
+                )
+                return CHECKLIST.slice(0, sectionsVisibles).filter(s => !removedSectionIds.has(s.id)).map((section) => {
                 const extraItems = extraItemsBySectionId[section.id] || []
                 const alerte = SUPPLIER_ALERTS[section.clause] || null
+                const inScope = scopeActiveSections.has(section.id)
                 return (
-                  <div key={section.id} className={`bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in ${alerte ? "border-l-4 border-brand-amber" : ""}`}>
+                  <div key={section.id} className={`bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in transition-opacity ${alerte ? "border-l-4 border-brand-amber" : inScope ? "border-l-4 border-brand" : ""} ${!inScope && scopeActiveSections.size > 0 ? "opacity-50" : ""}`}>
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <span className="text-xs font-bold text-brand shrink-0">{section.id}</span>
+                        {inScope && (
+                          <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand/15 text-brand shrink-0">Scope</span>
+                        )}
                         {alerte && (
                           <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${alerte.criticite === "majeure" ? "bg-nc-majeure text-white" : "bg-nc-mineure text-white"}`}>
                             ⚠ RATP {alerte.criticite === "majeure" ? "NC maj." : "NC min."}
@@ -383,7 +416,8 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     )}
                   </div>
                 )
-              })}
+              })
+              })()}
 
               {!genere && sectionsVisibles < CHECKLIST.length && (
                 <div className="bg-surface-sunk shadow-inset rounded-lg p-3 opacity-50">

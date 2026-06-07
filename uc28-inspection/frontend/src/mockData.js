@@ -576,6 +576,15 @@ ACTIONS PRIORITAIRES :
 3. Mise à jour instructions de travail §7.5 — STATUT : EN COURS`,
 }
 
+export const SCOPE_OPTIONS = [
+  { id: "so-1", label: "Étalonnage des équipements de mesure",      sections: ["S2"] },
+  { id: "so-2", label: "Gestion des pièces non conformes",          sections: ["S3"] },
+  { id: "so-3", label: "Maîtrise documentaire",                     sections: ["S1"] },
+  { id: "so-4", label: "Compétences et formation",                  sections: ["S4"] },
+  { id: "so-5", label: "Maîtrise de la production",                 sections: ["S2", "S3"] },
+  { id: "so-6", label: "Planification et maîtrise opérationnelle",  sections: ["S1", "S2"] },
+]
+
 export const SUPPLIER_ALERTS = {
   "§7.1.5": { criticite: "majeure", message: "3 clés dyno périmées — NC non clôturée nov. 2024" },
   "§8.7":   { criticite: "mineure", message: "Zone quarantaine partiellement délimitée" },
