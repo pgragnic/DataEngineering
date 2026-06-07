@@ -21,17 +21,6 @@ LIST_SNAPS    = "--snapshots" in sys.argv
 # ── Ordres à passer ─────────────────────────────────────────────────────────
 # Source : portfolio ThomasPJ au 07/06/2026
 ORDERS = [
-    # BAC x10 — 13/04/2026 & 05/06/2026 & 09/04/2026
-    {"symbol": "BAC", "pct": 0.50},
-    {"symbol": "BAC", "pct": 0.63},
-    {"symbol": "BAC", "pct": 0.25},
-    {"symbol": "BAC", "pct": 0.50},
-    {"symbol": "BAC", "pct": 0.50},
-    {"symbol": "BAC", "pct": 0.50},
-    {"symbol": "BAC", "pct": 0.50},
-    {"symbol": "BAC", "pct": 0.50},
-    {"symbol": "BAC", "pct": 0.50},
-    {"symbol": "BAC", "pct": 0.62},
     # GS x20 — 05/06/2026
     {"symbol": "GS", "pct": 0.25},
     {"symbol": "GS", "pct": 0.25},
@@ -55,7 +44,7 @@ ORDERS = [
     {"symbol": "GS", "pct": 0.25},
 ]
 
-LABEL         = "Copie ThomasPJ — BAC x10 + GS x20"
+LABEL         = "Copie ThomasPJ — GS x20"
 DELAY_SECONDS = 2
 # ────────────────────────────────────────────────────────────────────────────
 
