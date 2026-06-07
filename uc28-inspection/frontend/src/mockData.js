@@ -280,6 +280,28 @@ export const CHECKLIST = [
       { id: "S4-2", texte: "Plan de formation documenté", statut: "a-venir" },
     ],
   },
+  {
+    id: "S5",
+    titre: "Maîtrise de la production",
+    clause: "§8.5.1",
+    points: 3,
+    items: [
+      { id: "S5-1", texte: "Conditions de production définies et maîtrisées", statut: "a-venir" },
+      { id: "S5-2", texte: "Équipements de production conformes aux spécifications", statut: "a-venir" },
+      { id: "S5-3", texte: "Surveillance des paramètres process en place", statut: "a-venir" },
+    ],
+  },
+  {
+    id: "S6",
+    titre: "Planification & maîtrise opérationnelle",
+    clause: "§8.1",
+    points: 3,
+    items: [
+      { id: "S6-1", texte: "Processus opérationnels planifiés et documentés", statut: "a-venir" },
+      { id: "S6-2", texte: "Critères d'acceptation des produits définis", statut: "a-venir" },
+      { id: "S6-3", texte: "Enregistrements de maîtrise disponibles", statut: "a-venir" },
+    ],
+  },
 ]
 
 export const AUDITS_PRECEDENTS = [
@@ -331,6 +353,46 @@ export const RECURRENCES = [
 ]
 
 export const RAG_ARTICLES = {
+  "§8.5.1": [
+    {
+      clause: "§8.5.1",
+      titre: "Maîtrise de la production et de la prestation de service",
+      extrait:
+        "L'organisme doit mettre en œuvre la production et la prestation de service dans des conditions maîtrisées, incluant la disponibilité des informations documentées définissant les caractéristiques des produits.",
+    },
+    {
+      clause: "§8.5.2",
+      titre: "Identification et traçabilité",
+      extrait:
+        "L'organisme doit utiliser les moyens appropriés pour identifier les éléments de sortie lorsque cela est nécessaire pour assurer la conformité des produits et services.",
+    },
+    {
+      clause: "§8.6",
+      titre: "Libération des produits et services",
+      extrait:
+        "L'organisme doit mettre en œuvre les dispositions planifiées pour vérifier que les exigences relatives aux produits et services ont été satisfaites.",
+    },
+  ],
+  "§8.1": [
+    {
+      clause: "§8.1",
+      titre: "Planification et maîtrise opérationnelles",
+      extrait:
+        "L'organisme doit planifier, mettre en œuvre, maîtriser, surveiller et évaluer les processus nécessaires pour satisfaire aux exigences relatives à la réalisation des produits et services.",
+    },
+    {
+      clause: "§8.4",
+      titre: "Maîtrise des processus fournis par des prestataires externes",
+      extrait:
+        "L'organisme doit s'assurer que les processus, produits et services fournis par des prestataires externes sont conformes aux exigences.",
+    },
+    {
+      clause: "§9.1.1",
+      titre: "Surveillance, mesure, analyse et évaluation",
+      extrait:
+        "L'organisme doit déterminer ce qui doit faire l'objet d'une surveillance et d'une mesure, ainsi que les méthodes d'analyse et d'évaluation nécessaires pour assurer des résultats valides.",
+    },
+  ],
   "§7.5": [
     {
       clause: "§7.5.2",
@@ -581,8 +643,8 @@ export const SCOPE_OPTIONS = [
   { id: "so-2", label: "Gestion des pièces non conformes",          sections: ["S3"] },
   { id: "so-3", label: "Maîtrise documentaire",                     sections: ["S1"] },
   { id: "so-4", label: "Compétences et formation",                  sections: ["S4"] },
-  { id: "so-5", label: "Maîtrise de la production",                 sections: ["S2", "S3"] },
-  { id: "so-6", label: "Planification et maîtrise opérationnelle",  sections: ["S1", "S2"] },
+  { id: "so-5", label: "Maîtrise de la production",                 sections: ["S5"] },
+  { id: "so-6", label: "Planification et maîtrise opérationnelle",  sections: ["S6"] },
 ]
 
 export const SUPPLIER_ALERTS = {
