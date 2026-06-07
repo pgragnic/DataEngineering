@@ -615,6 +615,45 @@ Demande formelle de cohérence visuelle via un prompt structuré en 4 étapes (f
 - `frontend/src/components/PlanningOverlay.jsx` — label TC, prop transport vers MapCard
 - `frontend/src/components/SelectionView.jsx` — label TC, prop transport, displayStatut dynamique
 
+### Session du 2026-06-07 — Badge Auditeur, mapping RAG par clause, schémas d'architecture
+
+**Badge « Auditeur » sur les contenus ajoutés par l'auditeur**
+- Brief (écran 2) : les points ajoutés dans une section IA existante (`extraItems`) portent le même badge bleu « Auditeur » que les sections custom, positionné **à droite** du texte de l'item
+- Inspection (écran 3/4) : badge « Auditeur » rendu visible aussi dans la check-list, pour les sections custom **et** les points ajoutés
+  - `baseChecklist` marque les contenus auditeur avec un flag `auteur: "auditeur"` (extra items + sections custom + leurs items)
+  - Le flag survit aux mises à jour de statut (le reducer fait `{ ...it }`)
+  - Le texte `(ajouté)` sur les sections custom est remplacé par le badge ; badge des items aligné à droite (`ml-auto`)
+
+**Mapping articles normatifs (RAG) par clause — pilotage par la donnée**
+- Avant : `if (clause.includes("7.1.5")) … else if ("8.7") … else default` → seules S2 et S3 avaient des articles pertinents ; S1 (§7.5) et S4 (§7.2) retombaient sur le paquet `default` incohérent
+- Après : helper unique `articlesForClause(clause)` au niveau module
+  - Match exact `RAG_ARTICLES[clause]` (clé avec `§`, ex. `§7.5`)
+  - Repli tolérant sur le format backend **sans `§`** (`num.includes(k.replace(/§/g,""))`) — car la table `clauses_iso` stocke `7.1.5`, `8.7`… sans symbole
+  - Repli final sur `RAG_ARTICLES.default`
+- Utilisé aux 2 endroits : `useEffect` au clic d'un point **et** `handleAnalyser` (clause renvoyée par le backend)
+- 2 nouveaux paquets ajoutés dans `RAG_ARTICLES` : `§7.5` (documentation : §7.5.2/7.5.3/7.5.3.2) et `§7.2` (compétences : §7.2/7.2(b)/7.3)
+- Avantage : ajouter une section avec une clause répertoriée la relie automatiquement, sans toucher au code
+- Popover ⓘ « Articles normatifs — RAG » mis à jour pour refléter les 4 clauses cartographiées
+
+**Correction doc — stockage `data/`**
+- `audit.db` (SQLite) est en réalité **versionné** dans le dépôt (et non gitignoré) ; déjà seedé (tables `clauses_iso`, `sites`, `audits_historiques`)
+- Le seed `data/iso_9001_clauses.json` n'est lu qu'au premier `init_db()` si la table est vide ; il n'est pas versionné
+- Les clauses en base sont stockées **sans `§`** — d'où le repli tolérant de `articlesForClause()`
+
+**Schémas d'architecture (PNG 1920×1080, matplotlib)**
+- `docs/architecture_technique_UC28.png` — composants React, FastAPI (main/agent/rag/database), Claude API, SQLite, FAISS + sentence-transformers, OSRM, flux REST
+- `docs/architecture_fonctionnelle_UC28.png` — parcours 3 actes (AVANT/PENDANT/APRES), swimlanes acteurs, fonctions métier, valeurs produites
+- Scripts sources : `scripts/gen_architecture_diagram.py` et `scripts/gen_functional_diagram.py`
+- Note : pas de police emoji dans l'environnement (DejaVu Sans) → libellés en texte simple
+
+**Fichiers modifiés / créés**
+- `frontend/src/components/Brief.jsx` — badge Auditeur sur extra items (à droite)
+- `frontend/src/components/InspectionCapture.jsx` — flag `auteur`, badge dans la check-list, helper `articlesForClause`, popover RAG
+- `frontend/src/mockData.js` — paquets `§7.5` et `§7.2` dans `RAG_ARTICLES`
+- `uc28-inspection/CLAUDE.md` — correction stockage `data/`
+- `docs/architecture_technique_UC28.png`, `docs/architecture_fonctionnelle_UC28.png` — créés
+- `scripts/gen_architecture_diagram.py`, `scripts/gen_functional_diagram.py` — créés
+
 ---
 
 ## Commandes utiles
