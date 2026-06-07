@@ -22,6 +22,19 @@ const QUESTIONS_FALLBACK = [
   "Les responsables concernés sont-ils informés ?",
 ]
 
+// Sélectionne le paquet d'articles normatifs correspondant à une clause ISO.
+// Indexation directe par clause (ex. "§7.1.5"), avec repli tolérant (format
+// backend sans §) puis sur le paquet par défaut.
+function articlesForClause(clause) {
+  const c = (clause || "").trim()
+  if (RAG_ARTICLES[c]) return RAG_ARTICLES[c]
+  const num = c.replace(/§/g, "")
+  const key = num && Object.keys(RAG_ARTICLES).find(
+    (k) => k !== "default" && num.includes(k.replace(/§/g, ""))
+  )
+  return key ? RAG_ARTICLES[key] : RAG_ARTICLES.default
+}
+
 function Waveform({ active }) {
   const bars = Array.from({ length: 32 }, (_, i) => i)
   return (
@@ -151,10 +164,7 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
 
   useEffect(() => {
     if (!selectedItem) return
-    const clause = selectedItem.clause || ""
-    if (clause.includes("7.1.5")) setRagArticles(RAG_ARTICLES["§7.1.5"])
-    else if (clause.includes("8.7")) setRagArticles(RAG_ARTICLES["§8.7"])
-    else setRagArticles(RAG_ARTICLES.default)
+    setRagArticles(articlesForClause(selectedItem.clause))
   }, [selectionCount])
 
   useEffect(() => {
@@ -211,10 +221,7 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
         : observation.trim())
       const data = await analyser(observationAvecReponses, AUDIT_COURANT.site_id)
       setResultat(data)
-      const clauseStr = data.clause_iso?.clause || ""
-      if (clauseStr.includes("7.1.5")) setRagArticles(RAG_ARTICLES["§7.1.5"])
-      else if (clauseStr.includes("8.7")) setRagArticles(RAG_ARTICLES["§8.7"])
-      else setRagArticles(RAG_ARTICLES.default)
+      setRagArticles(articlesForClause(data.clause_iso?.clause))
       if ((data.criticite || "").toLowerCase() === "majeure") {
         clearTimeout(momentFortTimer.current)
         setMomentFort(true)
@@ -727,13 +734,14 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                       <span className="font-semibold text-brand text-[10px] uppercase tracking-wide">Comment sont sélectionnés ces articles ?</span>
                       <button onClick={() => setShowRagInfo(false)} className="text-ink-muted hover:text-ink"><X size={12} /></button>
                     </div>
-                    <p>À chaque sélection d'un point de checklist, l'Agent IA sélectionne les articles ISO les plus pertinents via RAG :</p>
+                    <p>À chaque sélection d'un point de checklist, l'Agent IA remonte les articles ISO de la clause correspondante :</p>
                     <ul className="space-y-1 pl-2">
-                      <li><span className="font-medium text-ink">Clause §7.1.5</span> — articles métrologie & étalonnage ciblés</li>
-                      <li><span className="font-medium text-ink">Clause §8.7</span> — articles maîtrise des NC sélectionnés</li>
-                      <li><span className="font-medium text-ink">Autre clause</span> — sélection par similarité sémantique</li>
+                      <li><span className="font-medium text-ink">§7.5</span> — maîtrise des informations documentées</li>
+                      <li><span className="font-medium text-ink">§7.1.5</span> — métrologie & étalonnage</li>
+                      <li><span className="font-medium text-ink">§8.7</span> — maîtrise des non-conformités</li>
+                      <li><span className="font-medium text-ink">§7.2</span> — compétences & formation</li>
                     </ul>
-                    <p className="pt-1">Le corpus ISO 9001:2015 est indexé par <strong>sentence-transformers</strong> (BERT multilingue). Survolez un article pour lire l'extrait normatif complet.</p>
+                    <p className="pt-1">Chaque point hérite de la clause de sa section ; une clause non répertoriée retombe sur un paquet d'articles transverses par défaut. Le corpus ISO 9001:2015 est indexé par <strong>sentence-transformers</strong> (BERT multilingue). Survolez un article pour lire l'extrait normatif complet.</p>
                   </div>
                 )}
               </div>

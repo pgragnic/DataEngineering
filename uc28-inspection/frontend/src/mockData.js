@@ -331,6 +331,46 @@ export const RECURRENCES = [
 ]
 
 export const RAG_ARTICLES = {
+  "§7.5": [
+    {
+      clause: "§7.5.2",
+      titre: "Création et mise à jour des informations documentées",
+      extrait:
+        "Lors de la création et de la mise à jour des informations documentées, l'organisme doit s'assurer que l'identification, la description, le format et le support sont appropriés, et qu'elles font l'objet d'une revue et d'une approbation.",
+    },
+    {
+      clause: "§7.5.3",
+      titre: "Maîtrise des informations documentées",
+      extrait:
+        "Les informations documentées doivent être disponibles et conviennent à l'utilisation, là où et quand elles sont nécessaires, et être protégées de manière appropriée (perte de confidentialité, usage impropre, perte d'intégrité).",
+    },
+    {
+      clause: "§7.5.3.2",
+      titre: "Distribution, accès et contrôle des versions",
+      extrait:
+        "L'organisme doit maîtriser la distribution, l'accès, la récupération, le stockage, la maîtrise des modifications (versions) et la conservation des informations documentées.",
+    },
+  ],
+  "§7.2": [
+    {
+      clause: "§7.2",
+      titre: "Compétences",
+      extrait:
+        "L'organisme doit déterminer les compétences nécessaires des personnes effectuant un travail qui a une incidence sur la performance et l'efficacité du système de management de la qualité.",
+    },
+    {
+      clause: "§7.2 (b)",
+      titre: "Formation et habilitation",
+      extrait:
+        "L'organisme doit s'assurer que ces personnes sont compétentes sur la base d'une formation initiale ou professionnelle ou d'une expérience appropriées.",
+    },
+    {
+      clause: "§7.3",
+      titre: "Sensibilisation",
+      extrait:
+        "L'organisme doit s'assurer que les personnes effectuant un travail sous son contrôle sont sensibilisées à la politique qualité, aux objectifs pertinents et aux conséquences d'un non-respect des exigences.",
+    },
+  ],
   "§7.1.5": [
     {
       clause: "§7.1.5",
