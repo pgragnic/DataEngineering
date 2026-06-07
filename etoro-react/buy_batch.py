@@ -89,45 +89,89 @@ if DO_COMPARE:
     except Exception as e:
         print(f"Impossible de joindre l'API : {e}"); sys.exit(1)
 
-    snap_positions  = snap.get("portfolio", {}).get("positions", [])
-    cur_positions   = current.get("positions", [])
-    snap_equity     = snap.get("portfolio", {}).get("equity", 0)
-    cur_equity      = current.get("equity", 0)
+    snap_positions = snap.get("portfolio", {}).get("positions", [])
+    cur_positions  = current.get("positions", [])
+    snap_equity    = snap.get("portfolio", {}).get("equity", 0)
+    cur_equity     = current.get("equity", 0)
 
-    # Regroupe par symbole
-    def by_symbol(positions):
-        acc = {}
-        for p in positions:
-            sym = p.get("name", "?")
-            if sym not in acc:
-                acc[sym] = {"count": 0, "amount": 0.0, "pnl": 0.0}
-            acc[sym]["count"]  += 1
-            acc[sym]["amount"] += p.get("amount", 0)
-            acc[sym]["pnl"]    += p.get("pnl", 0)
-        return acc
+    fm  = lambda n: f"${n:>9.2f}"
+    fd  = lambda n: f"{n:+.2f}"
+    fpct= lambda n: f"{n:+.2f}%"
 
-    snap_map = by_symbol(snap_positions)
-    cur_map  = by_symbol(cur_positions)
-    all_syms = sorted(set(snap_map) | set(cur_map))
+    # Index courant par positionID
+    cur_by_id = {p["positionID"]: p for p in cur_positions if "positionID" in p}
 
-    fmt = lambda n: f"{n:+.2f}" if n else "0.00"
+    # ── Détail position par position ────────────────────────────────────────
+    COL = f"{'#':<3} {'Symbole':<14} {'Dir':<6} {'Ouverture':<12} {'Prix ouv':>9} {'Prix act':>9} {'Mnt snap':>10} {'Mnt act':>10} {'Δ mnt':>8} {'P&L act':>9} {'P&L%':>7}  Statut"
+    SEP = "─" * len(COL)
+    print(COL)
+    print(SEP)
 
-    print(f"{'Symbole':<12} {'Snapshot':>10} {'Actuel':>10} {'Δ montant':>12} {'P&L actuel':>12} {'Positions':>10}")
-    print("─" * 72)
-    for sym in all_syms:
-        s = snap_map.get(sym, {})
-        c = cur_map.get(sym, {})
-        s_amt  = s.get("amount", 0)
-        c_amt  = c.get("amount", 0)
-        c_pnl  = c.get("pnl", 0)
-        delta  = c_amt - s_amt
-        count  = c.get("count", 0)
-        status = "" if c else "  ✗ fermé"
-        print(f"{sym:<12} ${s_amt:>9.2f} ${c_amt:>9.2f} {fmt(delta):>12}  {fmt(c_pnl):>11}  {count:>4}{status}")
+    total_snap_amt = 0.0
+    total_cur_amt  = 0.0
+    total_cur_pnl  = 0.0
 
-    print("─" * 72)
-    d_eq = cur_equity - snap_equity
-    print(f"{'EQUITY':<12} ${snap_equity:>9.2f} ${cur_equity:>9.2f} {fmt(d_eq):>12}")
+    for i, sp in enumerate(snap_positions, 1):
+        pid        = sp.get("positionID")
+        name       = sp.get("name", "?")
+        direction  = "Long" if sp.get("isBuy") else "Short"
+        open_date  = sp.get("openDate", "")[:10]
+        open_rate  = sp.get("openRate", 0)
+        snap_amt   = sp.get("amount", 0)
+        total_snap_amt += snap_amt
+
+        cp = cur_by_id.get(pid)
+        if cp:
+            cur_amt  = cp.get("amount", 0)
+            cur_pnl  = cp.get("pnl", 0)
+            close_rt = cp.get("closeRate", 0)
+            delta    = cur_amt - snap_amt
+            cost     = snap_amt - cur_pnl if (snap_amt - cur_pnl) != 0 else 1
+            pnl_pct  = (cur_pnl / (cur_amt - cur_pnl)) * 100 if (cur_amt - cur_pnl) != 0 else 0
+            status   = "✓ ouvert"
+            total_cur_amt += cur_amt
+            total_cur_pnl += cur_pnl
+        else:
+            cur_amt  = 0.0
+            cur_pnl  = 0.0
+            close_rt = 0.0
+            delta    = -snap_amt
+            pnl_pct  = 0.0
+            status   = "✗ fermé"
+
+        dir_arrow = "▲" if direction == "Long" else "▼"
+        print(
+            f"{i:<3} {name:<14} {dir_arrow+' '+direction:<6} {open_date:<12} "
+            f"{open_rate:>9.4f} {close_rt:>9.4f} "
+            f"{fm(snap_amt)} {fm(cur_amt)} {fd(delta):>8} "
+            f"{fm(cur_pnl)} {fpct(pnl_pct):>7}  {status}"
+        )
+
+    # ── Nouvelles positions (absentes du snapshot) ──────────────────────────
+    snap_ids  = {p.get("positionID") for p in snap_positions}
+    snap_syms = {p.get("name") for p in snap_positions}
+    new_pos   = [p for p in cur_positions if p.get("positionID") not in snap_ids
+                 and p.get("name") in snap_syms]
+
+    if new_pos:
+        print(f"\n  + Nouvelles positions sur les mêmes symboles :")
+        for p in new_pos:
+            direction = "▲ Long" if p.get("isBuy") else "▼ Short"
+            print(f"    #{p.get('positionID')}  {p.get('name'):<14} {direction}  "
+                  f"ouv {p.get('openRate',0):.4f}  "
+                  f"{fm(p.get('amount',0))}  P&L {fm(p.get('pnl',0))}")
+            total_cur_amt += p.get("amount", 0)
+            total_cur_pnl += p.get("pnl", 0)
+
+    # ── Résumé ───────────────────────────────────────────────────────────────
+    print(SEP)
+    d_amt = total_cur_amt - total_snap_amt
+    d_eq  = cur_equity    - snap_equity
+    pnl_pct_tot = (total_cur_pnl / (total_cur_amt - total_cur_pnl) * 100
+                   if (total_cur_amt - total_cur_pnl) != 0 else 0)
+    print(f"{'TOTAL positions':<34} {fm(total_snap_amt)} {fm(total_cur_amt)} {fd(d_amt):>8} "
+          f"{fm(total_cur_pnl)} {fpct(pnl_pct_tot):>7}")
+    print(f"{'EQUITY portefeuille':<34} {fm(snap_equity)} {fm(cur_equity)} {fd(d_eq):>8}")
     sys.exit(0)
 
 # ── Mode passage d'ordres ────────────────────────────────────────────────────
