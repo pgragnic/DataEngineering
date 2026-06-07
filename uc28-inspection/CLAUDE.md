@@ -57,7 +57,7 @@ start.bat   → Lance backend (uv) + frontend (npm) en un clic
 - Le **prompt caching** est activé sur le system prompt dans `agent.py` (`cache_control: ephemeral`).
 - Le modèle sentence-transformers du RAG est **préchargé au démarrage** (`lifespan`) pour éviter 30-60 s de latence sur le premier `/analyser`.
 - La clé `ANTHROPIC_API_KEY` dans `backend/.env` doit être la clé **complète** (format `sk-ant-api03-…`, ~100 caractères). Une clé tronquée provoque une `AuthenticationError 401`.
-- Les fichiers `data/` volumineux (CSV, JSON, Parquet, DB) sont exclus du dépôt (voir `.gitignore`).
+- La base SQLite **`data/audit.db`** est **versionnée** dans le dépôt (déjà seedée : tables `clauses_iso`, `sites`, `audits_historiques`). Le seed `data/iso_9001_clauses.json` n'est utilisé qu'au premier `init_db()` si la table est vide ; il n'est pas versionné. Les clauses en base sont stockées **sans le symbole `§`** (ex. `7.1.5`, `8.7`) — d'où le repli tolérant de `articlesForClause()` côté front.
 - Vérifier que `.env` n'est jamais commité. Le fichier `Lancer la démo (deux terminaux).txt` contient une clé en clair — **ne pas commiter**.
 
 ## Historique des sessions de développement
