@@ -298,10 +298,18 @@ export default function Brief({ onDemarrer, onBack, theme }) {
             <div className="space-y-3">
               {CHECKLIST.slice(0, sectionsVisibles).filter(s => !removedSectionIds.has(s.id)).map((section) => {
                 const extraItems = extraItemsBySectionId[section.id] || []
+                const alerte = SUPPLIER_ALERTS[section.clause] || null
                 return (
-                  <div key={section.id} className="bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in">
+                  <div key={section.id} className={`bg-surface-sunk shadow-inset rounded-lg p-3 animate-fade-in ${alerte ? "border-l-4 border-brand-amber" : ""}`}>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-bold text-brand">{section.id}</span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-xs font-bold text-brand shrink-0">{section.id}</span>
+                        {alerte && (
+                          <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${alerte.criticite === "majeure" ? "bg-nc-majeure text-white" : "bg-nc-mineure text-white"}`}>
+                            ⚠ RATP {alerte.criticite === "majeure" ? "NC maj." : "NC min."}
+                          </span>
+                        )}
+                      </div>
                       <button
                         onClick={() => setRemovedSectionIds(prev => new Set([...prev, section.id]))}
                         className="text-gray-400 hover:text-red-500 hover:bg-red-50 w-5 h-5 flex items-center justify-center rounded text-sm leading-none transition-colors"
@@ -309,6 +317,12 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                       >×</button>
                     </div>
                     <div className="text-sm font-medium text-ink">{section.titre}</div>
+                    {alerte && (
+                      <div className="mt-1 text-[10px] text-brand-amber flex items-start gap-1">
+                        <span className="shrink-0">⚠</span>
+                        <span>{alerte.message}</span>
+                      </div>
+                    )}
                     <div className="text-xs text-ink-muted mt-1 mb-2">
                       {section.items.filter(i => !removedItemIds.has(i.id)).length + extraItems.length} point{(section.items.filter(i => !removedItemIds.has(i.id)).length + extraItems.length) > 1 ? "s" : ""} de contrôle
                       {section.id === "S1" && (
