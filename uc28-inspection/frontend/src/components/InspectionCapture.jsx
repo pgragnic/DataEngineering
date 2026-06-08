@@ -848,9 +848,20 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
                           </div>
                         )}
                         {c.photoUrl && (
-                          <a href={c.photoUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 text-[10px] text-brand hover:underline flex items-center gap-1">
-                            <Camera size={10} />Voir la photo
-                          </a>
+                          <div className="relative group/photo mt-1.5 self-start">
+                            <img
+                              src={c.photoUrl}
+                              alt="preuve terrain"
+                              className="h-10 w-10 object-cover rounded cursor-zoom-in border border-divider"
+                            />
+                            <div className="pointer-events-none absolute bottom-full left-0 mb-1 z-50 opacity-0 group-hover/photo:opacity-100 transition-opacity duration-150">
+                              <img
+                                src={c.photoUrl}
+                                alt="preuve terrain agrandie"
+                                className="w-48 h-auto object-cover rounded-lg shadow-lg border border-divider"
+                              />
+                            </div>
+                          </div>
                         )}
                       </>
                     )}
