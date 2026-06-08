@@ -227,7 +227,7 @@ export const AUDIT_COURANT = {
   nom: "Atelier de maintenance Sucy-en-Brie",
   localisation: "Sucy-en-Brie (94)",
   referentiel: "ISO 9001:2015",
-  scope: ["Étalonnage des équipements de mesure", "Gestion des pièces non conformes"],
+  scope: ["Étalonnage & équipements de mesure", "Gestion des non-conformités"],
   effectif: 218,
   responsable_qualite: "Mei Lin Zhang",
   contact: "meilin.zhang@ratp.fr",
@@ -639,12 +639,12 @@ ACTIONS PRIORITAIRES :
 }
 
 export const SCOPE_OPTIONS = [
-  { id: "so-1", label: "Étalonnage des équipements de mesure",      sections: ["S2"] },
-  { id: "so-2", label: "Gestion des pièces non conformes",          sections: ["S3"] },
-  { id: "so-3", label: "Maîtrise documentaire",                     sections: ["S1"] },
-  { id: "so-4", label: "Compétences et formation",                  sections: ["S4"] },
-  { id: "so-5", label: "Maîtrise de la production",                 sections: ["S5"] },
-  { id: "so-6", label: "Planification et maîtrise opérationnelle",  sections: ["S6"] },
+  { id: "so-1", label: "Étalonnage & équipements de mesure",           sections: ["S2"] },
+  { id: "so-2", label: "Gestion des non-conformités",                  sections: ["S3"] },
+  { id: "so-3", label: "Maîtrise des informations documentées",        sections: ["S1"] },
+  { id: "so-4", label: "Compétences & formation",                      sections: ["S4"] },
+  { id: "so-5", label: "Maîtrise de la production",                    sections: ["S5"] },
+  { id: "so-6", label: "Planification & maîtrise opérationnelle",      sections: ["S6"] },
 ]
 
 export const SUPPLIER_ALERTS = {
