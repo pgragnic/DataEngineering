@@ -414,7 +414,7 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
           </div>
 
           {/* Colonne centre — Capture + Réponses + RAG */}
-          <div className="col-span-4 flex flex-col gap-3 overflow-y-auto min-h-0">
+          <div className={`col-span-4 flex flex-col gap-3 overflow-y-auto min-h-0 transition-opacity duration-200 ${!selectedItem ? "opacity-40 pointer-events-none select-none" : ""}`}>
             <div className="bg-surface rounded-xl shadow-md p-4">
               {selectedItem ? (
                 <div className="mb-3">
