@@ -109,11 +109,19 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
 
   function toStatement(q, rep) {
     let t = q.replace(/\s*\?$/, "").trim()
-    const affirm = { "est-elle": "est", "est-il": "est", "sont-ils": "sont", "sont-elles": "sont", "a-t-il": "a", "ont-ils": "ont", "ont-elles": "ont", "avez-vous": "vous avez" }
-    const neg    = { "est-elle": "n'est pas", "est-il": "n'est pas", "sont-ils": "ne sont pas", "sont-elles": "ne sont pas", "a-t-il": "n'a pas", "ont-ils": "n'ont pas", "ont-elles": "n'ont pas", "avez-vous": "vous n'avez pas" }
+    // Cas spéciaux (auxiliaires, formes irrégulières, élision)
+    const affirm = { "est-elle": "est", "est-il": "est", "est-on": "est", "sont-ils": "sont", "sont-elles": "sont", "a-t-il": "a", "a-t-elle": "a", "ont-ils": "ont", "ont-elles": "ont", "avez-vous": "vous avez", "y-a-t-il": "il y a" }
+    const neg    = { "est-elle": "n'est pas", "est-il": "n'est pas", "est-on": "n'est pas", "sont-ils": "ne sont pas", "sont-elles": "ne sont pas", "a-t-il": "n'a pas", "a-t-elle": "n'a pas", "ont-ils": "n'ont pas", "ont-elles": "n'ont pas", "avez-vous": "vous n'avez pas", "y-a-t-il": "il n'y a pas" }
     const map = rep === "oui" ? affirm : neg
     for (const [from, to] of Object.entries(map)) {
       t = t.replace(new RegExp(`\\b${from}\\b`, "gi"), to)
+    }
+    // Fallback général : [verbe]-t?-(il|elle|ils|elles|on) non couvert ci-dessus
+    const invRe = /(\w+)-t?-?(il|elle|ils|elles|on)\b/gi
+    if (rep === "oui") {
+      t = t.replace(invRe, "$1")
+    } else {
+      t = t.replace(invRe, (_, verb) => `ne ${verb} pas`)
     }
     t = t.replace(/\s+/g, " ").trim()
     return t.charAt(0).toUpperCase() + t.slice(1) + "."
