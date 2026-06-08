@@ -65,6 +65,13 @@ export default function Brief({ onDemarrer, onBack, theme }) {
   const totalPoints = CHECKLIST.reduce((s, c) => s + c.points, 0)
   const recurrents = 1
 
+  const scopeActiveSections = new Set(
+    editedBriefData.scope.flatMap(label => {
+      const opt = SCOPE_OPTIONS.find(o => o.label === label)
+      return opt ? opt.sections : []
+    })
+  )
+
   // ── Section header helper ──────────────────────────────────────────────────
   const SectionHeader = ({ label, id }) => (
     <dt className="text-[10px] font-semibold text-ink-muted uppercase flex items-center justify-between">
@@ -99,7 +106,12 @@ export default function Brief({ onDemarrer, onBack, theme }) {
           )}
         </div>
         <button
-          onClick={() => onDemarrer(customSections, extraItemsBySectionId, removedItemIds, removedSectionIds)}
+          onClick={() => {
+            const effectiveRemovedSections = scopeActiveSections.size > 0
+              ? new Set([...removedSectionIds, ...CHECKLIST.map(s => s.id).filter(id => !scopeActiveSections.has(id))])
+              : removedSectionIds
+            onDemarrer(customSections, extraItemsBySectionId, removedItemIds, effectiveRemovedSections)
+          }}
           disabled={!genere}
           className="disabled:bg-divider disabled:text-ink-muted disabled:cursor-not-allowed text-white font-semibold px-5 py-2 rounded-lg text-sm bg-brand hover:bg-brand-cyan transition-colors shadow-sm"
         >
@@ -318,14 +330,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
             )}
 
             <div className="space-y-3">
-              {(() => {
-                const scopeActiveSections = new Set(
-                  editedBriefData.scope.flatMap(label => {
-                    const opt = SCOPE_OPTIONS.find(o => o.label === label)
-                    return opt ? opt.sections : []
-                  })
-                )
-                return CHECKLIST.slice(0, sectionsVisibles).filter(s => !removedSectionIds.has(s.id)).map((section) => {
+              {CHECKLIST.slice(0, sectionsVisibles).filter(s => !removedSectionIds.has(s.id)).map((section) => {
                 const extraItems = extraItemsBySectionId[section.id] || []
                 const alerte = SUPPLIER_ALERTS[section.clause] || null
                 const inScope = scopeActiveSections.has(section.id)
@@ -416,8 +421,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     )}
                   </div>
                 )
-              })
-              })()}
+              })}
 
               {!genere && sectionsVisibles < CHECKLIST.length && (
                 <div className="bg-surface-sunk shadow-inset rounded-lg p-3 opacity-50">
