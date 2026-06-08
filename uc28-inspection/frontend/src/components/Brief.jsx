@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { AUDIT_COURANT, CHECKLIST, AUDITS_PRECEDENTS, SUPPLIER_DOCUMENTS, SUPPLIER_ALERTS, SCOPE_OPTIONS } from "../mockData"
+import { getSite } from "../api"
 import { FileText, History, ClipboardList, Upload, CheckCircle2, AlertTriangle, Calendar, Pencil, Check, X, Info } from "lucide-react"
 
 const inputCls = "w-full text-xs border border-divider rounded px-1.5 py-0.5 focus:outline-none focus:ring-1 focus:ring-brand bg-surface"
@@ -20,6 +21,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
   const [addingScopeItem, setAddingScopeItem] = useState(false)
   const [showChecklistInfo, setShowChecklistInfo] = useState(false)
   const [selectedRef, setSelectedRef] = useState("ISO 9001:2015")
+  const [siteData, setSiteData] = useState(null)
 
   // ── Brief client inline edit ───────────────────────────────────────────────
   const [editingSection, setEditingSection] = useState(null) // 'nom' | 'localisation' | 'effectif' | 'scope' | 'contact' | 'duree'
@@ -48,6 +50,21 @@ export default function Brief({ onDemarrer, onBack, theme }) {
   }
 
   useEffect(() => {
+    getSite(AUDIT_COURANT.site_id)
+      .then(data => {
+        setSiteData(data)
+        setEditedBriefData(prev => ({
+          ...prev,
+          nom:                 data.nom,
+          localisation:        data.localisation,
+          effectif:            data.effectif,
+          responsable_qualite: data.responsable_qualite,
+        }))
+      })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
     const start = Date.now()
     let count = 0
     const interval = setInterval(() => {
@@ -71,6 +88,17 @@ export default function Brief({ onDemarrer, onBack, theme }) {
       return opt ? opt.sections : []
     })
   )
+
+  const historiqueAudits = siteData?.historique_audits
+    ? siteData.historique_audits.map(a => ({
+        date:        a.date,
+        auditeur:    a.auditeur,
+        nc_majeures: a.non_conformites_majeures,
+        nc_mineures: a.non_conformites_mineures,
+        themes:      Array.isArray(a.themes_recurrents) ? a.themes_recurrents : [],
+        alerte:      false,
+      }))
+    : AUDITS_PRECEDENTS
 
   // ── Section header helper ──────────────────────────────────────────────────
   const SectionHeader = ({ label, id }) => (
@@ -525,7 +553,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
               <History size={11} />Audits précédents
             </h2>
             <div className="space-y-3">
-              {AUDITS_PRECEDENTS.map((audit, i) => (
+              {historiqueAudits.map((audit, i) => (
                 <div
                   key={i}
                   className={`bg-surface-sunk shadow-inset rounded-lg p-3 ${audit.alerte ? "border-l-4 border-brand-amber" : ""}`}
