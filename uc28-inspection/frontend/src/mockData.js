@@ -238,7 +238,7 @@ export const AUDIT_COURANT = {
 export const CHECKLIST = [
   {
     id: "S1",
-    titre: "Maîtrise des informations documentées",
+    titre: "Maîtrise documentaire",
     clause: "§7.5",
     points: 4,
     items: [
@@ -402,7 +402,7 @@ export const RAG_ARTICLES = {
     },
     {
       clause: "§7.5.3",
-      titre: "Maîtrise des informations documentées",
+      titre: "Maîtrise documentaire",
       extrait:
         "Les informations documentées doivent être disponibles et conviennent à l'utilisation, là où et quand elles sont nécessaires, et être protégées de manière appropriée (perte de confidentialité, usage impropre, perte d'intégrité).",
     },
@@ -641,7 +641,7 @@ ACTIONS PRIORITAIRES :
 export const SCOPE_OPTIONS = [
   { id: "so-1", label: "Étalonnage & équipements de mesure",           sections: ["S2"] },
   { id: "so-2", label: "Gestion des non-conformités",                  sections: ["S3"] },
-  { id: "so-3", label: "Maîtrise des informations documentées",        sections: ["S1"] },
+  { id: "so-3", label: "Maîtrise documentaire",                         sections: ["S1"] },
   { id: "so-4", label: "Compétences & formation",                      sections: ["S4"] },
   { id: "so-5", label: "Maîtrise de la production",                    sections: ["S5"] },
   { id: "so-6", label: "Planification & maîtrise opérationnelle",      sections: ["S6"] },
