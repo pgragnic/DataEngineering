@@ -677,3 +677,39 @@ npm run dev  # → http://localhost:5173
 # API docs interactives
 # http://localhost:8000/docs
 ```
+
+### Session du 2026-06-08 — Cohérence scope, Brief branché sur DB, UX Inspection
+
+**Cohérence labels scope ↔ checklist**
+- `SCOPE_OPTIONS` : labels alignés sur les titres exacts des sections `CHECKLIST` (S1–S6) ; `&` et noms canoniques
+- Section S1 renommée "Maîtrise documentaire" (était "Maîtrise des informations documentées") — dans `CHECKLIST.titre` (×2) et `SCOPE_OPTIONS.label`
+- `AUDIT_COURANT.scope` mis à jour avec les nouveaux labels
+
+**Brief.jsx branché sur audit.db**
+- Import `getSite` depuis `../api` ; nouveau state `siteData`
+- `useEffect` au montage → `GET /api/sites/RATP-SUC` ; fallback silencieux sur `AUDIT_COURANT` si backend absent
+- Champs `nom`, `localisation`, `effectif`, `responsable_qualite` surchargés depuis la DB dès réception
+- `historiqueAudits` = `siteData.historique_audits` (normalisé) ou `AUDITS_PRECEDENTS` en fallback
+- `audit.db` : `responsable_qualite` RATP-SUC corrigé (Karim Belkacem → **Mei Lin Zhang**) ; `themes_recurrents` alignés sur les nouveaux labels scope
+- CHECKLIST, SCOPE_OPTIONS, SUPPLIER_DOCUMENTS restent en mockData (pas d'équivalent DB)
+
+**Vignette photo au survol dans les constats**
+- Remplacement du lien texte "Voir la photo" par une vignette `40×40px` dans chaque carte constat
+- Survol → aperçu `192px` affiché au-dessus via `group-hover/photo` CSS — aucun state supplémentaire
+- `pointer-events-none` sur l'aperçu pour ne pas bloquer les interactions
+
+**Zone de capture grisée sans sélection**
+- Colonne centre de l'écran Inspection : `opacity-40 + pointer-events-none` tant qu'aucun point de checklist n'est sélectionné
+- Transition `duration-200` ; redevient pleinement active dès qu'un item est cliqué
+
+**Fix `toStatement` — inversions verbales françaises**
+- Bug : les formes comme `figurent-elles`, `comporte-t-il`, `dispose-t-on` n'étaient pas dans le dictionnaire → la question restait sans transformation dans l'observation
+- Ajout d'un fallback regex général : `/(\w+)-t?-?(il|elle|ils|elles|on)\b/` appliqué après le dictionnaire des auxiliaires (est/sont/a/ont/avez)
+- Affirmative : supprime le `-[pronom]`, garde le verbe seul ; Négative : `ne [verbe] pas`
+- Dictionnaire enrichi : `est-on`, `a-t-elle`, `y-a-t-il`
+
+**Fichiers modifiés**
+- `frontend/src/mockData.js` — labels SCOPE_OPTIONS canoniques, titre S1, AUDIT_COURANT.scope
+- `frontend/src/components/Brief.jsx` — getSite import, siteData state, useEffect fetch, historiqueAudits
+- `data/audit.db` — responsable_qualite + themes_recurrents RATP-SUC
+- `frontend/src/components/InspectionCapture.jsx` — vignette photo, grisage colonne capture, fix toStatement
