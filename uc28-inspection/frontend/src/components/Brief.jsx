@@ -306,7 +306,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
               </div>
               <div className="space-y-1.5">
                 {SUPPLIER_DOCUMENTS.map(doc => (
-                  <div key={doc.id} className="flex items-start gap-2 bg-surface-sunk shadow-inset rounded-lg px-2.5 py-2">
+                  <div key={doc.id} className="relative group/doc flex items-start gap-2 bg-surface-sunk shadow-inset rounded-lg px-2.5 py-2">
                     <span className="text-xs leading-none mt-0.5 shrink-0 text-brand-emerald">✓</span>
                     <div className="min-w-0 flex-1">
                       <div className="text-[10px] font-medium text-ink truncate">{doc.nom}</div>
@@ -315,6 +315,38 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     {doc.url && (
                       <a href={doc.url} download={doc.nom} className="text-[10px] text-brand hover:underline shrink-0 self-center">⬇</a>
                     )}
+                    {/* Aperçu au survol */}
+                    <div className="absolute bottom-full left-0 mb-1.5 w-72 z-40 opacity-0 group-hover/doc:opacity-100 pointer-events-none transition-opacity duration-150">
+                      <div className="bg-white border border-divider rounded-xl shadow-lg overflow-hidden">
+                        {doc.type === "PDF" ? (
+                          <embed src={doc.url} type="application/pdf" className="w-full h-44" />
+                        ) : (
+                          <div className="bg-blue-50 flex items-center justify-center h-20 gap-2">
+                            <span className="text-2xl">📄</span>
+                            <span className="text-xs font-semibold text-blue-700">Document Word</span>
+                          </div>
+                        )}
+                        <div className="p-2.5 space-y-1.5">
+                          <p className="text-[10px] text-ink leading-relaxed">{doc.insights?.resume}</p>
+                          {doc.insights?.sections_a_risque?.length > 0 && (
+                            <div>
+                              <div className="text-[9px] font-bold text-brand-amber uppercase mb-0.5">Sections à risque</div>
+                              {doc.insights.sections_a_risque.map((s, i) => (
+                                <div key={i} className="text-[9px] text-ink-muted">· {s}</div>
+                              ))}
+                            </div>
+                          )}
+                          {doc.insights?.points_controle?.length > 0 && (
+                            <div>
+                              <div className="text-[9px] font-bold text-brand uppercase mb-0.5">Points à vérifier</div>
+                              {doc.insights.points_controle.slice(0, 2).map((p, i) => (
+                                <div key={i} className="text-[9px] text-ink-muted">· {p}</div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

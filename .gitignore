@@ -8,6 +8,7 @@ Spark/Project/data/
 *.cfg
 *.csv
 *.docx
+!uc28-inspection/frontend/public/documents/CR_Audit_nov_2024.docx
 *.env
 *.gz
 *.json
