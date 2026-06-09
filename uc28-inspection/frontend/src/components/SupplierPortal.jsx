@@ -360,9 +360,9 @@ export default function SupplierPortal({ theme, onBack, externalDocs = [] }) {
                         {expandedDoc === doc.id ? "Masquer ▲" : "Voir analyse ▼"}
                       </button>
                     )}
-                    {doc.dataUrl && (
+                    {(doc.dataUrl || doc.url) && (
                       <button
-                        onClick={() => { const a = document.createElement("a"); a.href = doc.dataUrl; a.download = doc.nom; a.click() }}
+                        onClick={() => { const a = document.createElement("a"); a.href = doc.dataUrl ?? doc.url; a.download = doc.nom; a.click() }}
                         className="text-xs shrink-0 text-brand-emerald hover:underline flex items-center gap-1"
                       >⬇ Télécharger</button>
                     )}

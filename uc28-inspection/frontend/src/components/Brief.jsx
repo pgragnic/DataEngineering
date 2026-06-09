@@ -308,10 +308,13 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                 {SUPPLIER_DOCUMENTS.map(doc => (
                   <div key={doc.id} className="flex items-start gap-2 bg-surface-sunk shadow-inset rounded-lg px-2.5 py-2">
                     <span className="text-xs leading-none mt-0.5 shrink-0 text-brand-emerald">✓</span>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="text-[10px] font-medium text-ink truncate">{doc.nom}</div>
                       <div className="text-[10px] text-ink-muted">{doc.date} · {doc.insights?.sections_a_risque?.[0] ?? "Analysé"}</div>
                     </div>
+                    {doc.url && (
+                      <a href={doc.url} download={doc.nom} className="text-[10px] text-brand hover:underline shrink-0 self-center">⬇</a>
+                    )}
                   </div>
                 ))}
               </div>
