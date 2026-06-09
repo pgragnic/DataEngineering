@@ -713,3 +713,48 @@ npm run dev  # → http://localhost:5173
 - `frontend/src/components/Brief.jsx` — getSite import, siteData state, useEffect fetch, historiqueAudits
 - `data/audit.db` — responsable_qualite + themes_recurrents RATP-SUC
 - `frontend/src/components/InspectionCapture.jsx` — vignette photo, grisage colonne capture, fix toStatement
+
+### Session du 2026-06-09 — Boucle fournisseur fermée : transmission rapport BV + documents téléchargeables
+
+**Transmission du rapport BV vers le portail fournisseur RATP (boucle fermée)**
+- Scénario : Marc Lefèvre (BV) termine l'audit → ReportView → "⬆ Portail RATP" → le rapport apparaît dans le portail quand Mei Lin Zhang (RATP) se connecte
+- `App.jsx` : state `savedReports` persisté dans `localStorage("bv_saved_reports")` (survit F5 + changement de compte) + `handleSaveReport`
+- Props : `onSaveReport={handleSaveReport}` → ReportView ; `externalDocs={savedReports}` → SupplierPortal
+- `ReportView.jsx` : bouton "⬆ Portail RATP" dans la page-bar → "✓ Transmis au portail" après clic ; `handleTransmettrePortail` génère le DOCX via `exportDocx`, le convertit en `dataUrl` (base64) et appelle `onSaveReport({ id: rapport-bv-{timestamp}, fromBV: true, dataUrl, insights, ... })`
+- `SupplierPortal.jsx` : `useEffect` fusionne `externalDocs` (dédup par `id`), badge bleu "Bureau Veritas" (`doc.fromBV`), tri corrigé `id.split("-").pop()` (les IDs `rapport-bv-{ts}` cassaient `replace("doc-","")`), × masqué sur les rapports BV (`!doc.mock && !doc.fromBV`)
+- `"Rapport d'audit BV"` ajouté dans `TYPES_DOCUMENT` (groupe Audit & Inspection) pour le filtre catégorie
+
+**Documents fournisseur réellement téléchargeables**
+- Les 3 docs mock (`CR_Audit_nov_2024.docx`, `Procedures_etalonnage_v3.pdf`, `Plan_qualite_2025.pdf`) n'avaient que des métadonnées (`url` jamais utilisé) — désormais de vrais fichiers générés
+- `scripts/gen_supplier_docs.py` : génération avec contenu RATP réaliste (python-docx + reportlab) → `frontend/public/documents/` (servi statiquement)
+  - DOCX : CR d'inspection BV (tableau NC §7.1.5 majeure + §8.7 mineure, plan d'actions, signatures)
+  - PDF métrologie : inventaire équipements (3 clés dynamométriques périmées en rouge), références COFRAC, révisions
+  - PDF plan qualité : objectifs, plan d'actions correctives (statuts colorés CLÔTURÉ/EN COURS/NON ALLOUÉ/PARTIEL), calendrier
+- `SupplierPortal.jsx` : bouton "⬇ Télécharger" étendu à `doc.url` (`(doc.dataUrl || doc.url)`, href `doc.dataUrl ?? doc.url`) — fichiers statiques ET rapports BV base64
+- `Brief.jsx` : icône ⬇ cliquable (`<a href={doc.url} download>`) sur chaque doc de la section "Documents portail RATP"
+
+**Cohérence données planning**
+- `ClientList.jsx` : `missions: 4` (codé en dur) → `AUDITS_TIMELINE.length` (= 10) ; import `AUDITS_TIMELINE`
+- `mockData.js` : `KPIS.audits_jour` 4 → 10 (alignement avec les 10 missions)
+
+**Polish ReportView**
+- ⓘ tooltip "Grille de conformité" (version minimaliste : sens du taux + code couleur, sans formule mathématique) ; state `showConformiteInfo`, imports `Info`/`X`
+- Photo terrain affichée dans le rapport si `c.photoUrl && !anonymise` (masquée en mode RGPD car les photos peuvent contenir des éléments identifiables)
+- Bouton "Nouvel audit →" retiré de la page-bar
+
+**Renommage scope (Brief)**
+- "Ajouter un domaine" → "Ajouter un scope" ; "Tous les domaines…" → "Tous les scopes sont déjà sélectionnés"
+
+**Script de démo**
+- `docs/Script_Demo_UC28_Opus48.md` réécrit en v4 : ÉPILOGUE "La boucle se referme", 🔁 récurrences (Acte II), ⓘ audits précédents, 10 missions, persona Mei Lin Zhang, nouveaux Q&R, astuce purge localStorage
+
+**Fichiers créés / modifiés**
+- `scripts/gen_supplier_docs.py` — créé
+- `frontend/public/documents/{CR_Audit_nov_2024.docx, Procedures_etalonnage_v3.pdf, Plan_qualite_2025.pdf}` — créés
+- `frontend/src/App.jsx` — savedReports + localStorage + props
+- `frontend/src/components/ReportView.jsx` — bouton Portail RATP, handler, tooltip conformité, photo, retrait Nouvel audit
+- `frontend/src/components/SupplierPortal.jsx` — externalDocs, badge BV, tri, téléchargement url, type doc BV
+- `frontend/src/components/Brief.jsx` — lien téléchargement docs, renommage scope
+- `frontend/src/components/ClientList.jsx` — missions = AUDITS_TIMELINE.length
+- `frontend/src/mockData.js` — KPIS.audits_jour 10
+- `docs/Script_Demo_UC28_Opus48.md` — v4
