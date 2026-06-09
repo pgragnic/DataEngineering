@@ -203,9 +203,6 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
           >
             {reportSaved ? "✓ Transmis au portail" : transmettreLoading ? "Génération…" : "⬆ Portail RATP"}
           </button>
-          <button onClick={onNewAudit} className="text-white font-semibold px-5 py-2 rounded-lg text-sm bg-brand hover:bg-brand-cyan transition-colors shadow-sm">
-            Nouvel audit →
-          </button>
         </div>
       </div>
 
