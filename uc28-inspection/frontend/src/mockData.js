@@ -523,7 +523,7 @@ export const AUDITS_SEMAINE = {
 }
 
 export const KPIS = {
-  audits_jour: 4,
+  audits_jour: 10,
   audits_mois: 12,
   delai_moyen: "2j",
   recurrences: 4,

@@ -70,7 +70,9 @@ LE CADRE — ÉQUIPE, MODÈLE, ENJEU                             T 0:40
    Bureau Veritas achète la solution pour ses auditeurs.
    RATP et Apave sont les sites audités.
    Une seule plateforme, deux faces : l'auditeur d'un côté,
-   le fournisseur de l'autre — et le même moteur d'IA qui relie les deux."
+   le fournisseur de l'autre — et le même moteur d'IA qui relie les deux.
+   Une boucle fermée : le client dépose, l'auditeur contrôle,
+   et le rapport revient au client. Vous allez la voir se boucler."
 
 [PAUSE]
 
@@ -99,7 +101,8 @@ LE CADRE — ÉQUIPE, MODÈLE, ENJEU                             T 0:40
   "Deux identités dans l'application.
    Marc Lefèvre, auditeur Bureau Veritas — c'est lui qu'on suit.
    Et Mei Lin Zhang, responsable qualité côté RATP,
-   qui alimente le portail fournisseur. On y reviendra."
+   qui alimente le portail fournisseur. On y reviendra — et c'est elle
+   qui refermera la boucle à la fin."
 
 [CLIC → carte « Marc Lefèvre — Auditeur BV »]
 
@@ -114,7 +117,11 @@ LE CADRE — ÉQUIPE, MODÈLE, ENJEU                             T 0:40
 ════════════════════════════════════════════════════════════════════
 
 [DIRE]
-  "Aujourd'hui, Marc intervient pour la RATP. Douze missions ce mois-ci."
+  "Aujourd'hui, Marc intervient pour la RATP. Dix missions à son planning."
+
+  [COULISSES] La carte RATP affiche le compteur réel de missions
+             (AUDITS_TIMELINE.length = 10), synchronisé avec le planning.
+             Ne pas annoncer un autre chiffre que celui affiché.
 
 [CLIC → carte RATP]
 
@@ -125,8 +132,11 @@ LE CADRE — ÉQUIPE, MODÈLE, ENJEU                             T 0:40
 
 [DIRE]
   "Sa journée, d'un seul regard.
-   Quatre audits. Le trait rouge, c'est l'heure qu'il est.
+   Dix audits planifiés. Le trait rouge, c'est l'heure qu'il est.
    Marc sait où il en est sans ouvrir sa boîte mail."
+
+  [COULISSES] KPI « audits planifiés aujourd'hui » = 10, aligné sur la
+             timeline et sur la carte client (plus d'écart 4/10).
 
 [CLIC → une carte de mission → laisser l'animation de la carte se recentrer]
 
@@ -161,10 +171,15 @@ ACTE I — AVANT L'AUDIT · LE BRIEF                            T 2:20
   "Acte un : avant.
    Marc n'a pas encore quitté son bureau — et son brief est déjà prêt.
    Deux cent dix-huit personnes sur le site.
-   Responsable qualité : Karim Belkacem.
+   Responsable qualité : Mei Lin Zhang.
    Périmètre : maintenance des MI09."
 
-[PAUSE — pointer l'alerte rouge dans l'historique]
+  [COULISSES] Le Brief est branché sur la base : GET /api/sites/RATP-SUC.
+             Le responsable qualité (Mei Lin Zhang) vient de audit.db —
+             c'est la MÊME personne qui dépose les docs côté portail et
+             qui signera le rapport. Cohérence de la boucle.
+
+[PAUSE — pointer l'alerte rouge dans l'historique « Audits précédents »]
 
 [DIRE — ralentir, c'est un point fort]
   "Et là, l'alerte.
@@ -172,6 +187,23 @@ ACTE I — AVANT L'AUDIT · LE BRIEF                            T 2:20
    Marc n'a rien eu à se rappeler.
    L'application, elle, s'en souvient pour lui.
    Première douleur traitée : l'historique enfin exploité."
+
+[POINTER l'icône ⓘ à côté de « Audits précédents »]
+
+[DIRE]
+  "D'où vient cet historique ? Un clic sur le petit i le dit :
+   il est chargé depuis la base de connaissances Bureau Veritas —
+   dates, auditeurs, non-conformités, et surtout les thèmes récurrents.
+   Ces thèmes-là, on va les retrouver tout à l'heure sur le terrain."
+
+  ┌─ COULISSES — Provenance de l'historique (icône ⓘ) ────────────────┐
+  │ Source   GET /api/sites/RATP-SUC → table audits_historiques        │
+  │ Contenu  date, auditeur, NC majeures/mineures, thèmes récurrents   │
+  │ Thèmes   consolidés sur plusieurs millésimes d'audit               │
+  │ Fallback données mockData.js si le backend est absent              │
+  │ Lien     les thèmes récurrents sont reportés automatiquement dans  │
+  │          la check-list de l'inspection — badge 🔁 (cf. Acte II)    │
+  └────────────────────────────────────────────────────────────────────┘
 
 [POINTER l'en-tête « Check-list auto-générée » + l'icône ⓘ]
 
@@ -203,7 +235,7 @@ ACTE I — AVANT L'AUDIT · LE BRIEF                            T 2:20
 
 [DIRE]
   "Item ou section entière, au choix.
-   Et il peut ajouter ses propres points."
+   Et il peut ajouter ses propres points — ou élargir le scope de l'audit."
 
 [CLIC → « + Ajouter un point » → saisir un point → Entrée]
 
@@ -212,6 +244,10 @@ ACTE I — AVANT L'AUDIT · LE BRIEF                            T 2:20
    Voilà comment l'expertise de Marc entre dans le système —
    et devient réutilisable. Deuxième douleur : la prépa se standardise,
    sans écraser le savoir de l'auditeur."
+
+  [COULISSES] À droite des champs scope, le bouton « + Ajouter un scope »
+             permet d'élargir le périmètre (libellés alignés sur les
+             sections S1–S6). Optionnel à montrer.
 
 [PAUSE — pointer les badges ⚠ RATP sur §7.1.5 et §8.7]
 
@@ -230,8 +266,30 @@ ACTE II — PENDANT L'AUDIT · LE TERRAIN                       T 3:30
 
 [DIRE]
   "Acte deux : pendant.
-   Marc est sur site. Gants aux mains, devant les équipements.
-   Il choisit le point qu'il va contrôler."
+   Marc est sur site. Gants aux mains, devant les équipements."
+
+[POINTER la bannière ambre « 🔁 Points récurrents sur ce site »
+ en haut de la check-list]
+
+[DIRE — c'est le rappel de l'Acte I qui se concrétise]
+  "Et avant même de commencer, l'application lui rappelle
+   les points qui récidivent sur ce site :
+   l'étalonnage, clause 7.1.5 — et la gestion des pièces non conformes,
+   clause 8.7. Ce sont exactement les thèmes de l'historique du Brief.
+   Les sections concernées portent le badge 🔁.
+   L'historique ne dort plus dans un classeur : il est sous ses yeux,
+   au bon endroit, au bon moment."
+
+  ┌─ COULISSES — Bannière récurrences 🔁 ─────────────────────────────┐
+  │ Source  RECURRENCES[site_id RATP-SUC] (mockData)                  │
+  │ Affiche les thèmes récurrents du site en tête de check-list,      │
+  │ et un badge 🔁 sur chaque section dont la clause correspond.      │
+  │ Même donnée que les « thèmes récurrents » de l'historique Brief.  │
+  │ Détection de récidive aussi sur le résultat d'analyse (alerte 🔁).│
+  └────────────────────────────────────────────────────────────────────┘
+
+[DIRE]
+  "Il choisit le point qu'il va contrôler."
 
 [CLIC → item §7.1.5 « Vérification des certificats d'étalonnage »]
 
@@ -294,14 +352,15 @@ ACTE II — PENDANT L'AUDIT · LE TERRAIN                       T 3:30
   "Ce diagnostic vient de Claude, via la plateforme GEP de Capgemini.
    Pas une règle figée. Pas un copier-coller.
    Il a tenu compte des rames MI09, de l'atelier Sucy,
-   du responsable, de la NC de novembre dernier.
+   de la responsable Mei Lin Zhang, de la NC de novembre dernier.
    Troisième et quatrième douleurs réglées d'un coup :
    le constat est objectif, et il est généré pour Marc, pas par Marc."
 
-[POINTER l'alerte récidive 🔁 si visible]
+[POINTER l'alerte récidive 🔁 sur le résultat, si visible]
 
 [DIRE]
-  "Récidive. Ce point était déjà non conforme en novembre 2024.
+  "Récidive. Ce point était déjà non conforme en novembre 2024 —
+   c'est l'un des thèmes récurrents qu'on a vus en arrivant.
    Marc le voit à l'instant où il le constate."
 
 [POINTER les boutons « Confirmer » / « Corriger »]
@@ -412,42 +471,97 @@ ACTE III — APRÈS L'AUDIT · LE RAPPORT                        T 6:00
 [CLIC → section Signature → tracer la signature sur le canvas → « Confirmer »]
 
 [DIRE]
-  "Validation contradictoire. Karim signe à la main, sur la tablette.
-   Le rapport est tracé, sourcé, signé.
-   Marc quitte le site — le travail est terminé."
+  "Validation contradictoire. Mei Lin Zhang signe à la main, sur la tablette.
+   Le rapport est tracé, sourcé, signé."
 
+[PAUSE — c'est le moment de boucler]
 
-  ┌─────────────────────────────────────────────────────────────────┐
-  │ [BONUS] PORTAIL FOURNISSEUR — 60 s si le jury accroche           │
-  └─────────────────────────────────────────────────────────────────┘
+[POINTER le bouton « ⬆ Portail RATP » dans la barre du haut]
 
-  [CLIC → avatar haut droite → « Se connecter avec un autre compte »]
+[DIRE — appuyer, c'est le nouveau geste clé]
+  "Et maintenant, le geste qui ferme la boucle.
+   Mei Lin Zhang avait déposé ses documents avant l'audit.
+   D'un clic, Marc lui renvoie le rapport — directement dans son portail."
 
-  [DIRE]
-    "L'autre face de la plateforme. On passe côté RATP :
-     Mei Lin Zhang, responsable qualité fournisseur."
+[CLIC → « ⬆ Portail RATP » → le bouton passe à « ✓ Transmis au portail »]
 
-  [CLIC → carte « Mei Lin Zhang » → « Se connecter » → portail]
+[DIRE]
+  "Transmis. Marc quitte le site — le travail est terminé.
+   Le rapport, lui, est déjà reparti chez le client."
 
-  [DIRE]
-    "Son portail. Les documents déposés avant l'audit —
-     procédures, comptes-rendus, plans qualité,
-     classés par catégorie, triés par date."
-
-  [CLIC → un document → montrer l'analyse Claude : résumé + sections à risque]
-
-  [DIRE]
-    "Claude les a lus pour elle. Elle sait ce que l'auditeur va trouver
-     avant même qu'il arrive.
-     Et c'est exactement ce moteur qui a fait remonter
-     les alertes dans la check-list de Marc. Une seule IA, deux usages."
+  ┌─ COULISSES — Transmission du rapport au portail ─────────────────┐
+  │ Bouton « ⬆ Portail RATP » dans la barre haut de l'écran Rapport. │
+  │ Au clic :                                                         │
+  │   • génère le .docx (POST /api/rapport/docx) et le stocke en      │
+  │     base64 (téléchargeable côté portail) ;                        │
+  │   • crée un document fromBV avec insights pré-calculés            │
+  │     (résumé NC, sections à risque, actions, NC historiques) ;     │
+  │   • persiste dans localStorage (bv_saved_reports) → survit au     │
+  │     changement de compte ET au rafraîchissement (F5).             │
+  │ Fallback : si le backend est absent, le rapport est transmis      │
+  │ sans le fichier (métadonnées + analyse seules).                   │
+  └────────────────────────────────────────────────────────────────────┘
 
 
 ════════════════════════════════════════════════════════════════════
-CLÔTURE — REFERMER LA BOUCLE                                 T 7:20
+ÉPILOGUE — LA BOUCLE SE REFERME · PORTAIL RATP               T 7:00
 ════════════════════════════════════════════════════════════════════
 
-[Revenir au slide de clôture, ou rester sur le rapport signé]
+  [Recommandé : c'est le payoff de la promesse « boucle fermée ».
+   Si le temps manque, sacrifier le bonus manuscrit avant celui-ci.]
+
+[CLIC → avatar haut droite → « Se connecter avec un autre compte »]
+
+[DIRE]
+  "L'autre face de la plateforme. On passe côté RATP :
+   Mei Lin Zhang, responsable qualité fournisseur.
+   La même personne que Marc vient d'auditer et qui a signé le rapport."
+
+[CLIC → carte « Mei Lin Zhang » → « Se connecter » → portail]
+
+[DIRE]
+  "Son portail. En bas, les documents qu'elle avait déposés avant l'audit —
+   procédures, comptes-rendus, plans qualité,
+   classés par catégorie, triés par date.
+   Claude les avait lus pour elle, pour anticiper l'audit."
+
+[POINTER le rapport BV en tête de liste, badge bleu « Bureau Veritas »]
+
+[DIRE — le moment « waouh »]
+  "Et voici ce qui n'y était pas il y a deux minutes :
+   le rapport d'audit de Marc. Badge Bureau Veritas.
+   Il vient d'arriver — déposé directement par l'auditeur."
+
+[CLIC → « Voir analyse ▼ » sur le rapport BV]
+
+[DIRE]
+  "Son analyse est déjà là : deux NC majeures, les clauses à risque,
+   les actions correctives. Elle sait quoi faire avant même
+   d'ouvrir le document."
+
+[CLIC → « ⬇ Télécharger » sur le rapport BV]
+
+[DIRE]
+  "Et elle récupère le Word signé, en un clic.
+   La boucle est complète : RATP dépose, Bureau Veritas audite,
+   et le rapport revient à RATP — sur la même plateforme,
+   avec la même IA des deux côtés."
+
+  ┌─ COULISSES — Affichage côté portail ──────────────────────────────┐
+  │ Le rapport apparaît car App.jsx remonte savedReports (localStorage)│
+  │ vers SupplierPortal via la prop externalDocs.                     │
+  │ Marqueurs : badge « Bureau Veritas » (fromBV), type « Rapport     │
+  │ d'audit BV », statut « analysé », bouton ⬇ Télécharger (base64).  │
+  │ Pas de bouton × (un rapport BV ne se supprime pas côté client).   │
+  │ Filtre « Audit & Inspection » → le rapport BV y est inclus.       │
+  └────────────────────────────────────────────────────────────────────┘
+
+
+════════════════════════════════════════════════════════════════════
+CLÔTURE — REFERMER LA BOUCLE                                 T 7:30
+════════════════════════════════════════════════════════════════════
+
+[Revenir au slide de clôture, ou rester sur le portail avec le rapport BV]
 
 [DIRE — calme, on récapitule par la valeur, pas par la fonctionnalité]
   "Reprenons les cinq promesses du cahier des charges.
@@ -456,7 +570,10 @@ CLÔTURE — REFERMER LA BOUCLE                                 T 7:20
    Gain de temps : brief en trente secondes, rapport sur place.
    Respect des normes : chaque constat sourcé, l'article exact à l'écran.
    Capitalisation de l'expertise : chaque validation de Marc nourrit le système.
-   Qualité, traçabilité, explicabilité : tout est daté, sourcé, signé."
+   Qualité, traçabilité, explicabilité : tout est daté, sourcé, signé.
+
+   Et tout ça dans une seule boucle, d'un bout à l'autre :
+   du dépôt du client au rapport qui lui revient."
 
 [PAUSE 2 secondes]
 
@@ -485,11 +602,26 @@ R   Bureau Veritas achète la solution pour ses auditeurs.
     Le même moteur alimente la check-list de l'auditeur ET le tableau
     de bord côté client. Une plateforme, deux faces, un modèle de revenu B2B.
 
+Q · « Cette "boucle fermée", c'est juste un mot ou c'est dans le produit ? »
+R   C'est dans le produit, et on le montre en direct. Mei Lin Zhang dépose
+    ses documents avant l'audit. Marc les voit pré-analysés dans sa check-list.
+    À la fin, il signe son rapport et le transmet d'un clic au portail RATP —
+    le rapport réapparaît côté Mei Lin Zhang, badge Bureau Veritas, avec son
+    analyse et le Word téléchargeable. Dépôt → audit → retour : le tour complet.
+
 Q · « En quoi capitalisez-vous vraiment l'expertise des auditeurs ? »
 R   Après chaque diagnostic, deux boutons : Confirmer ou Corriger.
     Chaque geste devient une donnée. L'expertise d'un senior comme Marc —
     aujourd'hui perdue à son départ — devient réutilisable par toute l'équipe.
     C'est l'une des cinq valeurs explicitement demandées par le CDC.
+
+Q · « Comment l'historique est-il exploité sur le terrain ? »
+R   Au Brief, l'historique vient de la base BV (table audits_historiques) ;
+    l'icône ⓘ le documente. Les thèmes récurrents du site — pour Sucy,
+    l'étalonnage 7.1.5 et la gestion des pièces NC 8.7 — sont reportés
+    automatiquement en tête de la check-list d'inspection, avec un badge 🔁
+    sur les sections concernées. Et si un constat retombe sur une clause
+    déjà non conforme, une alerte récidive s'affiche sur le diagnostic.
 
 Q · « Quelle est la valeur de Claude face à une simple règle métier ? »
 R   Une règle dit : « clause 7.1.5 → action générique ».
@@ -503,9 +635,17 @@ R   Entièrement. Chaque diagnostic renvoie à sa clause ISO, et l'extrait
     On voit exactement quel passage a guidé l'analyse. C'est une exigence
     réglementaire du CDC, et c'est natif chez nous, pas un ajout cosmétique.
 
+Q · « Le rapport transmis survit-il si on rafraîchit la page ? »
+R   Oui. Il est persisté dans le navigateur (localStorage) ; il survit au
+    changement de compte et à un F5. Le fichier Word lui-même est stocké
+    (base64) et reste téléchargeable côté portail. En production, ce store
+    local serait remplacé par l'API documentaire — l'architecture est prête.
+
 Q · « Et si l'API Claude tombe pendant un audit ? »
 R   Bascule automatique sur un moteur local : RAG ISO 9001 + règles métier.
     Un badge indique « IA locale » ou « Claude Opus ». La démo tourne sans réseau.
+    Même la transmission au portail a un fallback : le rapport part avec son
+    analyse même si le backend de génération .docx est indisponible.
 
 Q · « Quelle norme couvrez-vous ? Et après ? »
 R   ISO 9001:2015, clauses 4 à 10, indexées par RAG. L'architecture est
@@ -546,21 +686,31 @@ CHECK-LIST AVANT DE MONTER SUR SCÈNE
   [ ] Micro système activé + testé
   [ ] Image de test prête pour la photo (n'importe quel JPG)
   [ ] Écran 16:9, zoom navigateur à 100 %
+  [ ] Carte RATP : compteur de missions = 10 (aligné planning + KPI)
   [ ] Mission « PROCHAIN » bien visible (statuts dynamiques selon l'heure)
   [ ] Sucy-en-Brie : flag alwaysDemarrer → bouton « Démarrer » garanti
-  [ ] Pop-overs ⓘ testés (check-list, questions, RAG) — s'ouvrent/se ferment
-  [ ] Signature : canvas manuscrit réactif au pointeur
+  [ ] Pop-overs ⓘ testés (check-list, Audits précédents, RAG) — s'ouvrent/se ferment
+  [ ] Bannière « 🔁 Points récurrents » visible en tête de check-list inspection
+  [ ] Signature : canvas manuscrit réactif au pointeur (signataire = Mei Lin Zhang)
+  [ ] PURGER le portail avant la démo : vider localStorage (clé bv_saved_reports)
+      → ainsi le rapport BV "apparaît" en direct quand on transmet sur scène
+  [ ] Bouton « ⬆ Portail RATP » testé → « ✓ Transmis au portail »
 
   RÈGLE D'OR : ne jamais parler pendant un chargement Claude.
   Le silence vend l'instantanéité du résultat.
 
+  ASTUCE BOUCLE : juste avant de monter, ouvrir la console et lancer
+  localStorage.removeItem("bv_saved_reports") puis recharger. Le portail
+  de Mei Lin Zhang ne contient alors que ses 3 docs — le rapport BV
+  apparaîtra réellement à l'écran au moment de la transmission.
+
 
 ════════════════════════════════════════════════════════════════════
-NOTES DE MISE EN SCÈNE (réécriture v3 — Opus 4.8)
+NOTES DE MISE EN SCÈNE (réécriture v4 — boucle fermée)
 ════════════════════════════════════════════════════════════════════
 
-  • Structure en trois actes : Avant / Pendant / Après — calquée
-    sur le cycle d'audit ET sur l'arc narratif.
+  • Structure en trois actes + épilogue : Avant / Pendant / Après /
+    Bouclage — calquée sur le cycle d'audit ET sur l'arc narratif.
   • Accroche « scène » (21 h, Marc devant son écran) au lieu d'une
     liste de problèmes ; la boucle 90/10 ouvre et referme le pitch.
   • Les 5 douleurs du CDC sont nommées au fil du parcours, à l'instant
@@ -570,6 +720,22 @@ NOTES DE MISE EN SCÈNE (réécriture v3 — Opus 4.8)
   • Explicabilité valorisée comme réponse à une exigence réglementaire.
   • Modèle économique (BV achète · RATP/Apave audités) explicité 2 fois.
   • Beats de silence balisés sur chaque moment « wow ».
-  • Bonus encadrés (manuscrit, portail) — sacrifiables sans casser le fil.
+  • Bonus manuscrit sacrifiable ; l'épilogue portail est prioritaire.
+
+  CHANGEMENTS v4 (cette session) :
+  • NOUVEAU — Bouclage de la plateforme : bouton « ⬆ Portail RATP » en
+    Acte III, le rapport signé revient dans le portail de Mei Lin Zhang
+    (badge Bureau Veritas, analyse, ⬇ Télécharger). Nouvel ÉPILOGUE dédié.
+  • NOUVEAU — Bannière « 🔁 Points récurrents sur ce site » en tête de la
+    check-list d'inspection (Acte II) + badges 🔁 sur les sections — lien
+    explicite avec l'historique du Brief.
+  • NOUVEAU — Icône ⓘ « Audits précédents » au Brief : provenance des
+    données (base BV / audits_historiques) et lien vers le 🔁 inspection.
+  • CORRIGÉ — Chiffres alignés sur l'app : 10 missions (carte client) et
+    10 audits planifiés (KPI dashboard) — fin de l'écart 4/10.
+  • CORRIGÉ — Responsable qualité Sucy = Mei Lin Zhang (et non Karim
+    Belkacem) : même persona côté portail, Brief et signature → boucle
+    personnifiée par une seule interlocutrice RATP.
+  • Terminologie : « Ajouter un scope » (et non « domaine ») au Brief.
   • Port :3000 · signature manuscrite seule · français accentué.
 ════════════════════════════════════════════════════════════════════
