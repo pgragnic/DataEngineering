@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { AUDITS_TIMELINE, AUDITS_EDF, AUDITS_TOTAL } from "../mockData"
 import MapCard from "./MapCard"
-import { Car, Train, Bike } from "lucide-react"
+import { Car, Train, Bike, CalendarDays } from "lucide-react"
 
 const TRANSPORT_OPTIONS = [
   { id: "voiture", Icon: Car,   label: "Voiture", bg: "bg-blue-100",   text: "text-blue-600" },
@@ -70,7 +70,7 @@ export default function PlanningOverlay({ onClose, onConfirm, selectedClient, th
 
       {/* Titre de page */}
       <div className="page-bar">
-        <h1 className={`text-base font-bold ${ag ? "text-[#5D93C1]" : ar ? "text-[#4B87F8]" : "text-gray-800"}`}>📅 Générez votre planning</h1>
+        <h1 className={`text-base font-bold flex items-center gap-2 ${ag ? "text-[#5D93C1]" : ar ? "text-[#4B87F8]" : "text-gray-800"}`}><CalendarDays size={16} />Générez votre planning</h1>
         <p className="text-xs text-gray-500 mt-0.5">Sélectionnez vos missions et choisissez votre mode de transport</p>
       </div>
 
@@ -152,9 +152,9 @@ export default function PlanningOverlay({ onClose, onConfirm, selectedClient, th
                 {n > 0 ? `${n} mission${n > 1 ? "s" : ""} sélectionnée${n > 1 ? "s" : ""}` : "Aucune sélection"}
               </span>
               <button onClick={handleConfirm} disabled={n === 0}
-                className="text-sm font-semibold px-5 py-2 rounded-lg text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="text-sm font-semibold px-5 py-2 rounded-lg text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                 style={{ backgroundColor: brandColor }}>
-                Générez votre planning ({n}) →
+                <CalendarDays size={14} />Générez votre planning ({n}) →
               </button>
             </div>
           </div>
