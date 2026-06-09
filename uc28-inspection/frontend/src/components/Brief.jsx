@@ -216,7 +216,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
               </div>
 
               <div>
-                <SectionHeader label="Scope" id="scope" />
+                <SectionHeader label="Scope de l'audit" id="scope" />
                 <dd className="mt-0.5 space-y-1">
                   {editedBriefData.scope.map((s, i) => (
                     editingSection === "scope" ? (
@@ -241,7 +241,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                   )}
                   {!addingScopeItem ? (
                     <button onClick={() => setAddingScopeItem(true)} className="mt-1 text-[10px] flex items-center gap-1 text-brand hover:text-brand-cyan transition-colors">
-                      + Ajouter un scope
+                      + Ajouter un scope de l'audit
                     </button>
                   ) : (
                     <div className="mt-2 bg-surface border border-divider rounded-lg p-2 space-y-0.5">
@@ -255,7 +255,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                         </button>
                       ))}
                       {SCOPE_OPTIONS.every(o => editedBriefData.scope.includes(o.label)) && (
-                        <div className="text-[10px] text-ink-muted px-2 py-1">Tous les scopes sont déjà sélectionnés</div>
+                        <div className="text-[10px] text-ink-muted px-2 py-1">Tous les scopes de l'audit sont déjà sélectionnés</div>
                       )}
                       <button onClick={() => setAddingScopeItem(false)} className="text-[10px] text-ink-muted hover:text-ink px-2 pt-1">Annuler</button>
                     </div>
@@ -372,7 +372,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                       <div className="flex items-center gap-1.5 min-w-0">
                         <span className="text-xs font-bold text-brand shrink-0">{section.id}</span>
                         {inScope && (
-                          <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand/15 text-brand shrink-0">Scope</span>
+                          <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand/15 text-brand shrink-0">Scope de l'audit</span>
                         )}
                         {alerte && (
                           <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${alerte.criticite === "majeure" ? "bg-nc-majeure text-white" : "bg-nc-mineure text-white"}`}>
