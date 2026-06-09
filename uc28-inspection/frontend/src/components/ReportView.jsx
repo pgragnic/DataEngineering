@@ -1,7 +1,7 @@
 import { useState, useRef } from "react"
 import { AUDIT_COURANT, AUDITEUR, CHECKLIST } from "../mockData"
 import { exportDocx } from "../api"
-import { Download, Send, PenLine, Lock, Unlock, BarChart2, ListChecks, FileCheck, LayoutList, Wrench } from "lucide-react"
+import { Download, Send, PenLine, Lock, Unlock, BarChart2, ListChecks, FileCheck, LayoutList, Wrench, Info, X } from "lucide-react"
 
 const CRITICITE_STYLE = {
   majeure:     { badge: "bg-nc-majeure text-white",  label: "NC MAJEURE",  dot: "bg-nc-majeure" },
@@ -36,6 +36,7 @@ function ScoreRing({ score }) {
 
 export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, theme, feedbackCount = 0, onSaveReport }) {
   const [sent, setSent] = useState(false)
+  const [showConformiteInfo, setShowConformiteInfo] = useState(false)
   const [downloading, setDownloading] = useState(false)
   const [reportSaved, setReportSaved] = useState(false)
   const [transmettreLoading, setTransmettreLoading] = useState(false)
@@ -230,9 +231,37 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
 
             {/* Grille de conformité */}
             <div className="card">
-              <h3 className="section-label">
-                <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><BarChart2 size={11} className="text-brand" /></span>Grille de conformité
-              </h3>
+              <div className="relative">
+                <h3 className="section-label">
+                  <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><BarChart2 size={11} className="text-brand" /></span>
+                  Grille de conformité
+                  <button onClick={() => setShowConformiteInfo(v => !v)} className="ml-1 text-brand/50 hover:text-brand transition-colors" title="Comment est calculé ce score ?">
+                    <Info size={12} />
+                  </button>
+                </h3>
+                {showConformiteInfo && (
+                  <div className="absolute top-7 left-0 right-0 z-30 bg-white border border-brand/20 rounded-xl shadow-lg p-3 text-xs text-ink-muted space-y-1.5">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-semibold text-brand text-[10px] uppercase tracking-wide">Comment est calculé ce score ?</span>
+                      <button onClick={() => setShowConformiteInfo(false)} className="text-ink-muted hover:text-ink"><X size={12} /></button>
+                    </div>
+                    <p>Chaque constat est converti en points selon sa criticité :</p>
+                    <ul className="space-y-1 pl-2">
+                      <li><span className="font-medium text-conforme">CONFORME</span> — 3 pts</li>
+                      <li><span className="font-medium text-observation">OBSERVATION</span> — 2 pts</li>
+                      <li><span className="font-medium text-nc-mineure">NC MINEURE</span> — 1 pt</li>
+                      <li><span className="font-medium text-nc-majeure">NC MAJEURE</span> — 0 pt</li>
+                    </ul>
+                    <p>Score section = somme des points ÷ (nb constats × 3) × 100</p>
+                    <ul className="space-y-1 pl-2 pt-0.5">
+                      <li><span className="font-medium text-observation">≥ 80 %</span> — conforme</li>
+                      <li><span className="font-medium text-brand-amber">50 – 79 %</span> — vigilance</li>
+                      <li><span className="font-medium text-nc-majeure">&lt; 50 %</span> — alerte</li>
+                    </ul>
+                    <p className="pt-0.5">Les sections non auditées affichent <span className="font-mono">—</span> et n'entrent pas dans le score global.</p>
+                  </div>
+                )}
+              </div>
               <div className="flex items-center justify-between mb-3 pt-2 pb-2 border-b border-divider">
                 <span className="text-xs font-semibold text-ink-muted">Score global</span>
                 <ScoreRing score={globalScore} />
