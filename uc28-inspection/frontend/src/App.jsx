@@ -27,6 +27,18 @@ export default function App() {
   const [selectedTransport, setSelectedTransport] = useState("voiture")
   const [selectedConfig, setSelectedConfig] = useState({ debutMin: 540, finMin: 1080, pauseMin: 720, pauseDuree: 90 })
   const [selectedClient, setSelectedClient] = useState(null)
+  const [savedReports, setSavedReports] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("bv_saved_reports") || "[]") }
+    catch { return [] }
+  })
+
+  function handleSaveReport(doc) {
+    setSavedReports(prev => {
+      const next = [...prev, doc]
+      localStorage.setItem("bv_saved_reports", JSON.stringify(next))
+      return next
+    })
+  }
 
   function handleOpenPlanning() {
     setView("planning")
@@ -110,7 +122,7 @@ export default function App() {
           />
         )}
         {view === "portail" && (
-          <SupplierPortal theme={theme} onBack={() => setView("login")} />
+          <SupplierPortal theme={theme} onBack={() => setView("login")} externalDocs={savedReports} />
         )}
         {view === "clients" && (
           <ClientList onSelectClient={(client) => { setSelectedClient(client); setView("dashboard") }} theme={theme} />
@@ -165,6 +177,7 @@ export default function App() {
             onNewAudit={() => { setView("dashboard"); setConstats([]) }}
             theme={theme}
             feedbackCount={feedbackCount}
+            onSaveReport={handleSaveReport}
           />
         )}
       </div>

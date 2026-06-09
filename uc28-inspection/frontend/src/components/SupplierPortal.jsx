@@ -4,7 +4,7 @@ import { analyserDocumentFournisseur } from "../api"
 import { Upload, FileText, AlertOctagon, Calendar, Building2, ClipboardList, BookOpen, ListChecks, Wrench, ShieldAlert, ArrowUpDown, ChevronDown, Info } from "lucide-react"
 
 const TYPES_DOCUMENT = [
-  { groupe: "Audit & Inspection", items: ["Rapport d'audit", "Compte-rendu d'inspection", "Non-conformité", "Incident / anomalie", "Observation terrain", "Plan d'actions correctives", "Suivi des actions"] },
+  { groupe: "Audit & Inspection", items: ["Rapport d'audit BV", "Rapport d'audit", "Compte-rendu d'inspection", "Non-conformité", "Incident / anomalie", "Observation terrain", "Plan d'actions correctives", "Suivi des actions"] },
   { groupe: "Normes & Exigences", items: ["Norme ISO", "Réglementation nationale", "Directive / réglementation européenne", "Référentiel de certification", "Exigence légale", "Obligation contractuelle"] },
   { groupe: "Procédures & Règles internes", items: ["Procédure interne", "Processus métier", "Mode opératoire", "Règles d'exploitation", "Instruction de travail", "Bonnes pratiques", "Guide interne"] },
   { groupe: "Technique & Équipements", items: ["Documentation technique", "Fiche équipement", "Plan / schéma", "Notice constructeur", "Maintenance (préventive / corrective)", "Spécifications techniques"] },
@@ -62,7 +62,7 @@ function InsightsPanel({ insights, ag, ar }) {
   )
 }
 
-export default function SupplierPortal({ theme, onBack }) {
+export default function SupplierPortal({ theme, onBack, externalDocs = [] }) {
   const ag = theme === "agile"
   const ar = theme === "aria"
   const fileInputRef = useRef(null)
@@ -83,14 +83,23 @@ export default function SupplierPortal({ theme, onBack }) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  useEffect(() => {
+    if (!externalDocs?.length) return
+    setDocs(prev => {
+      const existing = new Set(prev.map(d => d.id))
+      const newDocs = externalDocs.filter(d => !existing.has(d.id))
+      return newDocs.length ? [...prev, ...newDocs] : prev
+    })
+  }, [externalDocs])
+
   const typeEffectif = typeDoc === "Autres" ? autreTexte.trim() : typeDoc
   const uploadDisabled = !typeDoc || (typeDoc === "Autres" && !autreTexte.trim())
 
   const docsFiltres = docs
     .filter(d => filtreCategorie === "Tous" || getGroupe(d.typeDoc) === filtreCategorie)
     .sort((a, b) => {
-      const ta = parseInt(a.id.replace("doc-", "")) || 0
-      const tb = parseInt(b.id.replace("doc-", "")) || 0
+      const ta = parseInt(a.id.split("-").pop()) || 0
+      const tb = parseInt(b.id.split("-").pop()) || 0
       return triDate === "desc" ? tb - ta : ta - tb
     })
 
@@ -329,6 +338,9 @@ export default function SupplierPortal({ theme, onBack }) {
                       <div className="flex items-center gap-3">
                         <span className="font-medium text-sm text-gray-900 truncate">{doc.nom}</span>
                         <DocStatusBadge statut={doc.statut} ag={ag} ar={ar} />
+                        {doc.fromBV && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-brand text-white shrink-0">Bureau Veritas</span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-[11px] text-gray-400">Déposé le {doc.date}</span>
@@ -348,7 +360,13 @@ export default function SupplierPortal({ theme, onBack }) {
                         {expandedDoc === doc.id ? "Masquer ▲" : "Voir analyse ▼"}
                       </button>
                     )}
-                    {!doc.mock && (
+                    {doc.dataUrl && (
+                      <button
+                        onClick={() => { const a = document.createElement("a"); a.href = doc.dataUrl; a.download = doc.nom; a.click() }}
+                        className="text-xs shrink-0 text-brand-emerald hover:underline flex items-center gap-1"
+                      >⬇ Télécharger</button>
+                    )}
+                    {!doc.mock && !doc.fromBV && (
                       <button
                         onClick={() => setDocs(prev => prev.filter(d => d.id !== doc.id))}
                         className="shrink-0 text-gray-300 hover:text-red-400 transition-colors text-base leading-none"

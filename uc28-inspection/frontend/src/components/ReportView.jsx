@@ -34,9 +34,11 @@ function ScoreRing({ score }) {
   )
 }
 
-export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, theme, feedbackCount = 0 }) {
+export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, theme, feedbackCount = 0, onSaveReport }) {
   const [sent, setSent] = useState(false)
   const [downloading, setDownloading] = useState(false)
+  const [reportSaved, setReportSaved] = useState(false)
+  const [transmettreLoading, setTransmettreLoading] = useState(false)
   const [signatureMode, setSignatureMode] = useState(false)
   const [signataire, setSignataire] = useState("Mei Lin Zhang")
   const [signed, setSigned] = useState(false)
@@ -86,6 +88,42 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
   function confirmerSignature() {
     if (signCanvasRef.current) setSignDataUrl(signCanvasRef.current.toDataURL("image/png"))
     setSigned(true)
+  }
+
+  async function handleTransmettrePortail() {
+    if (!onSaveReport) return
+    setTransmettreLoading(true)
+    const clausesMajeures = [...new Set(constats.filter(c => c.criticite === "majeure").map(c => c.clause).filter(Boolean))]
+    const clausesMineures = [...new Set(constats.filter(c => c.criticite === "mineure").map(c => c.clause).filter(Boolean))]
+    const sectionsRisque = [...clausesMajeures, ...clausesMineures].map(cl =>
+      `${cl} — ${constats.find(c => c.clause === cl)?.titre_clause || "Non-conformité"}`
+    )
+    const insights = {
+      resume: `${counts.majeure} NC majeure(s), ${counts.mineure} NC mineure(s), ${counts.observation} observation(s) — Audit BV du ${today}`,
+      sections_a_risque: sectionsRisque,
+      points_controle: constats.map(c => c.action).filter(Boolean).slice(0, 4),
+      nc_historique: constats.filter(c => c.criticite === "majeure").map(c => `NC MAJEURE ${c.clause} — ${c.constat.slice(0, 60)}…`),
+    }
+    let dataUrl = null
+    try {
+      const blob = await exportDocx({ site_nom: AUDIT_COURANT.nom, site_localisation: AUDIT_COURANT.localisation, site_id: AUDIT_COURANT.site_id, referentiel: AUDIT_COURANT.referentiel, auditeur: AUDITEUR.nom, duree: dureeAudit, date: today, constats })
+      dataUrl = await new Promise(resolve => { const r = new FileReader(); r.onload = e => resolve(e.target.result); r.readAsDataURL(blob) })
+    } catch { /* backend absent — on transmet sans le fichier */ }
+    onSaveReport({
+      id: `rapport-bv-${Date.now()}`,
+      nom: `Rapport_BV_RATP_SUC_${new Date().toISOString().slice(0, 10)}.docx`,
+      type: "DOCX",
+      typeDoc: "Rapport d'audit BV",
+      date: today,
+      deposePar: AUDITEUR.nom,
+      mock: false,
+      fromBV: true,
+      statut: "analysé",
+      dataUrl,
+      insights,
+    })
+    setReportSaved(true)
+    setTransmettreLoading(false)
   }
 
   async function handleTelecharger() {
@@ -153,6 +191,17 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
               <Send size={13} className="inline mr-1" />Envoyer au client
             </button>
           )}
+          <button
+            onClick={handleTransmettrePortail}
+            disabled={reportSaved || transmettreLoading}
+            className={`text-xs font-semibold px-4 py-2 rounded-lg border transition-colors ${
+              reportSaved ? "border-brand-emerald text-brand-emerald bg-brand-emerald/5 cursor-default"
+              : transmettreLoading ? "border-divider text-ink-muted opacity-60 cursor-wait"
+              : "border-brand text-brand hover:bg-brand/5"
+            }`}
+          >
+            {reportSaved ? "✓ Transmis au portail" : transmettreLoading ? "Génération…" : "⬆ Portail RATP"}
+          </button>
           <button onClick={onNewAudit} className="text-white font-semibold px-5 py-2 rounded-lg text-sm bg-brand hover:bg-brand-cyan transition-colors shadow-sm">
             Nouvel audit →
           </button>
