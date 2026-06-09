@@ -241,7 +241,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                   )}
                   {!addingScopeItem ? (
                     <button onClick={() => setAddingScopeItem(true)} className="mt-1 text-[10px] flex items-center gap-1 text-brand hover:text-brand-cyan transition-colors">
-                      + Ajouter un domaine
+                      + Ajouter un scope
                     </button>
                   ) : (
                     <div className="mt-2 bg-surface border border-divider rounded-lg p-2 space-y-0.5">
@@ -255,7 +255,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                         </button>
                       ))}
                       {SCOPE_OPTIONS.every(o => editedBriefData.scope.includes(o.label)) && (
-                        <div className="text-[10px] text-ink-muted px-2 py-1">Tous les domaines sont déjà sélectionnés</div>
+                        <div className="text-[10px] text-ink-muted px-2 py-1">Tous les scopes sont déjà sélectionnés</div>
                       )}
                       <button onClick={() => setAddingScopeItem(false)} className="text-[10px] text-ink-muted hover:text-ink px-2 pt-1">Annuler</button>
                     </div>
