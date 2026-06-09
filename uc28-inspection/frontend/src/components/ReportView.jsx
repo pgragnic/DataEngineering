@@ -232,30 +232,28 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
                 <h3 className="section-label">
                   <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><BarChart2 size={11} className="text-brand" /></span>
                   Grille de conformité
-                  <button onClick={() => setShowConformiteInfo(v => !v)} className="ml-1 text-brand/50 hover:text-brand transition-colors" title="Comment est calculé ce score ?">
+                  <button onClick={() => setShowConformiteInfo(v => !v)} className="ml-1 text-brand/50 hover:text-brand transition-colors" title="Comment lire ce score ?">
                     <Info size={12} />
                   </button>
                 </h3>
                 {showConformiteInfo && (
                   <div className="absolute top-7 left-0 right-0 z-30 bg-white border border-brand/20 rounded-xl shadow-lg p-3 text-xs text-ink-muted space-y-1.5">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-semibold text-brand text-[10px] uppercase tracking-wide">Comment est calculé ce score ?</span>
+                      <span className="font-semibold text-brand text-[10px] uppercase tracking-wide">Comment lire ce score ?</span>
                       <button onClick={() => setShowConformiteInfo(false)} className="text-ink-muted hover:text-ink"><X size={12} /></button>
                     </div>
-                    <p>Chaque constat est converti en points selon sa criticité :</p>
+                    <p>Chaque section reçoit un <span className="font-medium text-ink">taux de conformité</span> : plus il est élevé, plus la section respecte la norme.</p>
                     <ul className="space-y-1 pl-2">
-                      <li><span className="font-medium text-conforme">CONFORME</span> — 3 pts</li>
-                      <li><span className="font-medium text-observation">OBSERVATION</span> — 2 pts</li>
-                      <li><span className="font-medium text-nc-mineure">NC MINEURE</span> — 1 pt</li>
-                      <li><span className="font-medium text-nc-majeure">NC MAJEURE</span> — 0 pt</li>
+                      <li><span className="font-medium text-ink">100 %</span> — tout conforme</li>
+                      <li><span className="font-medium text-ink">0 %</span> — non-conformités majeures</li>
                     </ul>
-                    <p>Score section = somme des points ÷ (nb constats × 3) × 100</p>
-                    <ul className="space-y-1 pl-2 pt-0.5">
+                    <p className="pt-0.5">Code couleur :</p>
+                    <ul className="space-y-1 pl-2">
                       <li><span className="font-medium text-observation">≥ 80 %</span> — conforme</li>
-                      <li><span className="font-medium text-brand-amber">50 – 79 %</span> — vigilance</li>
-                      <li><span className="font-medium text-nc-majeure">&lt; 50 %</span> — alerte</li>
+                      <li><span className="font-medium text-brand-amber">50 – 79 %</span> — à surveiller</li>
+                      <li><span className="font-medium text-nc-majeure">&lt; 50 %</span> — critique</li>
                     </ul>
-                    <p className="pt-0.5">Les sections non auditées affichent <span className="font-mono">—</span> et n'entrent pas dans le score global.</p>
+                    <p className="pt-0.5">Une section non auditée affiche <span className="font-mono">—</span> et n'entre pas dans le score global.</p>
                   </div>
                 )}
               </div>
