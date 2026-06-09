@@ -20,6 +20,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
   const [removedSectionIds, setRemovedSectionIds] = useState(new Set())
   const [addingScopeItem, setAddingScopeItem] = useState(false)
   const [showChecklistInfo, setShowChecklistInfo] = useState(false)
+  const [showHistoriqueInfo, setShowHistoriqueInfo] = useState(false)
   const [selectedRef, setSelectedRef] = useState("ISO 9001:2015")
   const [siteData, setSiteData] = useState(null)
 
@@ -546,9 +547,31 @@ export default function Brief({ onDemarrer, onBack, theme }) {
 
           {/* ── Colonne droite — Audits précédents ───────────────────────── */}
           <div className="card col-span-4">
-            <h2 className="section-label">
-              <History size={11} />Audits précédents
-            </h2>
+            <div className="relative">
+              <h2 className="section-label">
+                <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><History size={11} className="text-brand" /></span>
+                Audits précédents
+                <button onClick={() => setShowHistoriqueInfo(v => !v)} className="ml-1 text-brand/50 hover:text-brand transition-colors" title="D'où viennent ces données ?">
+                  <Info size={12} />
+                </button>
+              </h2>
+              {showHistoriqueInfo && (
+                <div className="absolute top-7 left-0 right-0 z-30 bg-white border border-brand/20 rounded-xl shadow-lg p-3 text-xs text-ink-muted space-y-1.5">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-brand text-[10px] uppercase tracking-wide">D'où viennent ces données ?</span>
+                    <button onClick={() => setShowHistoriqueInfo(false)} className="text-ink-muted hover:text-ink"><X size={12} /></button>
+                  </div>
+                  <p>L'historique est chargé depuis la <strong>base de connaissances BV</strong> au démarrage du Brief :</p>
+                  <ul className="space-y-1 pl-2">
+                    <li><span className="font-medium text-ink">Source</span> — <code className="text-[10px] bg-canvas px-1 rounded">GET /api/sites/RATP-SUC</code> → table <code className="text-[10px] bg-canvas px-1 rounded">audits_historiques</code></li>
+                    <li><span className="font-medium text-ink">Contenu</span> — date, auditeur, NC majeures/mineures, thèmes récurrents</li>
+                    <li><span className="font-medium text-ink">Thèmes récurrents</span> — identifiés à chaque audit, consolidés sur plusieurs millésimes</li>
+                    <li><span className="font-medium text-ink">Fallback</span> — données mockData.js si le backend est absent</li>
+                  </ul>
+                  <p className="pt-1">Les thèmes récurrents des audits précédents sont automatiquement reportés dans la <strong>check-list de l'inspection</strong> (badge 🔁).</p>
+                </div>
+              )}
+            </div>
             <div className="space-y-3">
               {historiqueAudits.map((audit, i) => (
                 <div
