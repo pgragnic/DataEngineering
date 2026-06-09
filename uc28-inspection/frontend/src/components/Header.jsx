@@ -49,7 +49,7 @@ export default function Header({ view, auditContext, onNavigate, theme, user, la
         {/* Logo */}
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded bg-white flex items-center justify-center">
-            <span className="text-dark-teal font-black text-lg leading-none">R</span>
+            <span className="text-dark-teal font-black text-sm leading-none">BV</span>
           </div>
           <div>
             <div className="font-bold text-base leading-tight">BV — Inspection Augmentée</div>
