@@ -52,7 +52,7 @@ export default function Header({ view, auditContext, onNavigate, theme, user, la
             <span className="text-dark-teal font-black text-lg leading-none">R</span>
           </div>
           <div>
-            <div className="font-bold text-base leading-tight">RATP — Inspection Augmentée</div>
+            <div className="font-bold text-base leading-tight">BV — Inspection Augmentée</div>
             {isAuditView && auditContext ? (
               <div className="text-xs text-brand-cyan">
                 Audit ISO 9001 · {auditContext.nom} · {auditContext.auditeur}
