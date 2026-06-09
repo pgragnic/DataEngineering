@@ -758,3 +758,25 @@ npm run dev  # → http://localhost:5173
 - `frontend/src/components/ClientList.jsx` — missions = AUDITS_TIMELINE.length
 - `frontend/src/mockData.js` — KPIS.audits_jour 10
 - `docs/Script_Demo_UC28_Opus48.md` — v4
+
+### Session du 2026-06-09 (suite) — Supports de présentation alignés sur la démo v4
+
+**UC28_Pitch_Deck_v2.pptx** (mis à jour depuis UC28_Pitch_Deck-1.pptx)
+- Script python-pptx de diff ciblé — formatage conservé, seuls les textes sont modifiés
+- Slide 2 : Marc Lefèvre "Vingt-trois ans de terrain" ; descriptions douleurs étendues pour couvrir les 5 du CDC (expertise rare + constats subjectifs manquaient)
+- Slide 3 : "Plateforme biface" → **"Boucle fermée : RATP dépose → BV audite → rapport revient au client"** ; Restituer + "Transmission directe au portail fournisseur d'un clic"
+- Slide 4 : `localhost:5173` → `localhost:3000` ; sous-titre inclut "épilogue boucle fermée côté RATP"
+- Slide 5 : "Zéro saisie clavier" → **"Capitalisation de l'expertise"** (Confirmer/Corriger — cœur stratégique du script)
+- Slide 6 : différenciant 3 → **"Boucle fermée"** (client dépose → audit → rapport revient)
+
+**UC28_OnePager.pptx** (nouveau — même structure que le 1-pager VGF Data4Business)
+- Reproduit fidèlement le layout du template : photo pleine hauteur gauche, overlay bleu, bandeau logo, header client, zones contenu, barre technique bas, 3 cercles droite, KPI badge
+- Photo terrain : `docs/demo-photos/01_cle_dynamometrique_tag.png`
+- Fond : `#272936` (dark navy) · accents cyan `#00B0F0` · texte blanc · police Ubuntu
+- 3 cercles droite (style Data Mesh) : "IA Contextuelle", "Boucle Fermée BV ↔ RATP", "Zéro Paperasse"
+- KPI : ≈ 24 000 h/an potentiel récupéré
+- Sections : Objectifs · Contexte et enjeux (5 douleurs) · Périmètre · Démarche/Solution · Environnement technique
+
+**Fichiers créés / modifiés**
+- `demo/UC28_Pitch_Deck_v2.pptx` — déplacé de docs/ + mis à jour
+- `demo/UC28_OnePager.pptx` — créé
