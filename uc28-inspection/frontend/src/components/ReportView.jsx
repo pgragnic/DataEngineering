@@ -395,6 +395,12 @@ export default function ReportView({ constats, dureeAudit, onBack, onNewAudit, t
                       ) : (
                         c.action && <div className="text-ink-muted italic mt-0.5">Action : {c.action}</div>
                       )}
+                      {c.photoUrl && !anonymise && (
+                        <figure className="mt-1.5">
+                          <img src={c.photoUrl} alt={`Preuve photographique — ${c.clause}`} className="rounded border border-divider max-h-40 object-contain" />
+                          <figcaption className="text-[9px] text-ink-muted mt-0.5">Preuve photographique · {c.clause}</figcaption>
+                        </figure>
+                      )}
                     </div>
                   )
                 })}
