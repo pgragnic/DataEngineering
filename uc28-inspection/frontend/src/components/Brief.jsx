@@ -391,9 +391,6 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                     )}
                     <div className="text-xs text-ink-muted mt-1 mb-2">
                       {section.items.filter(i => !removedItemIds.has(i.id)).length + extraItems.length} point{(section.items.filter(i => !removedItemIds.has(i.id)).length + extraItems.length) > 1 ? "s" : ""} de contrôle
-                      {section.id === "S1" && (
-                        <span className="ml-2 font-medium text-brand-amber">· 1 récurrent</span>
-                      )}
                     </div>
                     <div className="space-y-0.5 mb-1">
                       {section.items.filter(i => !removedItemIds.has(i.id)).map(item => (
