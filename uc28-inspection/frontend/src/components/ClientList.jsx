@@ -1,7 +1,8 @@
 import { Building2, ChevronRight, Briefcase } from "lucide-react"
+import { AUDITS_TIMELINE } from "../mockData"
 
 const CLIENTS = [
-  { id: "ratp",        nom: "RATP",                     secteur: "Transport ferroviaire",           missions: 4, prochaine: "Aujourd'hui 14h30", couleur: "bg-brand",         initiales: "RATP" },
+  { id: "ratp",        nom: "RATP",          secteur: "Transport ferroviaire",           missions: AUDITS_TIMELINE.length, prochaine: "Aujourd'hui 14h30", couleur: "bg-brand",         initiales: "RATP" },
   { id: "edf",         nom: "EDF",                      secteur: "Énergie & production électrique", missions: 3, prochaine: "Demain 08h00",       couleur: "bg-brand-cyan",    initiales: "EDF"  },
   { id: "total",       nom: "TotalEnergies",             secteur: "Énergie & pétrochimie",           missions: 2, prochaine: "Jeudi 10h00",        couleur: "bg-brand-emerald", initiales: "TE"   },
 ]
