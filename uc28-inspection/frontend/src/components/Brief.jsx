@@ -309,7 +309,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                   <div key={doc.id} className="relative group/doc flex items-start gap-2 bg-surface-sunk shadow-inset rounded-lg px-2.5 py-2">
                     <span className="text-xs leading-none mt-0.5 shrink-0 text-brand-emerald">✓</span>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[10px] font-medium text-ink truncate">{doc.nom}</div>
+                      <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-medium text-ink hover:text-brand hover:underline truncate block">{doc.nom}</a>
                       <div className="text-[10px] text-ink-muted">{doc.date} · {doc.insights?.sections_a_risque?.[0] ?? "Analysé"}</div>
                     </div>
                     {doc.url && (
