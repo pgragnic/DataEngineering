@@ -379,12 +379,28 @@ export default function InspectionCapture({ constats, onAddConstat, onUpdateCons
             <h3 className="section-label">
               <span className="w-5 h-5 rounded bg-brand/15 flex items-center justify-center shrink-0"><ClipboardList size={11} className="text-brand" /></span>Check-list
             </h3>
+            {recurrencesSite?.items.length > 0 && (
+              <div className="mb-3 flex items-start gap-2 bg-brand-amber/10 border border-brand-amber/40 rounded-lg px-3 py-2">
+                <span className="text-brand-amber shrink-0 leading-none mt-0.5 text-sm">🔁</span>
+                <div>
+                  <div className="text-[10px] font-bold text-brand-amber uppercase tracking-wide mb-0.5">Points récurrents sur ce site</div>
+                  <ul className="space-y-0.5">
+                    {recurrencesSite.items.map((item, i) => (
+                      <li key={i} className="text-[10px] text-ink-muted leading-snug">· {item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
             {checklist.map((section) => (
               <div key={section.id} className="mb-4">
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <span className={`text-xs font-bold flex items-center gap-1.5 min-w-0 ${section.auteur === "auditeur" ? "text-brand-emerald" : "text-brand"}`}>
                     <span className="truncate">{section.id} — {section.titre}</span>
                     {section.auteur === "auditeur" && <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-brand text-white shrink-0">Auditeur</span>}
+                    {recurrencesSite?.items.some(item => item.includes(section.clause.replace(/§/g, ""))) && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-brand-amber text-white shrink-0">🔁</span>
+                    )}
                   </span>
                   <span className="text-[10px] text-ink-muted font-mono shrink-0">{section.clause}</span>
                 </div>
