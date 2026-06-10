@@ -544,7 +544,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
               {genere && (
                 addingSection ? (
                   <div className="bg-surface-sunk shadow-inset border border-dashed border-brand/30 rounded-lg p-3">
-                    <div className="text-[10px] font-semibold text-ink-muted mb-2">Nouvelle section</div>
+                    <div className="text-[10px] font-semibold text-ink-muted mb-2">Nouveau scope</div>
                     <input autoFocus type="text" value={newSectionTitre} onChange={e => setNewSectionTitre(e.target.value)}
                       onKeyDown={e => { if (e.key === "Escape") { setAddingSection(false); setNewSectionTitre(""); setNewSectionClause("") } }}
                       placeholder="Titre de la section *"
@@ -573,7 +573,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
                   <button onClick={() => { setAddingSection(true); setAddingItemTo(null) }}
                     className="w-full border border-dashed border-brand/30 rounded-lg p-2.5 text-xs flex items-center justify-center gap-1.5 text-brand hover:bg-brand/5 transition-colors"
                   >
-                    + Nouvelle section
+                    + Nouveau scope
                   </button>
                 )
               )}
