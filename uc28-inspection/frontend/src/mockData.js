@@ -227,7 +227,7 @@ export const AUDIT_COURANT = {
   nom: "Atelier de maintenance Sucy-en-Brie",
   localisation: "Sucy-en-Brie (94)",
   referentiel: "ISO 9001:2015",
-  scope: ["Étalonnage & équipements de mesure", "Gestion des non-conformités"],
+  scope: ["Étalonnage & équipements de mesure", "Gestion des non-conformités", "Maîtrise documentaire"],
   effectif: 218,
   responsable_qualite: "Mei Lin Zhang",
   contact: "meilin.zhang@ratp.fr",
