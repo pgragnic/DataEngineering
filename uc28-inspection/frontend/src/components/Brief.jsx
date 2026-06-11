@@ -128,7 +128,7 @@ export default function Brief({ onDemarrer, onBack, theme }) {
         <div className="text-xs text-ink-muted">
           {genere ? (
             <span className="font-medium text-brand-emerald">
-              Check-list : {CHECKLIST.length} sections · {totalPoints} points de contrôle · {recurrents} point de contrôle récurrent
+              Check-list : {CHECKLIST.length} sections · {totalPoints} points de contrôle
             </span>
           ) : (
             <span>Génération de la check-list…</span>
