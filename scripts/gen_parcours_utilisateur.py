@@ -28,7 +28,8 @@ C_SECTION_BG  = RGBColor(0xE3, 0xF2, 0xFD)   # wash cyan
 SLIDE_W = Inches(13.33)
 SLIDE_H = Inches(7.5)
 
-OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "uc28-inspection", "docs", "UC28_Parcours_Utilisateur.pptx")
+OUT_PATH      = os.path.join(os.path.dirname(__file__), "..", "uc28-inspection", "docs", "UC28_Parcours_Utilisateur.pptx")
+SCREENSHOTS   = os.path.join(os.path.dirname(__file__), "..", "uc28-inspection", "docs", "screenshots")
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -1215,6 +1216,60 @@ def slide_cloture(prs):
              align=PP_ALIGN.RIGHT)
 
 
+# ── Slide screenshot ─────────────────────────────────────────────────────────
+
+def slide_screenshot(prs, img_filename, title, annotations, accent_color=None):
+    """Slide visuel : screenshot pleine page + bandeau titre haut + annotations bas."""
+    s    = blank(prs)
+    ac   = accent_color or C_BRAND
+    img_path = os.path.abspath(os.path.join(SCREENSHOTS, img_filename))
+    if not os.path.exists(img_path):
+        return  # skip gracefully if file missing
+
+    # Fond noir pour contraste
+    rect(s, 0, 0, SLIDE_W, SLIDE_H, fill=C_DARK_TEAL)
+
+    # Bandeau titre haut (54px)
+    rect(s, 0, 0, SLIDE_W, Inches(0.72), fill=ac)
+    text_box(s, Inches(0.3), Inches(0.1), Inches(10), Inches(0.52),
+             title, size=Pt(15), bold=True, color=C_WHITE)
+    # Numéro slide discret
+    text_box(s, SLIDE_W - Inches(1.2), Inches(0.18), Inches(1.0), Inches(0.38),
+             "ÉCRAN →", size=Pt(9), color=RGBColor(0xFF, 0xFF, 0xFF),
+             align=PP_ALIGN.RIGHT, italic=True)
+
+    # Screenshot (centré, hauteur = slide - titre - bande bas)
+    BAND_H = Inches(0.82)
+    img_top    = Inches(0.78)
+    img_height = SLIDE_H - img_top - BAND_H
+    # Aspect 1280/720 = 16/9 → largeur max = 13.33 in mais marges 0.2
+    img_width  = img_height * (1280 / 720)
+    if img_width > SLIDE_W - Inches(0.4):
+        img_width  = SLIDE_W - Inches(0.4)
+        img_height = img_width * (720 / 1280)
+    img_left = (SLIDE_W - img_width) / 2
+
+    s.shapes.add_picture(img_path, img_left, img_top, img_width, img_height)
+
+    # Bandeau annotations bas
+    band_top = SLIDE_H - BAND_H
+    rect(s, 0, band_top, SLIDE_W, BAND_H, fill=C_INK)
+    if annotations:
+        col_w = SLIDE_W / len(annotations)
+        for i, (icon, txt) in enumerate(annotations):
+            cx = i * col_w
+            # Séparateur vertical entre colonnes
+            if i > 0:
+                rect(s, cx, band_top + Inches(0.1), Inches(0.015),
+                     BAND_H - Inches(0.2), fill=RGBColor(0x40, 0x55, 0x60))
+            text_box(s, cx + Inches(0.2), band_top + Inches(0.1),
+                     col_w - Inches(0.3), Inches(0.35),
+                     icon, size=Pt(10), bold=True, color=ac)
+            text_box(s, cx + Inches(0.2), band_top + Inches(0.44),
+                     col_w - Inches(0.3), Inches(0.32),
+                     txt, size=Pt(9), color=RGBColor(0xCC, 0xD8, 0xE0))
+
+
 # ── Slide de transition (mini slide entre actes) ───────────────────────────
 
 def slide_transition(prs, acte, label, color, subtitle=""):
@@ -1242,26 +1297,80 @@ def main():
     slide_douleurs(prs)         # 2
     slide_architecture(prs)     # 3
     slide_connexion(prs)        # 4
+
     slide_dashboard(prs)        # 5
-    slide_transition(prs,        # 6
+    slide_screenshot(prs, "01_dashboard.png",
+        "Écran 1 — Dashboard · La journée de Marc d'un seul regard",
+        [("10 missions planifiées", "Trait rouge temps réel · vue Liste/Planning"),
+         ("Carte Leaflet + OSRM", "Itinéraire routier réel, clic → zoom sur le site"),
+         ("Filtre PROCHAIN", "Mission Sucy-en-Brie sélectionnée → Démarrer"),
+         ("Hors-ligne", "Zéro clé API — fonctionne même sans réseau")],
+        C_BRAND)                # 6
+
+    slide_transition(prs,        # 7
         "ACTE I", "Avant l'audit — Le Brief",
         C_BRAND, "T 2:20 · Marc n'a pas quitté son bureau — son brief est déjà prêt")
-    slide_brief_1(prs)          # 7
-    slide_brief_2(prs)          # 8
-    slide_transition(prs,        # 9
+
+    slide_brief_1(prs)          # 8
+    slide_screenshot(prs, "02_brief_context.png",
+        "ACTE I · Brief — Contexte site, historique NC, check-list auto-générée",
+        [("Historique branché sur audit.db", "NC §7.1.5 ouverte depuis nov. 2024 — jamais clôturée"),
+         ("Thèmes récurrents 🔁", "§7.1.5 + §8.7 → badges dans la check-list d'inspection"),
+         ("4 sections générées", "S1 §7.5 · S2 §7.1.5 · S3 §8.7 · S4 §7.2"),
+         ("Douleur ③ traitée", "Historique exploité — Marc n'a rien eu à se rappeler")],
+        C_BRAND)                # 9
+
+    slide_brief_2(prs)          # 10
+    slide_screenshot(prs, "03_brief_scope.png",
+        "ACTE I · Brief — Scope, documents RATP, check-list éditable",
+        [("Scope de l'audit", "3 domaines actifs · §7.1.5 · §8.7 · §7.5"),
+         ("⚠ Alertes RATP", "3 docs pré-analysés par Claude · risques remontés"),
+         ("Check-list éditable", "× supprimer un item · + ajouter un point sur mesure"),
+         ("Douleurs ① ②", "Expertise capitalisée (badge Auditeur) · Prépa standardisée")],
+        C_BRAND)                # 11
+
+    slide_transition(prs,        # 12
         "ACTE II", "Pendant l'audit — Le Terrain",
         C_EMERALD, "T 3:30 · Marc est sur site, gants aux mains, devant les équipements")
-    slide_inspection_1(prs)     # 10
-    slide_inspection_2(prs)     # 11
-    slide_transition(prs,        # 12
+
+    slide_inspection_1(prs)     # 13
+    slide_screenshot(prs, "04_inspection.png",
+        "ACTE II · Inspection — Capture terrain, analyse IA, questions oui/non",
+        [("Bannière 🔁 récurrences", "§7.1.5 + §8.7 rappelés avant même de commencer"),
+         ("NC MAJEURE §7.1.5", "Clés dynamométriques non étalonnées · certificats périmés 8 mois"),
+         ("3 questions Claude", "Oui/Non contextualisées · réponses réinjectées dans l'analyse"),
+         ("Douleurs ③ ④ traitées", "Récidive détectée · constat objectif généré par l'IA")],
+        C_EMERALD)              # 14
+
+    slide_inspection_2(prs)     # 15
+
+    slide_transition(prs,        # 16
         "ACTE III", "Après l'audit — Le Rapport",
         C_DARK_TEAL, "T 6:00 · Le rapport est déjà là. Sur place. Pas ce soir — maintenant.")
-    slide_rapport(prs)          # 13
-    slide_transition(prs,        # 14
+
+    slide_rapport(prs)          # 17
+    slide_screenshot(prs, "05_report.png",
+        "ACTE III · Rapport — Synthèse, grille conformité, signature, envoi portail",
+        [("Score 35% — alerte rouge", "§7.1.5 à 18% · §8.7 à 42% · barres colorées par seuil"),
+         ("Actions disponibles", "Modifier · Anonymiser RGPD · Télécharger Word · Signer"),
+         ("⬆ Portail RATP", "Un clic → rapport transmis directement chez Mei Lin Zhang"),
+         ("Douleur ⑤ traitée", "La soirée de rédaction de Marc a disparu")],
+        C_DARK_TEAL)            # 18
+
+    slide_transition(prs,        # 19
         "ÉPILOGUE", "La boucle se referme",
         RGBColor(0x00, 0x5C, 0x40), "T 7:00 · Mei Lin Zhang se connecte au portail RATP")
-    slide_epilogue(prs)         # 15
-    slide_cloture(prs)          # 16
+
+    slide_epilogue(prs)         # 20
+    slide_screenshot(prs, "06_portal.png",
+        "ÉPILOGUE · Portail RATP — Mei Lin Zhang reçoit le rapport de Marc",
+        [("Badge Bureau Veritas", "Le rapport de Marc apparaît en tête de liste"),
+         ("Analyse instantanée", "2 NC majeures · actions · clauses à risque déjà visibles"),
+         ("⬇ Télécharger", "Le .docx signé est récupérable en un clic"),
+         ("Boucle complète", "RATP dépose → BV audite → rapport revient à RATP")],
+        RGBColor(0x00, 0x5C, 0x40))  # 21
+
+    slide_cloture(prs)          # 22
 
     out = os.path.abspath(OUT_PATH)
     os.makedirs(os.path.dirname(out), exist_ok=True)
