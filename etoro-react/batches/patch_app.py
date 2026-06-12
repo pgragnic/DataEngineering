@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Run from Termux: python3 ~/DataEngineering/etoro-react/patch_app.py
+Run from Termux: python3 ~/DataEngineering/etoro-react/batches/patch_app.py
 Patches ~/app.py — track_user route with snapshot-diff history
+Détecte : ouverture, fermeture, renforcement (+15%), allégement (-15%)
 """
 import re, shutil, sys
 from pathlib import Path
@@ -69,20 +70,22 @@ def track_user(username):
                 "amount": round(p.get("Value", 0), 2),
                 "pnl":    round(p.get("NetProfit", 0), 2),
                 "isBuy":  p.get("Direction") != "Sell",
+                "trades": p.get("NumberOfTrades") or p.get("Trades") or 0,
             }
             current_map[iid] = entry
             positions.append({k: v for k, v in entry.items() if k != "iid"})
         positions.sort(key=lambda x: -x["amount"])
 
         # 5. Diff avec le snapshot précédent
-        events = load_events()
-        key = username.lower()
-        user = events.get(key, {"last": {}, "history": []})
-        last_map = user.get("last", {})
-        today = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+        events    = load_events()
+        key       = username.lower()
+        user      = events.get(key, {"last": {}, "history": []})
+        last_map  = user.get("last", {})
+        today     = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
 
         new_events = []
-        # Positions ouvertes depuis la dernière visite
+
+        # Positions ouvertes (nouvel instrument)
         for iid, p in current_map.items():
             siid = str(iid)
             if siid not in last_map:
@@ -93,7 +96,55 @@ def track_user(username):
                     "amount": p["amount"],
                     "date":   today,
                 })
-        # Positions fermées depuis la dernière visite
+            else:
+                prev = last_map[siid]
+                prev_val    = prev.get("amount", 0)
+                prev_trades = prev.get("trades", 0)
+                cur_trades  = p["trades"]
+                cur_val     = p["amount"]
+
+                # Détection par nombre de trades (précis)
+                if cur_trades and prev_trades and cur_trades != prev_trades:
+                    delta = cur_trades - prev_trades
+                    if delta > 0:
+                        new_events.append({
+                            "name":   p["name"],
+                            "action": "add",
+                            "isBuy":  p["isBuy"],
+                            "amount": cur_val,
+                            "delta":  delta,
+                            "date":   today,
+                        })
+                    else:
+                        new_events.append({
+                            "name":   p["name"],
+                            "action": "partial_close",
+                            "isBuy":  p["isBuy"],
+                            "amount": cur_val,
+                            "delta":  delta,
+                            "date":   today,
+                        })
+                # Fallback : détection par variation de valeur > 10%
+                elif prev_val > 0:
+                    ratio = (cur_val - prev_val) / prev_val
+                    if ratio > 0.10:
+                        new_events.append({
+                            "name":   p["name"],
+                            "action": "add",
+                            "isBuy":  p["isBuy"],
+                            "amount": cur_val,
+                            "date":   today,
+                        })
+                    elif ratio < -0.10:
+                        new_events.append({
+                            "name":   p["name"],
+                            "action": "partial_close",
+                            "isBuy":  p["isBuy"],
+                            "amount": cur_val,
+                            "date":   today,
+                        })
+
+        # Positions fermées (instrument disparu)
         for siid, p in last_map.items():
             if int(siid) not in current_map:
                 new_events.append({
@@ -108,12 +159,14 @@ def track_user(username):
             history = new_events + history
 
         # Sauvegarde snapshot
-        user["last"]    = {str(iid): p for iid, p in current_map.items()}
-        user["history"] = history[:50]
+        user["last"]    = {str(iid): {"name": p["name"], "amount": p["amount"],
+                                       "isBuy": p["isBuy"], "trades": p["trades"]}
+                           for iid, p in current_map.items()}
+        user["history"] = history[:100]
         events[key] = user
         save_events(events)
 
-        return jsonify({"positions": positions, "history": history[:20]})
+        return jsonify({"positions": positions, "history": history[:30]})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

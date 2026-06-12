@@ -720,7 +720,12 @@ export default function App() {
               <div className="section-title">Mouvements récents</div>
               {trackData.history.map((h, i) => {
                 const sym = (h.name || '').split('/')[0].split(' ')[0]
-                const isOpen = h.action === 'open'
+                const actionLabel = {
+                  open:          { txt: '● Ouvert',    cls: 'pnl-pos' },
+                  close:         { txt: '○ Fermé',     cls: 'pnl-neg' },
+                  add:           { txt: '▲ Renforcé',  cls: 'pnl-pos' },
+                  partial_close: { txt: '▼ Allégé',    cls: 'pnl-neg' },
+                }[h.action] || { txt: h.action, cls: '' }
                 return (
                   <div key={i} className="card">
                     <div className="card-row">
@@ -730,10 +735,9 @@ export default function App() {
                           <div>
                             <div className="card-name">{h.name}</div>
                             <div className="card-sub">
-                              <span className={isOpen ? 'pnl-pos' : 'pnl-neg'}>
-                                {isOpen ? '● Ouvert' : '○ Fermé'}
-                              </span>
+                              <span className={actionLabel.cls}>{actionLabel.txt}</span>
                               {' · '}{h.isBuy ? '▲ Long' : '▼ Short'}
+                              {h.delta != null && ` · ${h.delta > 0 ? '+' : ''}${h.delta} pos`}
                             </div>
                           </div>
                         </div>
