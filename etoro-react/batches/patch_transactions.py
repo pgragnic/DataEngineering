@@ -57,6 +57,7 @@ def log_transaction(response):
                 "orderId": order.get("orderID") or order.get("orderId"),
                 "status":  "error" if resp.get("error") else "ok",
                 "error":   resp.get("error"),
+                "detail":  order,
             })
         elif path.startswith("/api/sell/") and method == "POST":
             resp = _txjson.loads(response.get_data(as_text=True))
@@ -66,6 +67,7 @@ def log_transaction(response):
                 "positionId": path.split("/")[-1],
                 "status":     "error" if resp.get("error") else "ok",
                 "error":      resp.get("error"),
+                "detail":     resp,
             })
     except Exception:
         pass

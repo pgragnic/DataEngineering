@@ -335,6 +335,7 @@ export default function App() {
 
   const [txData,    setTxData]    = useState(null)
   const [txLoading, setTxLoading] = useState(false)
+  const [txDetail,  setTxDetail]  = useState(null)
 
   const [showConfig,   setShowConfig]   = useState(false)
   const [configRatio,  setConfigRatio]  = useState('')
@@ -504,6 +505,40 @@ export default function App() {
       </header>
 
       <FuturesBanner futures={futures} marketOpen={marketOpen} />
+
+      {txDetail && (
+        <div className="modal-overlay" onClick={() => setTxDetail(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{maxHeight:'80vh', overflowY:'auto'}}>
+            <div className="modal-title">
+              {txDetail.type === 'buy' ? '▲ BUY' : '▼ SELL'} {txDetail.symbol || `#${txDetail.positionId}`}
+            </div>
+            <div className="modal-name" style={{marginBottom:12}}>{txDetail.date?.replace('T',' ').replace('Z','')}</div>
+            <table style={{width:'100%', fontSize:'0.8rem', borderCollapse:'collapse'}}>
+              <tbody>
+                {Object.entries(txDetail).filter(([k]) => k !== 'detail').map(([k, v]) => (
+                  <tr key={k} style={{borderBottom:'1px solid var(--border)'}}>
+                    <td style={{padding:'5px 4px', color:'var(--text-muted)', whiteSpace:'nowrap'}}>{k}</td>
+                    <td style={{padding:'5px 4px', color:'var(--text-primary)', textAlign:'right', wordBreak:'break-all'}}>
+                      {v == null ? '—' : String(v)}
+                    </td>
+                  </tr>
+                ))}
+                {txDetail.detail && Object.entries(txDetail.detail).map(([k, v]) => (
+                  <tr key={'d_'+k} style={{borderBottom:'1px solid var(--border)'}}>
+                    <td style={{padding:'5px 4px', color:'var(--blue)', whiteSpace:'nowrap'}}>{k}</td>
+                    <td style={{padding:'5px 4px', color:'var(--text-primary)', textAlign:'right', wordBreak:'break-all'}}>
+                      {v == null ? '—' : String(v)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="modal-buttons">
+              <button className="btn-modal-back" onClick={() => setTxDetail(null)}>Fermer</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <nav>
         {['portfolio', 'acheter', 'pending', 'stats', 'suivi', 'transactions'].map(t => (
@@ -766,7 +801,7 @@ export default function App() {
             const isOk  = tx.status === 'ok'
             const date  = tx.date ? tx.date.replace('T', ' ').replace('Z', '') : ''
             return (
-              <div key={i} className="card">
+              <div key={i} className="card selectable" onClick={() => setTxDetail(tx)}>
                 <div className="card-row">
                   <div className="card-left">
                     <div className="card-logo-name">
