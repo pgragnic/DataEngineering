@@ -224,6 +224,11 @@ for i, order in enumerate(ORDERS, 1):
     pct = order["pct"]
     print(f"[{i}/{total}] BUY {sym}  {pct}%", end="  →  ", flush=True)
 
+    if pct <= 0:
+        print("SKIP (pct <= 0)")
+        results.append({**order, "status": "skipped"})
+        continue
+
     if DRY_RUN:
         print("skipped")
         results.append({**order, "status": "dry-run"})

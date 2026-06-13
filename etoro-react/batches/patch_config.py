@@ -39,8 +39,8 @@ def set_config():
     cfg_file = Path.home() / "etoro_config.json"
     data = request.get_json(force=True)
     ratio = float(data.get("ratio", 1.0))
-    if ratio <= 0:
-        return jsonify({"error": "ratio must be > 0"}), 400
+    if ratio <= 0 or ratio > 100:
+        return jsonify({"error": "ratio must be between 0 and 100"}), 400
     cfg_file.write_text(_json.dumps({"ratio": ratio}))
     return jsonify({"ok": True, "ratio": ratio})
 '''

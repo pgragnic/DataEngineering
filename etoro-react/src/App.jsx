@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import './App.css'
 
 const CACHE_KEY = 'etoro_portfolio'
@@ -342,7 +342,7 @@ export default function App() {
   const [configSaving, setConfigSaving] = useState(false)
 
   const API        = import.meta.env.VITE_API_URL || ''
-  const TRACK_USER = 'Thomaspj'
+  const TRACK_USER = import.meta.env.VITE_TRACK_USER || 'Thomaspj'
 
   const load = (silent = false) => {
     if (!silent) setLoading(true)
@@ -402,6 +402,7 @@ export default function App() {
   }
 
   useEffect(() => {
+    let cacheHit = false
     try {
       const cached = localStorage.getItem(CACHE_KEY)
       if (cached) {
@@ -411,10 +412,11 @@ export default function App() {
           setLastUpdate(new Date(time).toLocaleTimeString('fr-FR'))
           setFromCache(true)
           setLoading(false)
+          cacheHit = true
         }
       }
     } catch {}
-    load()
+    if (!cacheHit) load()
     loadFutures()
     const iv = setInterval(() => { load(true); loadFutures() }, CACHE_TTL)
     return () => clearInterval(iv)
@@ -425,20 +427,21 @@ export default function App() {
     if (tab === 'transactions') loadTx()
   }, [tab])
 
-  const positions = data?.positions || []
-  const pending   = data?.pending   || []
-  const equity    = data?.equity    ?? 0
-  const cash      = data?.cash      ?? 0
-  const totalPnl  = positions.reduce((s, p) => s + p.pnl, 0)
-  const invested  = positions.reduce((s, p) => s + p.amount, 0)
-  const sorted    = sortPositions(positions, sortKey)
-
-  const groupMap = sorted.reduce((acc, p) => {
-    if (!acc[p.name]) acc[p.name] = []
-    acc[p.name].push(p)
-    return acc
-  }, {})
-  const groupList = Object.values(groupMap)
+  const { positions, pending, equity, cash, totalPnl, invested, sorted, groupList } = useMemo(() => {
+    const positions = data?.positions || []
+    const pending   = data?.pending   || []
+    const equity    = data?.equity    ?? 0
+    const cash      = data?.cash      ?? 0
+    const totalPnl  = positions.reduce((s, p) => s + p.pnl, 0)
+    const invested  = positions.reduce((s, p) => s + p.amount, 0)
+    const sorted    = sortPositions(positions, sortKey)
+    const groupMap  = sorted.reduce((acc, p) => {
+      if (!acc[p.name]) acc[p.name] = []
+      acc[p.name].push(p)
+      return acc
+    }, {})
+    return { positions, pending, equity, cash, totalPnl, invested, sorted, groupList: Object.values(groupMap) }
+  }, [data, sortKey])
 
   async function doSearch(q) {
     if (!q.trim()) { setSearchResults([]); return }
@@ -508,27 +511,23 @@ export default function App() {
 
       {txDetail && (
         <div className="modal-overlay" onClick={() => setTxDetail(null)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{maxHeight:'80vh', overflowY:'auto'}}>
+          <div className="modal modal-tx" onClick={e => e.stopPropagation()}>
             <div className="modal-title">
               {txDetail.type === 'buy' ? '▲ BUY' : '▼ SELL'} {txDetail.symbol || `#${txDetail.positionId}`}
             </div>
-            <div className="modal-name" style={{marginBottom:12}}>{txDetail.date?.replace('T',' ').replace('Z','')}</div>
-            <table style={{width:'100%', fontSize:'0.8rem', borderCollapse:'collapse'}}>
+            <div className="modal-name">{txDetail.date?.replace('T',' ').replace('Z','')}</div>
+            <table className="tx-detail-table">
               <tbody>
                 {Object.entries(txDetail).filter(([k]) => k !== 'detail').map(([k, v]) => (
-                  <tr key={k} style={{borderBottom:'1px solid var(--border)'}}>
-                    <td style={{padding:'5px 4px', color:'var(--text-muted)', whiteSpace:'nowrap'}}>{k}</td>
-                    <td style={{padding:'5px 4px', color:'var(--text-primary)', textAlign:'right', wordBreak:'break-all'}}>
-                      {v == null ? '—' : String(v)}
-                    </td>
+                  <tr key={k}>
+                    <td>{k}</td>
+                    <td>{v == null ? '—' : String(v)}</td>
                   </tr>
                 ))}
                 {txDetail.detail && Object.entries(txDetail.detail).map(([k, v]) => (
-                  <tr key={'d_'+k} style={{borderBottom:'1px solid var(--border)'}}>
-                    <td style={{padding:'5px 4px', color:'var(--blue)', whiteSpace:'nowrap'}}>{k}</td>
-                    <td style={{padding:'5px 4px', color:'var(--text-primary)', textAlign:'right', wordBreak:'break-all'}}>
-                      {v == null ? '—' : String(v)}
-                    </td>
+                  <tr key={'d_'+k} className="tx-detail-row">
+                    <td>{k}</td>
+                    <td>{v == null ? '—' : String(v)}</td>
                   </tr>
                 ))}
               </tbody>

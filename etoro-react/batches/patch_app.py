@@ -97,7 +97,7 @@ def track_user(username):
 
         # Instruments fermés depuis la dernière visite
         for siid, p in last_map.items():
-            if int(siid) not in current_map:
+            if siid not in {str(k) for k in current_map}:
                 new_events.append({
                     "name":   p["name"],
                     "action": "close",

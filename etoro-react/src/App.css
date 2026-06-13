@@ -602,3 +602,18 @@ input::placeholder { color: var(--text-muted); }
   color: var(--text-muted); font-size: var(--text-base);
   line-height: 1.6;
 }
+
+/* ── Transaction detail modal ────────────────────────────── */
+.modal-tx { max-height: 80vh; overflow-y: auto; }
+.modal-tx .modal-name { margin-bottom: 12px; }
+
+.tx-detail-table {
+  width: 100%;
+  font-size: 0.8rem;
+  border-collapse: collapse;
+}
+.tx-detail-table tr           { border-bottom: 1px solid var(--border); }
+.tx-detail-table td           { padding: 5px 4px; }
+.tx-detail-table td:first-child { color: var(--text-muted); white-space: nowrap; }
+.tx-detail-table td:last-child  { color: var(--text-primary); text-align: right; word-break: break-all; }
+.tx-detail-table .tx-detail-row td:first-child { color: var(--blue); }
