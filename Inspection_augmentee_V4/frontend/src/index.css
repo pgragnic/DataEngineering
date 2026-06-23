@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+/* UC28 Design System — tokens CSS */
+:root {
+  --brand:        #0070AD;   /* bleu Capgemini, primaire */
+  --brand-cyan:   #12ABDB;   /* cyan accent */
+  --emerald:      #10B981;   /* actions positives */
+  --amber:        #F59E0B;   /* alertes / scores */
+  --dark-teal:    #0F2027;   /* fond sombre */
+
+  --bg:           #EEF2F7;   /* fond général — bleu-gris profond */
+  --surface:      #FFFFFF;   /* fond cartes */
+  --surface-sunk: #F1F4F9;   /* panneaux internes creusés */
+  --border:       #E2E8F0;   /* bordures */
+  --text:         #0F172A;   /* texte principal */
+  --text-muted:   #64748B;   /* texte secondaire */
+
+  /* Échelle d'ombres portées (teintées dark-teal) */
+  --shadow-sm:    0 1px 3px 0 rgba(15,32,39,.08), 0 1px 2px -1px rgba(15,32,39,.06);
+  --shadow-md:    0 4px 12px -2px rgba(15,32,39,.10), 0 2px 6px -2px rgba(15,32,39,.07);
+  --shadow-lg:    0 10px 24px -4px rgba(15,32,39,.13), 0 4px 10px -4px rgba(15,32,39,.09);
+  --shadow-inset: inset 0 2px 6px 0 rgba(15,32,39,.06);
+
+  /* Washes — fonds tintés très pâles */
+  --wash-cyan:    #EBF6FB;
+  --wash-emerald: #ECFDF5;
+
+  --nc-majeure:   #EF4444;
+  --nc-mineure:   #F59E0B;
+  --observation:  #10B981;
+  --conforme:     #14B8A6;
+
+  /* Canaux RGB pour les modificateurs d'opacité Tailwind (/10, /20, /30…) */
+  --brand-rgb:       0 112 173;
+  --brand-cyan-rgb:  18 171 219;
+  --emerald-rgb:     16 185 129;
+  --amber-rgb:       245 158 11;
+  --nc-majeure-rgb:  239 68 68;
+  --nc-mineure-rgb:  245 158 11;
+  --observation-rgb: 16 185 129;
+  --conforme-rgb:    20 184 166;
+
+  /* Gabarit & grille */
+  --container-max: 1440px;
+  --page-pad:      1.5rem;
+  --gutter:        1.5rem;
+
+  /* Primitives cartes */
+  --card-radius:   0.75rem;
+  --card-pad:      1rem;
+
+  /* Échelle d'espacement */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+}
+
+/* ── Shell d'application ─────────────────────────────────────────── */
+.page-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem var(--page-pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+.page-content {
+  flex: 1;
+  padding: var(--page-pad);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Grille 12 colonnes ──────────────────────────────────────────── */
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gutter);
+}
+
+/* ── Primitive carte ─────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border-radius: var(--card-radius);
+  padding: var(--card-pad);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Label de section (petites capitales) ────────────────────────── */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--wash-cyan);
+  border-radius: 0.375rem;
+  margin-inline: -0.25rem;
+  padding: 0.375rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.75rem;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { overflow-x: hidden; max-width: 100%; }
+body { font-family: 'Inter', 'Calibri Light', system-ui, sans-serif; }
