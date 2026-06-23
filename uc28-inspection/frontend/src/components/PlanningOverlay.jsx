@@ -139,7 +139,7 @@ export default function PlanningOverlay({ onClose, onConfirm, selectedClient, th
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className={`font-semibold text-sm truncate ${isSelected ? "text-white" : "text-gray-800"}`}>{audit.titre}</div>
-                      <div className={`text-xs truncate ${isSelected ? "text-white/80" : "text-gray-500"}`}>{audit.site} · {audit.dureeMin} min</div>
+                      <div className={`text-xs truncate ${isSelected ? "text-white/80" : "text-gray-500"}`}>{audit.site} · Temps estimé pour effectuer la mission : {audit.dureeMin} min</div>
                     </div>
                   </button>
                 )

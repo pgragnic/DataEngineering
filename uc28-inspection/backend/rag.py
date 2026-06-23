@@ -1,10 +1,5 @@
-import os
 import numpy as np
 import faiss
-
-# Forcer l'utilisation du cache local — évite les appels HuggingFace bloqués par le proxy SSL Capgemini
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 from sentence_transformers import SentenceTransformer
 
@@ -33,14 +28,13 @@ def _load() -> None:
 
     _model = SentenceTransformer(_MODEL_NAME)
 
-    # Concaténer titre + exigence pour un embedding riche
     texts = [f"{c['titre']} : {c['exigence']}" for c in _clauses]
     embeddings = _model.encode(
         texts, normalize_embeddings=True, show_progress_bar=False
     ).astype("float32")
 
     dim = embeddings.shape[1]
-    _index = faiss.IndexFlatIP(dim)  # cosine similarity sur vecteurs normalisés
+    _index = faiss.IndexFlatIP(dim)
     _index.add(embeddings)
 
 

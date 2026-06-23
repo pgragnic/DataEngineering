@@ -273,7 +273,7 @@ export default function Dashboard({ onDemarrer, onOpenPlanning, theme }) {
 
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-ink text-sm truncate">{audit.titre}</div>
-                        <div className="text-xs text-ink-muted truncate">{audit.site}</div>
+                        <div className="text-xs text-ink-muted truncate">{audit.site} · Temps estimé pour effectuer la mission : {audit.dureeMin} min</div>
                         <div className="text-xs text-ink-muted mt-0.5 truncate">Scope : {audit.scope}</div>
                         {audit.trajet?.voiture !== "—" && (
                           <div className="mt-1 flex gap-3 text-[10px] text-ink-muted">
